@@ -25,7 +25,6 @@ const PRODUCT = {
 
 const ProductDetail = () => {
   const [selectedSize, setSelectedSize] = useState(PRODUCT.sizes[0]);
-  const [selectedColor, setSelectedColor] = useState(PRODUCT.colors[0]);
   const [pagination, setPagination] = useState("description");
 
   const hasDiscountPrice = PRODUCT.discount_percentage;
@@ -45,18 +44,6 @@ const ProductDetail = () => {
           <div className="lg:grid lg:grid-cols-2 md:grid-cols-2 lg:gap-x-12 items-start">
             {/* LEFT COLUMN: Image Section */}
             <div className="w-full aspect-square static lg:sticky lg:top-8">
-              <div className="img_thumbnails flex items-center gap-4">
-                {PRODUCT.colors.map((color, index) => (
-                  <button
-                    key={index}
-                    className="thumbnail_item w-16 h-16 mb-4 rounded-lg overflow-hidden cursor-pointer border-2 border-gray-200 hover:border-black"
-                  >
-                    <div className="w-full h-full flex items-center justify-center bg-gray-300">
-                      <span className="text-sm text-gray-700">{color}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
               <div className="img_prev h-full w-full rounded-2xl overflow-hidden bg-gray-300 flex items-center justify-center">
                 <img
                   src={PRODUCT.image}
@@ -107,7 +94,7 @@ const ProductDetail = () => {
                 </div>
               </div>
 
-              <div className="stock mt-6">
+              <div className="stock my-10">
                 <span
                   className={`text-gray-600 ${selectedSize.stock > 0 ? "bg-green-200 text-green-800" : "bg-red-100"} px-2 py-1 rounded`}
                 >
@@ -120,20 +107,6 @@ const ProductDetail = () => {
                     items available
                   </span>
                 )}
-              </div>
-
-              <div className="mt-10">
-                <p className="text-xl! font-bold text-gray-900">Select Color</p>
-                <div className="img_colors flex items-center gap-4">
-                  {PRODUCT.colors.map((color, index) => (
-                    <button
-                      id={color}
-                      key={index}
-                      className={`thumbnail_item w-10 h-10 mb-4 rounded-lg overflow-hidden cursor-pointer border-2 border-gray-200 hover:border-black ${color} ${selectedColor === color ? "border-black!" : ""}`}
-                      onClick={() => setSelectedColor(color)}
-                    ></button>
-                  ))}
-                </div>
               </div>
 
               {/* Size Selection */}

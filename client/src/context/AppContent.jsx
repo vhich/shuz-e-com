@@ -1,7 +1,8 @@
-import { createContext, useEffect, useState, useRef } from "react";
-import { toast } from "react-toastify";
-import axios from "axios";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { createContext, useEffect, useState } from "react";
+import PropTypes from "prop-types";
+// import { toast } from "react-toastify";
+// import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 export const AppContent = createContext();
 
@@ -25,4 +26,8 @@ export const AppContextProvider = (props) => {
       {props.children}
     </AppContent.Provider>
   );
+};
+
+AppContextProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

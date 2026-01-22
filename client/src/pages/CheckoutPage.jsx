@@ -45,7 +45,7 @@ export default function CheckoutPage() {
                         name="firstName"
                         required
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-green-300 focus:outline-none transition-all"
                       />
                     </div>
                     <div>
@@ -57,7 +57,7 @@ export default function CheckoutPage() {
                         name="lastName"
                         required
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-green-300 focus:outline-none transition-all"
                       />
                     </div>
                     <div className="md:col-span-2">
@@ -69,7 +69,7 @@ export default function CheckoutPage() {
                         name="email"
                         required
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-green-300 focus:outline-none transition-all"
                       />
                     </div>
                   </div>
@@ -90,7 +90,7 @@ export default function CheckoutPage() {
                         name="address"
                         required
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-green-300 focus:outline-none transition-all"
                       />
                     </div>
                     <div className="md:col-span-2">
@@ -102,7 +102,7 @@ export default function CheckoutPage() {
                         name="city"
                         required
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-green-300 focus:outline-none transition-all"
                       />
                     </div>
                     <div className="md:col-span-2">
@@ -114,7 +114,7 @@ export default function CheckoutPage() {
                         name="state"
                         required
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-green-300 focus:outline-none transition-all"
                       />
                     </div>
                     <div className="md:col-span-2">
@@ -126,8 +126,18 @@ export default function CheckoutPage() {
                         name="zip"
                         required
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-green-300 focus:outline-none transition-all"
                       />
+                    </div>
+                    <div className="md:col-span-6">
+                      <label className="block text-sm font-medium text-slate-600">
+                        Additional Information
+                      </label>
+                      <textarea
+                        name="add-info"
+                        id="add-info"
+                        className="mt-1 w-full h-40 px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-green-300 focus:outline-none transition-all"
+                      ></textarea>
                     </div>
                   </div>
                 </section>

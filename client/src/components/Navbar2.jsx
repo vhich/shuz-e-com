@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { assets, navLinks, userNavLinks } from "../assets/asset.js";
-import { ShoppingBag, User, Search } from "lucide-react";
+import { User, Search } from "lucide-react";
 
-const Navbar = () => {
-  const [isHome, setIsHome] = useState(window.location.pathname === "/");
+const Navbar2 = () => {
+  const [isHome] = useState(window.location.pathname === "/");
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const dropdownRef = useRef(null);
   useEffect(() => {
@@ -72,12 +72,6 @@ const Navbar = () => {
               ))}
             </ul>
           </button>
-          <button className="cart relative" onClick={() => navigate("/cart")}>
-            <ShoppingBag />
-            <div className="cart_noft bg-red-600 rounded-full w-5 h-5 text-white flex justify-center items-center text-sm absolute -top-2 -right-3">
-              20
-            </div>
-          </button>
         </div>
       </div>
       <div className="container sm:hidden block">
@@ -112,15 +106,6 @@ const Navbar = () => {
                 ))}
               </ul>
             </button>
-            <button
-              className="cart relative flex items-center"
-              onClick={() => navigate("/cart")}
-            >
-              <ShoppingBag />
-              <div className="cart_noft bg-red-600 rounded-full w-5 h-5 text-white flex justify-center items-center text-sm -translate-x-1">
-                20
-              </div>
-            </button>
           </div>
         </div>
 
@@ -140,4 +125,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Navbar2;

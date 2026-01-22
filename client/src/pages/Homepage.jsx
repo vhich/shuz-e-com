@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { assets } from "../assets/asset";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -9,8 +9,12 @@ import BestSeller from "../components/BestSeller";
 import CategoryList from "../components/CategoryList";
 import Reviews from "../components/Reviews";
 import InfiniteBrandScroll from "../components/InfiniteBrandScroll";
+import Newsletter from "../components/Newsletter";
 
 const Homepage = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0 });
+  }, []);
   return (
     <>
       <section
@@ -66,6 +70,7 @@ const Homepage = () => {
       </section>
       <BestSeller />
       <Reviews />
+      <Newsletter />
       <InfiniteBrandScroll />
     </>
   );

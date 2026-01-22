@@ -33,7 +33,6 @@ const ReviewCard = ({ review }) => {
           <p className="text-sm font-semibold text-gray-900 capitalize">
             {review.name}
           </p>
-          <p className="text-xs text-gray-500 capitalize">{review.role}</p>
         </div>
       </div>
     </div>

@@ -99,7 +99,7 @@ h2 {
 h3 {
   font-size: 3rem;
   font-weight: 500;
-  line-height: 3rem;
+  line-height: 3.5rem;
 }
 h4 {
   font-size: 2.5rem;
@@ -182,6 +182,14 @@ button {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 200;
+}
+
+.shop_hero {
+  height: 55vh;
+  background: url("./assets/images/shop_default_header_img.jpg");
+  background-size: cover;
+  background-position: center;
+  position: relative;
 }
 
 .container {

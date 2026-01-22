@@ -1,4 +1,5 @@
 import logo from "./images/logo.png";
+import logo_white from "./images/logo_white.png";
 import hero_bg from "./images/hero_bg.png";
 import xpro_1 from "./images/xpro_1.png";
 import xpro_1plus from "./images/xpro_1plus.png";
@@ -28,6 +29,7 @@ import brand_logo5 from "./images/brands/brand-logo5.png";
 
 const assets = {
   logo,
+  logo_white,
   hero_bg,
   xpro_1,
   xpro_1plus,
@@ -251,6 +253,28 @@ const brands = [
   },
 ];
 
+const footerLinks = [
+  {
+    title: "My Account",
+    links: ["Orders", "Account details", "Addresses", "Lost password"],
+  },
+  {
+    title: "Quick Links",
+    links: [
+      "Home",
+      "About Us",
+      "Shop",
+      "Product Categories",
+      "Blog",
+      "Contact Us",
+    ],
+  },
+  {
+    title: "Information",
+    links: ["Privacy Policy", "Guarantee", "Refund and Returns Policy"],
+  },
+];
+
 export {
   assets,
   navLinks,
@@ -260,4 +284,5 @@ export {
   productCard,
   reviews,
   brands,
+  footerLinks,
 };

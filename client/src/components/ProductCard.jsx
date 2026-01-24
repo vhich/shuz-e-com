@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 import { AppContent } from "../context/AppContent";
 
 const ProductCard = ({ product }) => {
@@ -38,6 +39,16 @@ const ProductCard = ({ product }) => {
       )}
     </div>
   );
+};
+
+ProductCard.propTypes = {
+  product: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    image: PropTypes.string.isRequired,
+    discount_percentage: PropTypes.number,
+  }).isRequired,
 };
 
 export default ProductCard;

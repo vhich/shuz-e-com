@@ -5,11 +5,10 @@ import Jumbotron from "../components/Jumbotron";
 import { AppContent } from "../context/AppContent";
 
 const Cart = () => {
-  const { productId } = useContext(AppContent);
   const navigate = useNavigate();
 
-  const scrollTopPage = () => {
-    navigate(`/checkout/${productId}`);
+  const navigateToCheckout = () => {
+    navigate(`/checkout`);
   };
 
   // 1. Initialize state with your products
@@ -147,7 +146,7 @@ const Cart = () => {
                   </div>
                 </div>
                 <button
-                  onClick={scrollTopPage}
+                  onClick={navigateToCheckout}
                   className="w-full! mt-8 pry-btn"
                 >
                   Checkout Now

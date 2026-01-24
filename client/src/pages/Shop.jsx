@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import PropTypes from "prop-types";
 import { Filter, X, ChevronDown } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import Navbar from "../components/Navbar";
@@ -250,8 +251,8 @@ const Shop = () => {
                     No results found
                   </h2>
                   <p className="text-gray-500 mt-2">
-                    Try adjusting your filters or sorting to find what you're
-                    looking for.
+                    Try adjusting your filters or sorting to find what
+                    you&apos;re looking for.
                   </p>
                   <button
                     onClick={() => {
@@ -328,5 +329,11 @@ const FilterContent = ({
     </div>
   </div>
 );
+
+FilterContent.propTypes = {
+  selectedCategories: PropTypes.arrayOf(PropTypes.string).isRequired,
+  handleCategoryChange: PropTypes.func.isRequired,
+  setSelectedPriceRange: PropTypes.func.isRequired,
+};
 
 export default Shop;

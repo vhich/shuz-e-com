@@ -2,12 +2,20 @@ import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { assets, navLinks, userNavLinks } from "../assets/asset.js";
 import { ShoppingBag, User, Search } from "lucide-react";
+import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
-  const [isHome, setIsHome] = useState(window.location.pathname === "/");
+  const [isHome] = useState(window.location.pathname === "/");
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Define an array of paths where the cart should be HIDDEN
+  const hideCartPaths = ["/login", "/account/create-account", "/cart"];
+
+  // Check if current path is in our "hide" list
+  const shouldHideCart = hideCartPaths.includes(location.pathname);
 
   const dropdownRef = useRef(null);
   useEffect(() => {
@@ -72,12 +80,14 @@ const Navbar = () => {
               ))}
             </ul>
           </button>
-          <button className="cart relative" onClick={() => navigate("/cart")}>
-            <ShoppingBag />
-            <div className="cart_noft bg-red-600 rounded-full w-5 h-5 text-white flex justify-center items-center text-sm absolute -top-2 -right-3">
-              20
-            </div>
-          </button>
+          {!shouldHideCart && (
+            <button className="cart relative" onClick={() => navigate("/cart")}>
+              <ShoppingBag />
+              <div className="cart_noft bg-red-600 rounded-full w-5 h-5 text-white flex justify-center items-center text-sm absolute -top-2 -right-3">
+                20
+              </div>
+            </button>
+          )}
         </div>
       </div>
       <div className="container sm:hidden block">
@@ -112,15 +122,17 @@ const Navbar = () => {
                 ))}
               </ul>
             </button>
-            <button
-              className="cart relative flex items-center"
-              onClick={() => navigate("/cart")}
-            >
-              <ShoppingBag />
-              <div className="cart_noft bg-red-600 rounded-full w-5 h-5 text-white flex justify-center items-center text-sm -translate-x-1">
-                20
-              </div>
-            </button>
+            {!shouldHideCart && (
+              <button
+                className="cart relative"
+                onClick={() => navigate("/cart")}
+              >
+                <ShoppingBag />
+                <div className="cart_noft bg-red-600 rounded-full w-5 h-5 text-white flex justify-center items-center text-sm absolute -top-2 -right-3">
+                  20
+                </div>
+              </button>
+            )}
           </div>
         </div>
 

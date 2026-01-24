@@ -1,0 +1,232 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap");
+@import "tailwindcss";
+
+* {
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  list-style: none;
+  text-decoration: none;
+}
+
+body {
+  background-color: #f9f9f9;
+  overflow-y: hidden;
+}
+
+button {
+  cursor: pointer;
+  margin: 0.8rem 0;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+textarea {
+  resize: none;
+}
+@utility scrollbar-hide {
+  /* This handles Chrome, Safari, and Edge (including iOS) */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* This handles Firefox and newer Chrome/Edge */
+  /* @supports is used to hide warnings in some editors */
+  @supports (scrollbar-width: none) {
+    scrollbar-width: none;
+  }
+
+  /* This handles old IE */
+  -ms-overflow-style: none;
+}
+
+@theme {
+  --animate-scroll: scroll 20s linear infinite;
+
+  @keyframes scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+::-webkit-scrollbar-track:hover {
+  background-color: transparent;
+}
+::-webkit-scrollbar-track:active {
+  background-color: transparent;
+}
+::-webkit-scrollbar-button {
+  display: none;
+}
+::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+h1 {
+  font-size: 4.5rem;
+  font-weight: 700;
+  line-height: 5rem;
+}
+h2 {
+  font-size: 3.5rem;
+  font-weight: 600;
+  line-height: 3.5rem;
+}
+h3 {
+  font-size: 3rem;
+  font-weight: 500;
+  line-height: 3.5rem;
+}
+h4 {
+  font-size: 2.5rem;
+  font-weight: 500;
+  line-height: 2.5rem;
+}
+h5 {
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 2.5rem;
+}
+h6 {
+  font-size: 1.8rem;
+  font-weight: 500;
+  line-height: 2rem;
+}
+p {
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.5rem;
+}
+span {
+  font-size: 1rem;
+  font-weight: 400;
+}
+a {
+  font-size: 1rem;
+  font-weight: 400;
+  display: block;
+}
+button,
+input {
+  font-size: 1rem;
+  font-weight: 400;
+}
+.pry-btn {
+  background-color: #000000;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.375rem;
+  display: block;
+  width: fit-content;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+.sec-btn {
+  background-color: #ffffff;
+  color: #000000;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #000000;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  font-weight: 500;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+  display: block;
+  width: fit-content;
+}
+button {
+  cursor: pointer;
+}
+.pry-btn:hover {
+  background-color: #252424;
+}
+.sec-btn:hover {
+  background-color: #e7e4e4;
+}
+
+.container {
+  width: 90%;
+  margin: auto;
+}
+
+@media (max-width: 1000px) {
+  .container {
+    width: 92%;
+  }
+  h1 {
+    font-size: 2.8rem;
+    line-height: 3rem;
+  }
+  h2 {
+    font-size: 2.5rem;
+  }
+  h3 {
+    font-size: 2.2rem;
+  }
+  h4 {
+    font-size: 2rem;
+  }
+  h5 {
+    font-size: 1.6rem;
+  }
+  h6 {
+    font-size: 1.2rem;
+  }
+  p {
+    font-size: 0.8rem;
+  }
+  span {
+    font-size: 0.8rem;
+  }
+  a {
+    font-size: 0.8rem;
+  }
+  button,
+  input {
+    font-size: 0.8rem;
+  }
+  .pry-btn {
+    padding: 0.72rem 1.3rem;
+    font-size: 0.8rem;
+  }
+  .sec-btn {
+    padding: 0.72rem 1.3rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 764px) {
+  .container {
+    width: 95%;
+  }
+  .circle {
+    display: none;
+  }
+}

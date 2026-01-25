@@ -1,0 +1,24 @@
+import express from "express";
+import {
+  registerAdmin,
+  loginAdmin,
+  logoutAdmin,
+} from "../controllers/adminController.js";
+import { getAdminData } from "../controllers/adminData.js";
+import { protectAdmin } from "../middleware/protectAdmin.js";
+import { setSecurityHeaders } from "../middleware/securityHeader.js";
+
+const router = express.Router();
+
+// Apply security headers to ALL routes in this router
+router.use(setSecurityHeaders);
+
+// Auth Routes
+router.post("/register", registerAdmin);
+router.post("/login", loginAdmin);
+router.post("/logout", protectAdmin, logoutAdmin);
+
+// Protected Data Routes
+router.get("/me", protectAdmin, getAdminData);
+
+export default router;

@@ -7,9 +7,12 @@ import { useLocation } from "react-router-dom";
 export const AppContent = createContext();
 
 export const AppContextProvider = (props) => {
-  //   const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl =
+    import.meta.env.VITE_BACKEND_URL_NETWORK ||
+    import.meta.env.VITE_BACKEND_URL_LOCAL;
   const [productId, setProductId] = useState();
   const [loading, setLoading] = useState(true);
+  const [product, setProduct] = useState(); //to get the product detail in the product page
 
   const { pathname } = useLocation();
 
@@ -36,6 +39,9 @@ export const AppContextProvider = (props) => {
     setProductId,
     setLoading,
     loading,
+    product,
+    setProduct,
+    backendUrl,
   };
 
   return (

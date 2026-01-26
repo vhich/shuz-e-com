@@ -1,11 +1,14 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
-import { Filter, X, ChevronDown } from "lucide-react";
+import { Filter, X } from "lucide-react";
 import ProductCard from "../components/ProductCard";
-import Navbar from "../components/Navbar";
 import Feature from "../components/Feature";
 import Newsletter from "../components/Newsletter";
 import Jumbotron from "../components/Jumbotron";
+
+import axios from "axios";
+import { AppContent } from "../context/AppContent";
+import Loading from "../components/Loading";
 
 const Shop = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -15,94 +18,55 @@ const Shop = () => {
   const [selectedPriceRange, setSelectedPriceRange] = useState("");
   const [sortBy, setSortBy] = useState("Default Sorting");
   const [currentPage, setCurrentPage] = useState(1);
+  const [allProducts, setAllProducts] = useState([]);
+  const [allCategories, setAllCategories] = useState([]);
 
   // --- LOGIC: DATA ---
   // --- LOGIC: DATA ---
-  const allProducts = [
-    {
-      id: 1,
-      name: "Nike Air Max 270",
-      price: 150,
-      category: "Running",
-      popularity: 90,
-      date: 2024,
-    },
-    {
-      id: 2,
-      name: "Nike Joyride Dual",
-      price: 80,
-      category: "Running",
-      popularity: 85,
-      date: 2023,
-    },
-    {
-      id: 3,
-      name: "Jordan Retro High",
-      price: 190,
-      category: "Basketball",
-      popularity: 99,
-      date: 2024,
-    },
-    {
-      id: 4,
-      name: "Vans Old Skool",
-      price: 45,
-      category: "Lifestyle",
-      popularity: 70,
-      date: 2022,
-    },
-    {
-      id: 5,
-      name: "Adidas Ultraboost",
-      price: 120,
-      category: "Running",
-      popularity: 92,
-      date: 2024,
-    },
-    {
-      id: 6,
-      name: "Puma Training Pro",
-      price: 60,
-      category: "Training",
-      popularity: 75,
-      date: 2023,
-    },
-    {
-      id: 7,
-      name: "Puma Training Pro v2",
-      price: 65,
-      category: "Training",
-      popularity: 75,
-      date: 2023,
-    }, // Changed id from 6 to 7
-    {
-      id: 8,
-      name: "airmax Training Pro",
-      price: 60,
-      category: "Training",
-      popularity: 75,
-      date: 2025,
-    }, // Changed id from 7 to 8
-    {
-      id: 9,
-      name: "xproTraining Pro",
-      price: 60,
-      category: "Running",
-      popularity: 75,
-      date: 2023,
-    }, // Changed id from 8 to 9
-  ];
+  const { setLoading } = useContext(AppContent);
+  const backendUrl =
+    import.meta.env.VITE_BACKEND_URL_NETWORK ||
+    import.meta.env.VITE_BACKEND_URL_LOCAL;
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const { data } = await axios.get(`${backendUrl}/api/shuz/products`);
+
+        if (data?.success) {
+          // 2. Update state
+          setAllProducts(data.data);
+          const products = data.data;
+          setAllCategories([...new Set(products.flatMap((p) => p.categories))]);
+        }
+      } catch (error) {
+        console.error("Error fetching products", error);
+      } finally {
+        // 3. Stop loading ONLY after data is set or error caught
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [backendUrl]); // Added backendUrl as dependency for safety
 
   // --- LOGIC: FILTERING & SORTING ---
   const filteredProducts = useMemo(() => {
+    // Defensive check: if allProducts is empty, return empty
+    if (!allProducts || allProducts.length === 0) return [];
+
     let result = [...allProducts];
 
-    // Category Filter
+    // Category Filter (Fixing p.category -> p.categories)
     if (selectedCategories.length > 0) {
-      result = result.filter((p) => selectedCategories.includes(p.category));
+      result = result.filter((p) =>
+        // Check if ANY of the product's categories match the selected ones
+        p.categories?.some((cat) => selectedCategories.includes(cat)),
+      );
     }
 
-    // Price Filter
+    // Price Filter (Ensure numbers match your DB scale)
+    // If your DB uses 50,000 for 50k Naira, change these numbers to match!
     if (selectedPriceRange === "Under $50")
       result = result.filter((p) => p.price < 50);
     else if (selectedPriceRange === "$50 - $100")
@@ -113,16 +77,22 @@ const Shop = () => {
       result = result.filter((p) => p.price > 150);
 
     // Sort Logic
-    if (sortBy === "Popularity")
-      result.sort((a, b) => b.popularity - a.popularity);
-    if (sortBy === "Latest") result.sort((a, b) => b.date - a.date);
     if (sortBy === "Price: Low to High")
       result.sort((a, b) => a.price - b.price);
     if (sortBy === "Price: High to Low")
       result.sort((a, b) => b.price - a.price);
+    if (sortBy === "Latest")
+      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     return result;
-  }, [selectedCategories, selectedPriceRange, sortBy]);
+    // ADD allProducts HERE!
+  }, [
+    allProducts,
+    allCategories,
+    selectedCategories,
+    selectedPriceRange,
+    sortBy,
+  ]);
 
   // Pagination Logic
   const itemsPerPage = 4;
@@ -142,6 +112,7 @@ const Shop = () => {
 
   return (
     <>
+      <Loading />
       <Jumbotron text={"Shop"} />
       <div className="container">
         {/* --- MOBILE FILTER DRAWER --- */}
@@ -167,6 +138,7 @@ const Shop = () => {
               selectedCategories={selectedCategories}
               handleCategoryChange={handleCategoryChange}
               setSelectedPriceRange={setSelectedPriceRange}
+              allCategories={allCategories}
             />
           </div>
         </div>
@@ -182,6 +154,7 @@ const Shop = () => {
                 selectedCategories={selectedCategories}
                 handleCategoryChange={handleCategoryChange}
                 setSelectedPriceRange={setSelectedPriceRange}
+                allCategories={allCategories}
               />
             </aside>
 
@@ -220,7 +193,7 @@ const Shop = () => {
                 <>
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-10">
                     {currentItems.map((product) => (
-                      <ProductCard key={product.id} product={product} />
+                      <ProductCard key={product._id} product={product} />
                     ))}
                   </div>
 
@@ -228,7 +201,13 @@ const Shop = () => {
                   {totalPages > 1 && (
                     <div
                       className="mt-16 flex justify-center gap-2"
-                      onClick={window.scrollTo({ top: 100, left: 0 })}
+                      onClick={() =>
+                        window.scrollTo({
+                          top: 100,
+                          left: 0,
+                          behavior: "smooth",
+                        })
+                      }
                     >
                       {[...Array(totalPages)].map((_, i) => (
                         <button
@@ -281,59 +260,66 @@ const FilterContent = ({
   selectedCategories,
   handleCategoryChange,
   setSelectedPriceRange,
+  allCategories,
 }) => (
-  <div className="space-y-8">
-    <div>
-      <p className="font-medium! text-xl! mb-4 text-gray-900">Categories</p>
-      <div className="space-y-2 text-gray-600">
-        {["Lifestyle", "Running", "Basketball", "Training"].map((cat) => (
-          <label
-            key={cat}
-            className="flex items-center gap-3 cursor-pointer hover:text-black"
-          >
-            <input
-              type="checkbox"
-              checked={selectedCategories.includes(cat)}
-              onChange={() => handleCategoryChange(cat)}
-              className="w-4 h-4 rounded border-gray-300 text-black focus:ring-black"
-            />
-            <span>{cat}</span>
-          </label>
-        ))}
+  <>
+    <div className="space-y-8">
+      <div>
+        <p className="font-medium! text-xl! mb-4 text-gray-900">Categories</p>
+        <div className="space-y-2 text-gray-600">
+          {allCategories.map((cat) => (
+            <label
+              key={cat}
+              className="flex items-center gap-3 cursor-pointer hover:text-black"
+            >
+              <input
+                type="checkbox"
+                checked={selectedCategories.includes(cat)}
+                onChange={() => handleCategoryChange(cat)}
+                className="w-4 h-4 rounded border-gray-300 text-black focus:ring-black"
+              />
+              <span>{cat}</span>
+            </label>
+          ))}
+        </div>
       </div>
-    </div>
 
-    <div>
-      <p className="font-medium! text-xl! mb-4 text-gray-900">Price Range</p>
-      <div className="space-y-2 text-gray-600">
-        {[
-          "All Prices",
-          "Under $50",
-          "$50 - $100",
-          "$100 - $150",
-          "Over $150",
-        ].map((price) => (
-          <label key={price} className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="radio"
-              name="price"
-              onChange={() =>
-                setSelectedPriceRange(price === "All Prices" ? "" : price)
-              }
-              className="w-4 h-4 border-gray-300 text-black focus:ring-black"
-            />
-            <span>{price}</span>
-          </label>
-        ))}
+      <div>
+        <p className="font-medium! text-xl! mb-4 text-gray-900">Price Range</p>
+        <div className="space-y-2 text-gray-600">
+          {[
+            "All Prices",
+            "Under $50",
+            "$50 - $100",
+            "$100 - $150",
+            "Over $150",
+          ].map((price) => (
+            <label
+              key={price}
+              className="flex items-center gap-3 cursor-pointer"
+            >
+              <input
+                type="radio"
+                name="price"
+                onChange={() =>
+                  setSelectedPriceRange(price === "All Prices" ? "" : price)
+                }
+                className="w-4 h-4 border-gray-300 text-black focus:ring-black"
+              />
+              <span>{price}</span>
+            </label>
+          ))}
+        </div>
       </div>
     </div>
-  </div>
+  </>
 );
 
 FilterContent.propTypes = {
   selectedCategories: PropTypes.arrayOf(PropTypes.string).isRequired,
   handleCategoryChange: PropTypes.func.isRequired,
   setSelectedPriceRange: PropTypes.func.isRequired,
+  allCategories: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default Shop;

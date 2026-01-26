@@ -1,41 +1,92 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { useParams } from "react-router-dom"; // Added for URL ID
+import axios from "axios";
 import Navbar from "../components/Navbar";
 import ReviewCard from "../components/ReviewCard";
 import { reviews } from "../assets/asset";
 import BestSeller from "../components/BestSeller";
-
-const PRODUCT = {
-  id: 1,
-  name: "Air Flex Runner Z-20",
-  baseSku: "SH-AFR-20",
-  price: 129.99,
-  discount_percentage: 15,
-  description:
-    "The ultimate performance running shoe designed for maximum comfort and speed. Featuring breathable mesh and carbon-fiber plates for energy return.",
-  colors: ["bg-red-500", "bg-blue-500", "bg-gray-300"],
-  sizes: [
-    { value: "8", suffix: "08", stock: 10 },
-    { value: "9", suffix: "09", stock: 4 },
-    { value: "10", suffix: "10", stock: 0 },
-    { value: "11", suffix: "11", stock: 7 },
-  ],
-  image:
-    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1000&auto=format&fit=crop", // High quality shoe placeholder
-};
+import { AppContent } from "../context/AppContent";
+import Loading from "../components/Loading";
 
 const ProductDetail = () => {
-  const [selectedSize, setSelectedSize] = useState(PRODUCT.sizes[0]);
-  const [pagination, setPagination] = useState("description");
+  const { id } = useParams(); // Get ID from URL
+  const { backendUrl } = useContext(AppContent);
 
-  const hasDiscountPrice = PRODUCT.discount_percentage;
-  const discountPrice = (
-    PRODUCT.price -
-    (PRODUCT.price * PRODUCT.discount_percentage) / 100
-  ).toFixed(2);
+  const [product, setProduct] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [pagination, setPagination] = useState("description");
+  const [loading, setLoading] = useState(true);
+
+  // Helper variables for price
+  const [discountPrice, setDiscountPrice] = useState(0);
+  const [hasDiscountPrice, setHasDiscountPrice] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });
-  }, []);
+
+    const fetchProductDetail = async () => {
+      try {
+        setLoading(true);
+        const { data } = await axios.get(
+          `${backendUrl}/api/shuz/products/${id}`,
+        );
+
+        if (data.success) {
+          const fetchedProduct = data.data;
+          setProduct(fetchedProduct);
+          // 1. Look inside the array objects to see if at least one size has stock
+          const isAvailable = fetchedProduct.sizes.some((s) => s.stock > 0);
+
+          // 2. Calculate total count by summing 'stock' from each object
+          const totalStockCount = fetchedProduct.sizes.reduce(
+            (acc, curr) => acc + (curr.stock || 0),
+            0,
+          );
+
+          setProduct({
+            ...fetchedProduct,
+            isAvailable,
+            totalStockCount,
+          });
+
+          // Set discount logic once product is loaded
+          if (fetchedProduct.discount > 0) {
+            setHasDiscountPrice(true);
+            const price =
+              fetchedProduct.price -
+              (fetchedProduct.price * fetchedProduct.discount) / 100;
+            setDiscountPrice(
+              price.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }),
+            );
+          }
+        }
+      } catch (error) {
+        console.error("Error matching product ID:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProductDetail();
+  }, [id, backendUrl]);
+
+  if (loading) return <Loading />;
+  if (!product)
+    return (
+      <div className="container py-20 text-center font-bold">
+        <h5>Product not found</h5>
+        <button
+          onClick={() => (window.location.href = "/shop")}
+          className="pry-btn mx-auto!"
+        >
+          Go to shop
+        </button>
+      </div>
+    );
+
   return (
     <>
       <Navbar />
@@ -44,11 +95,11 @@ const ProductDetail = () => {
           <div className="lg:grid lg:grid-cols-2 md:grid-cols-2 lg:gap-x-12 items-start">
             {/* LEFT COLUMN: Image Section */}
             <div className="w-full aspect-square static lg:sticky lg:top-8">
-              <div className="img_prev h-full w-full rounded-2xl overflow-hidden bg-gray-300 flex items-center justify-center">
+              <div className="img_prev h-full w-full rounded-2xl overflow-hidden bg-white flex items-center justify-center">
                 <img
-                  src={PRODUCT.image}
-                  alt={PRODUCT.name}
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-500"
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-contain object-center hover:scale-105 transition-transform duration-500"
                 />
               </div>
             </div>
@@ -58,9 +109,9 @@ const ProductDetail = () => {
               <div className="border-b border-gray-200 pb-6">
                 <nav className="flex mb-4 text-xs font-medium text-gray-500 uppercase tracking-widest">
                   <span>Footwear</span> <span className="mx-2">/</span>{" "}
-                  <span>Running</span>
+                  <span>{product.categories?.[0] || "Running"}</span>
                 </nav>
-                <h4 className="text-gray-900">{PRODUCT.name}</h4>
+                <h4 className="text-gray-900 capitalize">{product.name}</h4>
                 <div className="ratings my-3">
                   <span className="text-yellow-500 text-lg!">★★★★☆</span>
                   <span className="text-gray-500 ml-2">(2 reviews)</span>
@@ -70,25 +121,32 @@ const ProductDetail = () => {
                   {hasDiscountPrice ? (
                     <div className="price flex flex-row-reverse gap-2 items-center mb-4">
                       <h6 className="discount_price text-red-600">
-                        ${discountPrice}
+                        ${discountPrice.toLocaleString()}
                       </h6>
                       <h6 className="original_price text-gray-600 line-through!">
-                        ${PRODUCT.price}
+                        $
+                        {product.price.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
                       </h6>
                     </div>
                   ) : (
                     <h6 className="price text-gray-800 mb-4">
-                      ${PRODUCT.price}
+                      $
+                      {product.price.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
                     </h6>
                   )}
 
-                  {/* Dynamic SKU Display */}
                   <div className="flex flex-col items-end">
                     <span className="text-gray-400 uppercase tracking-widest">
                       SKU:
                     </span>
                     <span className="text-gray-600 bg-gray-100 px-2 py-1 rounded">
-                      {PRODUCT.baseSku}-{selectedSize.suffix}
+                      {product.sku}
                     </span>
                   </div>
                 </div>
@@ -96,15 +154,27 @@ const ProductDetail = () => {
 
               <div className="stock my-10">
                 <span
-                  className={`text-gray-600 ${selectedSize.stock > 0 ? "bg-green-200 text-green-800" : "bg-red-100"} px-2 py-1 rounded`}
+                  className={`text-gray-600 ${product.isAvailable && product.totalStockCount > 5 ? "bg-green-200 text-green-800" : "bg-red-100 text-red-500"} px-2 py-1 rounded`}
                 >
-                  {selectedSize.stock > 0 ? `In Stock` : "Out of Stock"}
+                  {product.isAvailable ? `In Stock` : "Out of Stock"}
                 </span>
-                {selectedSize.stock > 0 && (
+
+                {product.isAvailable && product.totalStockCount > 5 && (
                   <span className="text-sm ml-2 text-gray-600">
-                    <span className="text-green-700">Hurry up!</span> only{" "}
-                    <span className="text-green-700">{selectedSize.stock}</span>{" "}
-                    items available
+                    <span className="text-green-700"></span>
+                    <span className="text-green-700">
+                      {product.totalStockCount}
+                    </span>{" "}
+                    item available
+                  </span>
+                )}
+                {product.isAvailable && product.totalStockCount < 5 && (
+                  <span className="text-sm ml-2 text-gray-600">
+                    <span className="text-red-500">Hurry up!</span>only{" "}
+                    <span className="text-red-500">
+                      {product.totalStockCount}
+                    </span>{" "}
+                    item(s) available
                   </span>
                 )}
               </div>
@@ -121,16 +191,16 @@ const ProductDetail = () => {
                 </div>
 
                 <div className="grid grid-cols-4 gap-4 mt-1">
-                  {PRODUCT.sizes.map((size) => (
+                  {product.sizes?.map((size) => (
                     <button
                       key={size.value}
-                      onClick={() => setSelectedSize(size)}
+                      onClick={() => setSelectedSize(size.value)}
                       disabled={size.stock === 0}
                       className={`rounded-lg border-2 transition-all
                       ${
                         size.stock === 0
                           ? "bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed"
-                          : selectedSize.value === size.value
+                          : selectedSize === size.value
                             ? "border-black bg-black text-white"
                             : "border-gray-200 text-gray-900 hover:border-gray-400"
                       }
@@ -150,10 +220,10 @@ const ProductDetail = () => {
               {/* Action Buttons */}
               <div className="mt-10 flex gap-4">
                 <button
-                  disabled={selectedSize.stock === 0}
+                  disabled={product.stock === 0}
                   className="flex-1 bg-black text-white px-8 py-4 rounded-full font-bold uppercase tracking-wide hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
                 >
-                  {selectedSize.stock === 0 ? "Out of Stock" : "Add to Cart"}
+                  {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
                 </button>
                 <button className="p-4 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors">
                   <svg
@@ -184,6 +254,8 @@ const ProductDetail = () => {
               </div>
             </div>
           </div>
+
+          {/* Tabs Section */}
           <div className="my-10 py-2 border-t border-b border-gray-300">
             <header className="flex gap-6">
               <button
@@ -203,15 +275,7 @@ const ProductDetail = () => {
               {pagination === "description" && (
                 <>
                   <p className="text-gray-700 leading-7">
-                    {PRODUCT.description}
-                  </p>
-                  <p className="text-gray-700 leading-7">
-                    Nam nec tellus a odio tincidunt auctor a ornare odio. Sed
-                    non mauris vitae erat consequat auctor eu in elit. Class
-                    aptent taciti sociosqu ad litora torquent per conubia
-                    nostra, per inceptos himenaeos. Mauris in erat justo. Nullam
-                    ac urna eu felis dapibus condimentum sit amet a augue. Sed
-                    non neque elit sed.
+                    {product.description}
                   </p>
                 </>
               )}

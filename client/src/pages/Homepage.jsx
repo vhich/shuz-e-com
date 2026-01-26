@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { assets } from "../assets/asset";
-import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Feature from "../components/Feature";
 import CollectionGrid from "../components/CollectionGrid";
@@ -53,7 +52,7 @@ const Homepage = () => {
           <div className="z-10">
             <h1 className="mb-4">RUNNING SHOES SALE OFF 50%</h1>
             <p className="mb-4">
-              Get the latest running shoes at half price, do't miss it!
+              Get the latest running shoes at half price, don&apos;t miss it!
             </p>
             <button className="pry-btn m-auto">Shop Now</button>
           </div>

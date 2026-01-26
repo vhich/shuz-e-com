@@ -1,8 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
 import Jumbotron from "../components/Jumbotron";
-import { AppContent } from "../context/AppContent";
 
 const Cart = () => {
   const navigate = useNavigate();

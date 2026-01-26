@@ -1,15 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Eye, EyeOff, Lock, Mail, ShieldCheck } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAppContext } from "../context/AppContent";
+import Loading from "../components/Loading";
 
 const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  //   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const {
+    handleAdminLogin,
+    setDisableForm,
+    disableForm,
+    setLoading,
+    isLoggedIn,
+  } = useAppContext();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Admin Login Attempt:", formData);
+    setLoading(true);
+    setDisableForm(true);
+    handleAdminLogin(email, password);
   };
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    isLoggedIn && navigate("/admin/dashboard");
+  }, [isLoggedIn, navigate]);
 
   return (
     <div className="h-screen overflow-y-auto flex flex-col items-center bg-[#f0f2f5] py-10">
@@ -22,7 +40,8 @@ const AdminLogin = () => {
       </div>
 
       {/* Login Box */}
-      <div className="w-full max-w-100 bg-white shadow-xl shadow-gray-200/50 rounded-lg border border-gray-200 p-8">
+      <div className="relative w-full max-w-100 bg-white shadow-xl shadow-gray-200/50 rounded-lg border border-gray-200 p-8">
+        <Loading />
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Email */}
           <div>
@@ -34,9 +53,7 @@ const AdminLogin = () => {
                 type="email"
                 required
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded focus:border-green-600 focus:bg-white transition-all outline-none text-gray-700"
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
           </div>
@@ -53,9 +70,7 @@ const AdminLogin = () => {
                 type={showPassword ? "text" : "password"}
                 required
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded focus:border-green-600 focus:bg-white transition-all outline-none text-gray-700"
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
+                onChange={(e) => setPassword(e.target.value)}
               />
               <button
                 type="button"
@@ -83,7 +98,11 @@ const AdminLogin = () => {
           </div>
 
           {/* Submit Button */}
-          <button type="submit" className="w-full! pry-btn">
+          <button
+            type="submit"
+            className={`w-full! pry-btn ${disableForm ? "opacity-25" : "opacity-100"}`}
+            disabled={disableForm}
+          >
             Log In
           </button>
         </form>

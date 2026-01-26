@@ -8,6 +8,8 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { useAppContext } from "../context/AppContent";
+import Loading from "../components/Loading";
 
 const AdminCreateAcct = () => {
   const [formData, setFormData] = useState({
@@ -17,10 +19,14 @@ const AdminCreateAcct = () => {
     password: "",
     adminKey: "",
   });
+  const { handleAdminCreateAccount, setLoading, setDisableForm, disableForm } =
+    useAppContext();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Admin Registration Data:", formData);
+    setLoading(true);
+    setDisableForm(true);
+    handleAdminCreateAccount(formData);
   };
 
   return (
@@ -42,8 +48,9 @@ const AdminCreateAcct = () => {
 
             <form
               onSubmit={handleSubmit}
-              className="space-y-5 bg-white shadow-2xl rounded-2xl overflow-hidden p-6"
+              className="relative space-y-5 bg-white shadow-2xl rounded-2xl overflow-hidden p-6"
             >
+              <Loading />
               {/* Full Name */}
               <div className="grid grid-cols-1 lg:grid-cols-2 md::grid-cols-2 gap-2">
                 <div>
@@ -77,7 +84,7 @@ const AdminCreateAcct = () => {
                       type="text"
                       required
                       className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-green-500 outline-none transition-all"
-                      placeholder="John"
+                      placeholder="Doe"
                       onChange={(e) =>
                         setFormData({ ...formData, lastName: e.target.value })
                       }
@@ -154,7 +161,8 @@ const AdminCreateAcct = () => {
               {/* Action Button */}
               <button
                 type="submit"
-                className="w-full! mt-4 pry-btn flex! items-center justify-center gap-3"
+                className={`w-full! ${disableForm ? "opacity-85" : "opacity-100"} mt-4 pry-btn flex! items-center justify-center gap-3`}
+                disabled={disableForm}
               >
                 <UserPlus size={18} />
                 Create Admin Account

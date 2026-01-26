@@ -9,21 +9,30 @@ import Mainlayout from "./layouts/Mainlayout";
 import UploadProduct from "./pages/UploadProduct";
 import AdminLogin from "./pages/AdminLogin";
 import AdminCreateAcct from "./pages/AdminCreateAcct";
+import { AppContextProvider } from "./context/AppContextProvider";
+import AdminDashboard from "./pages/AdminDashboard";
 
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/">
-        <Route element={<Mainlayout />}>
+        <Route
+          element={
+            <AppContextProvider>
+              <Mainlayout />
+            </AppContextProvider>
+          }
+        >
           <Route index element={<AdminLogin />}></Route>
           <Route
             path="/admin/account/create-account"
             element={<AdminCreateAcct />}
           ></Route>
           <Route
-            path="/admin/upload-product/12345"
+            path="/admin/upload-product"
             element={<UploadProduct />}
           ></Route>
+          <Route path="/admin/dashboard" element={<AdminDashboard />}></Route>
         </Route>
       </Route>,
     ),

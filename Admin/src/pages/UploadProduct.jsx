@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import SideNav from "../components/SideNav";
 import AdminNavbar from "../components/AdminNavbar";
-// Import your assets here
-// import { product_img1, product_img2, product_img3, product_img4, product_img5, product_img7 } from "../assets/asset";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useAppContext } from "../context/AppContent";
+import ProductPreview from "../components/ProductPreview";
 
 const CATEGORIES = [
   { id: 1, name: "Running Shoes" },
@@ -15,6 +17,24 @@ const CATEGORIES = [
 const UploadProduct = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [recentProduct, setRecentProduct] = useState(null);
+  // Inside your UploadProduct Component
+  const { setLoading, loading, disableForm, setDisableForm, backendUrl } =
+    useAppContext();
+  const [productData, setProductData] = useState({
+    name: "",
+    sku: "",
+    price: "",
+    discount: 0,
+    description: "",
+  });
+
+  // Generic handler for text inputs
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProductData((prev) => ({ ...prev, [name]: value }));
+  };
   const [sizes, setSizes] = useState([
     { value: "8", suffix: "08", stock: 0 },
     { value: "9", suffix: "09", stock: 0 },
@@ -42,14 +62,84 @@ const UploadProduct = () => {
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setDisableForm(true);
+
+    // Basic Frontend Validation
+    if (
+      !productData.sku ||
+      !productData.description ||
+      !productData.name ||
+      !productData.price ||
+      selectedCategories.length === 0
+    ) {
+      setLoading(false);
+      setDisableForm(false);
+    }
+    const formData = new FormData();
+
+    // 1. Append Text Fields
+    formData.append("name", productData.name);
+    formData.append("sku", productData.sku);
+    formData.append("price", productData.price);
+    formData.append("discount", productData.discount);
+    formData.append("description", productData.description);
+
+    // 2. Append Arrays (Must be stringified for FormData)
+    formData.append("categories", JSON.stringify(selectedCategories));
+    formData.append("sizes", JSON.stringify(sizes));
+
+    // 3. Append File (The raw file object from state or ref)
+    const imageFile = e.target.querySelector('input[type="file"]').files[0];
+    if (imageFile) {
+      formData.append("image", imageFile);
+    } else {
+      setLoading(false);
+      setDisableForm(false);
+      alert("Please select a product image");
+    }
+
+    try {
+      const { data } = await axios.post(`${backendUrl}/add-product`, formData, {
+        withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      if (data.success) {
+        toast.success("Product Published!");
+        setLoading(false);
+        setDisableForm(false);
+        setRecentProduct(data.data);
+        console.log(recentProduct);
+
+        setIsModalOpen(true);
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || "Upload failed");
+      setLoading(false);
+      setDisableForm(false);
+    } finally {
+      setLoading(false);
+      setDisableForm(false);
+    }
+  };
+
   return (
     <>
       <AdminNavbar />
+      {isModalOpen && (
+        <ProductPreview
+          product={recentProduct}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
+
       <main className="w-screen">
         <div className="grid lg:grid-cols-[15%_85%] sm:grid-cols-1">
           <SideNav />
           <section className="bg-gray-50 h-screen w-full overflow-y-auto py-12 px-2 md:px-10 lg:px-15">
-            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="relative bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="bg-green-700 py-8 px-4 text-white">
                 <h6>Product Management</h6>
                 <p className="text-gray-200">
@@ -57,7 +147,10 @@ const UploadProduct = () => {
                 </p>
               </div>
 
-              <form className="py-8 px-4 md:px-8 lg:px-10 space-y-10">
+              <form
+                onSubmit={handleSubmit}
+                className="py-8 px-4 md:px-8 lg:px-10 space-y-10"
+              >
                 {/* PART 1: GENERAL INFO & SIZES */}
                 <div className="space-y-6">
                   <h6 className="flex items-center gap-2">
@@ -69,11 +162,17 @@ const UploadProduct = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     <input
+                      name="name"
+                      value={productData.name}
                       type="text"
                       placeholder="Product Name"
+                      onChange={handleChange}
                       className="w-full p-3 border rounded-xl outline-none focus:border-black"
                     />
                     <input
+                      name="sku"
+                      value={productData.sku}
+                      onChange={handleChange}
                       type="text"
                       placeholder="Base SKU (e.g. SH-AFR)"
                       className="w-full p-3 border rounded-xl outline-none focus:border-black"
@@ -82,12 +181,18 @@ const UploadProduct = () => {
 
                   <div className="grid grid-cols-2 md:grid-cols-2 gap-2">
                     <input
+                      name="price"
+                      value={productData.price}
+                      onChange={handleChange}
                       type="number"
                       min={0}
                       placeholder="Price ($)"
                       className="w-full p-3 border rounded-xl outline-none"
                     />
                     <input
+                      name="discount"
+                      value={productData.discount}
+                      onChange={handleChange}
                       type="number"
                       min={0}
                       placeholder="Discount (%)"
@@ -96,6 +201,9 @@ const UploadProduct = () => {
                   </div>
 
                   <textarea
+                    name="description"
+                    value={productData.description}
+                    onChange={handleChange}
                     placeholder="Product Description..."
                     rows="4"
                     className="w-full p-4 border rounded-xl outline-none focus:border-black resize-none bg-gray-50"
@@ -223,7 +331,10 @@ const UploadProduct = () => {
                   </div>
                 </div>
 
-                <button className="w-full bg-black text-white py-5 rounded-2xl font-bold text-lg hover:bg-gray-900 transition-all shadow-xl active:scale-95">
+                <button
+                  disabled={disableForm}
+                  className={`w-full bg-black text-white py-5 rounded-2xl font-bold text-lg hover:bg-gray-900 transition-all shadow-xl active:scale-95 ${loading ? "opacity-85" : "opacity-100"}`}
+                >
                   Publish Product
                 </button>
               </form>

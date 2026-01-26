@@ -143,7 +143,7 @@ const Shop = () => {
           </div>
         </div>
 
-        <div className="max-w-360 mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-360 mx-auto p-2 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* --- DESKTOP SIDEBAR --- */}
             <aside className="hidden lg:block w-64 shrink-0">
@@ -191,7 +191,7 @@ const Shop = () => {
               {/* Product Grid or Empty State */}
               {currentItems.length > 0 ? (
                 <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-10">
+                  <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 sm:gap-2 lg:gap-">
                     {currentItems.map((product) => (
                       <ProductCard key={product._id} product={product} />
                     ))}

@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { AppContent } from "../context/AppContent";
 
 const ProductCard = ({ product }) => {
-  const { setProductId } = useContext(AppContent);
+  const { setProductId, loading } = useContext(AppContent);
   const navigate = useNavigate();
   const setProductIdUrl = () => {
     setProductId(product._id);
@@ -22,17 +22,23 @@ const ProductCard = ({ product }) => {
   return (
     <div
       id={product._id}
-      className="p-2 border border-gray-200 bg-white rounded-lg shadow-sm flex flex-col items-center text-center hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer"
+      className="p-2 border border-gray-200 bg-white rounded-lg shadow-sm flex flex-col items-center text-center hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer overflow-hidden"
       onClick={setProductIdUrl}
     >
-      <div className="product_img bg-gray-200 my-4 h-50">
-        <img src={product.image} alt={product.name} className="h-full" />
+      <div
+        className={`product_img ${loading ? "bg-gray-200" : "bg-white"} my-4 h-45 flex flex-col overflow-hidden`}
+      >
+        <img
+          src={product.image}
+          alt={product.name}
+          className="h-full object-contain"
+        />
       </div>
       <p className={`lg:text-xl! sm:text-sm! mb-2 hover:text-green-700`}>
         {product.name}
       </p>
       {hasDiscountPrice ? (
-        <div className="price flex flex-row-reverse gap-2 items-center mb-4">
+        <div className="price flex flex-wrap gap-2 items-center mb-4">
           <span className="discount_price text-red-600">${discountPrice}</span>
           <span className="original_price text-gray-600 line-through!">
             $

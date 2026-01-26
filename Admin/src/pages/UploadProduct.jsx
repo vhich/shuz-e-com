@@ -339,6 +339,12 @@ const UploadProduct = () => {
                 </button>
               </form>
             </div>
+            <div className="mb-10 opacity-0">
+              <p>
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Illum,
+                quidem?
+              </p>
+            </div>
           </section>
         </div>
       </main>

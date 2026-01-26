@@ -11,6 +11,7 @@ import geoip from "geoip-lite";
 export const registerAdmin = async (req, res) => {
   try {
     const { firstName, lastName, email, password, adminKey } = req.body;
+    console.log("Request Body:", req.body);
 
     // 1. Security Check
     if (adminKey !== process.env.ADMIN_SECRET_KEY) {
@@ -74,9 +75,10 @@ export const loginAdmin = async (req, res) => {
       ? `${geo.city}, ${geo.country}`
       : "Unknown Location";
 
+    console.log("Request Body:", req.body);
     if (!admin) {
       return res
-        .status(500)
+        .status(401)
         .json({ success: false, message: "admin not found." });
     }
 
@@ -91,8 +93,7 @@ export const loginAdmin = async (req, res) => {
         if (admin.loggedIn === true) {
           return res.status(401).json({
             success: false,
-            message:
-              "This admin is logged in already. \n Use a different email.",
+            message: "This admin is logged in already. Use a different email.",
           });
         }
       }

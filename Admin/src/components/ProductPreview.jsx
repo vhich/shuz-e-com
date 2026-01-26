@@ -45,15 +45,22 @@ const ProductPreview = ({ product, onClose }) => {
 
             <div className="flex items-center gap-4">
               <span className="text-3xl! font-bold! text-green-600">
-                ₦{Number(product && product.price).toLocaleString()}
+                $
+                {Number(product && product.price).toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
               </span>
               {product && product.discount > 0 && (
                 <span className="text-2xl! text-gray-400 line-through!">
-                  ₦
+                  $
                   {(
                     product.price *
                     (1 + product.discount / 100)
-                  ).toLocaleString()}
+                  ).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
                 </span>
               )}
             </div>

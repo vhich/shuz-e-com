@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SideNav from "../components/SideNav";
 import AdminNavbar from "../components/AdminNavbar";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAppContext } from "../context/AppContent";
 import ProductPreview from "../components/ProductPreview";
+import BottomSpace from "../components/BottomSpace";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const CATEGORIES = [
   { id: 1, name: "Running Shoes" },
@@ -15,13 +17,25 @@ const CATEGORIES = [
 ];
 
 const UploadProduct = () => {
+  const {
+    setLoading,
+    loading,
+    disableForm,
+    setDisableForm,
+    backendUrl,
+    isLoggedIn,
+    editMode,
+    setEditMode,
+  } = useAppContext();
+  const navigate = useNavigate();
+  const location = useLocation(); // To catch the product data for editing
+  const [productId, setProductId] = useState(null);
+
   const [imagePreview, setImagePreview] = useState(null);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [recentProduct, setRecentProduct] = useState(null);
-  // Inside your UploadProduct Component
-  const { setLoading, loading, disableForm, setDisableForm, backendUrl } =
-    useAppContext();
+
   const [productData, setProductData] = useState({
     name: "",
     sku: "",
@@ -30,11 +44,6 @@ const UploadProduct = () => {
     description: "",
   });
 
-  // Generic handler for text inputs
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProductData((prev) => ({ ...prev, [name]: value }));
-  };
   const [sizes, setSizes] = useState([
     { value: "8", suffix: "08", stock: 0 },
     { value: "9", suffix: "09", stock: 0 },
@@ -42,7 +51,36 @@ const UploadProduct = () => {
     { value: "11", suffix: "11", stock: 0 },
   ]);
 
-  // Handlers
+  // LOGIC: Check for Edit Data on Mount
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate("/");
+      return;
+    }
+
+    // If location.state contains a product, we are in Edit Mode
+    if (location.state && location.state.product) {
+      const p = location.state.product;
+      setEditMode(true);
+      setProductId(p._id);
+      setProductData({
+        name: p.name,
+        sku: p.sku,
+        price: p.price,
+        discount: p.discount || 0,
+        description: p.description,
+      });
+      setSelectedCategories(p.categories || []);
+      setSizes(p.sizes || sizes);
+      setImagePreview(p.image); // Show the existing image
+    }
+  }, [location.state, isLoggedIn, navigate, sizes, setEditMode, editMode]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProductData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleCategoryChange = (name) => {
     setSelectedCategories((prev) =>
       prev.includes(name) ? prev.filter((c) => c !== name) : [...prev, name],
@@ -67,7 +105,6 @@ const UploadProduct = () => {
     setLoading(true);
     setDisableForm(true);
 
-    // Basic Frontend Validation
     if (
       !productData.sku ||
       !productData.description ||
@@ -75,55 +112,95 @@ const UploadProduct = () => {
       !productData.price ||
       selectedCategories.length === 0
     ) {
+      toast.error("Please fill all required fields");
       setLoading(false);
       setDisableForm(false);
+      return;
     }
-    const formData = new FormData();
 
-    // 1. Append Text Fields
+    const formData = new FormData();
     formData.append("name", productData.name);
     formData.append("sku", productData.sku);
     formData.append("price", productData.price);
     formData.append("discount", productData.discount);
     formData.append("description", productData.description);
-
-    // 2. Append Arrays (Must be stringified for FormData)
     formData.append("categories", JSON.stringify(selectedCategories));
     formData.append("sizes", JSON.stringify(sizes));
 
-    // 3. Append File (The raw file object from state or ref)
-    const imageFile = e.target.querySelector('input[type="file"]').files[0];
+    const imageFile = document.querySelector('input[type="file"]').files[0];
     if (imageFile) {
       formData.append("image", imageFile);
     } else {
-      setLoading(false);
-      setDisableForm(false);
-      alert("Please select a product image");
+      formData.append("image", imagePreview);
     }
 
     try {
-      const { data } = await axios.post(`${backendUrl}/add-product`, formData, {
-        withCredentials: true,
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      if (data.success) {
-        toast.success("Product Published!");
-        setLoading(false);
-        setDisableForm(false);
-        setRecentProduct(data.data);
-        console.log(recentProduct);
+      let response;
+      if (editMode) {
+        // UPDATE LOGIC
+        response = await axios.put(
+          `http://10.102.130.138:4000/api/update-product/${productId}`,
+          formData,
+          {
+            withCredentials: true,
+            headers: { "Content-Type": "multipart/form-data" },
+          },
+        );
+      } else {
+        // UPLOAD LOGIC
+        response = await axios.post(`${backendUrl}/add-product`, formData, {
+          withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      }
 
-        setIsModalOpen(true);
+      if (response.data.success) {
+        toast.success(editMode ? "Product Updated!" : "Product Published!");
+        setIsModalOpen(false);
+        setEditMode(false);
+        navigate("/admin/products");
       }
     } catch (err) {
-      alert(err.response?.data?.message || "Upload failed");
-      setLoading(false);
-      setDisableForm(false);
+      console.log(err);
+
+      toast.error("Operation failed");
     } finally {
       setLoading(false);
       setDisableForm(false);
     }
   };
+  function PreviewProduct(e) {
+    e.preventDefault();
+
+    if (
+      !productData.sku ||
+      !productData.description ||
+      !productData.name ||
+      !productData.price ||
+      selectedCategories.length === 0
+    ) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
+    // 1. Create a plain object that matches your Product Model structure
+    const previewData = {
+      name: productData.name,
+      sku: productData.sku,
+      price: Number(productData.price),
+      discount: Number(productData.discount),
+      description: productData.description,
+      categories: selectedCategories, // Already an array
+      sizes: sizes, // Already an array
+      image: imagePreview, // The blob URL you created in handleImageChange
+    };
+    if (previewData.image === "" || !previewData.image) {
+      toast.error("Please select an image!");
+    }
+
+    setRecentProduct(previewData);
+    setIsModalOpen(true);
+  }
 
   return (
     <>
@@ -132,6 +209,7 @@ const UploadProduct = () => {
         <ProductPreview
           product={recentProduct}
           onClose={() => setIsModalOpen(false)}
+          handleSubmit={(e) => handleSubmit(e)}
         />
       )}
 
@@ -148,7 +226,7 @@ const UploadProduct = () => {
               </div>
 
               <form
-                onSubmit={handleSubmit}
+                onSubmit={PreviewProduct}
                 className="py-8 px-4 md:px-8 lg:px-10 space-y-10"
               >
                 {/* PART 1: GENERAL INFO & SIZES */}
@@ -335,15 +413,12 @@ const UploadProduct = () => {
                   disabled={disableForm}
                   className={`w-full bg-black text-white py-5 rounded-2xl font-bold text-lg hover:bg-gray-900 transition-all shadow-xl active:scale-95 ${loading ? "opacity-85" : "opacity-100"}`}
                 >
-                  Publish Product
+                  Preview Product
                 </button>
               </form>
             </div>
             <div className="mb-10 opacity-0">
-              <p>
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Illum,
-                quidem?
-              </p>
+              <BottomSpace />
             </div>
           </section>
         </div>

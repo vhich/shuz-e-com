@@ -1,8 +1,10 @@
 import React from "react";
+import { useAppContext } from "../context/AppContent";
 
-const ProductPreview = ({ product, onClose }) => {
+const ProductPreview = ({ product, onClose, handleSubmit }) => {
+  const { editMode } = useAppContext();
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
+    <div className="fixed inset-0 z-45 flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
       <div className="bg-white w-full max-w-5xl max-h-[90vh] rounded-4xl overflow-hidden shadow-2xl flex flex-col md:flex-row relative animate-in fade-in zoom-in duration-300">
         {/* Close Button */}
         <button
@@ -43,40 +45,44 @@ const ProductPreview = ({ product, onClose }) => {
               </p>
             </div>
 
-            <div className="flex items-center gap-4">
-              <span className="text-3xl! font-bold! text-green-600">
-                $
-                {Number(product && product.price).toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </span>
+            <div className="flex gap-4">
               {product && product.discount > 0 && (
-                <span className="text-2xl! text-gray-400 line-through!">
+                <span
+                  className={`text-3xl! font-bold! ${product && product.discount > 0 && "text-green-600"}`}
+                >
                   $
                   {(
-                    product.price *
-                    (1 + product.discount / 100)
+                    product.price -
+                    (product.price * product.discount) / 100
                   ).toLocaleString(undefined, {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}
                 </span>
               )}
+              <span
+                className={`text-3xl! font-bold! ${product && product.discount > 0 ? " text-gray-400 line-through!" : "text-green-600"}`}
+              >
+                $
+                {Number(product && product.price).toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </span>
             </div>
 
             <div className="border-t border-b py-6">
-              <h6 className="font-bold mb-3">Select Size</h6>
+              <h6 className="font-bold mb-3">Selected Sizes</h6>
               <div className="grid grid-cols-4 gap-2">
                 {product &&
                   product.sizes?.map((s) => (
                     <button
                       key={s.value}
                       disabled={s.stock === 0}
-                      className={`py-3 rounded-xl border-2 font-bold transition-all ${
+                      className={`py-3 rounded-xl border-2 font-bold transition-all cursor-not-allowed! ${
                         s.stock > 0
-                          ? "border-gray-200 hover:border-black"
-                          : "bg-gray-100 text-gray-300 border-transparent cursor-not-allowed"
+                          ? "border-gray-200"
+                          : "bg-gray-100 text-gray-300 border-transparent"
                       }`}
                     >
                       {s.value}
@@ -97,10 +103,10 @@ const ProductPreview = ({ product, onClose }) => {
 
             {/* Admin Action */}
             <button
-              onClick={() => (window.location.href = "/admin/dashboard")}
+              onClick={handleSubmit}
               className="w-full bg-black text-white py-5 rounded-2xl font-bold text-lg hover:bg-gray-800 transition-all shadow-xl active:scale-95"
             >
-              Confirm & Exit Preview
+              {editMode ? "Update product" : "Publish Product"}
             </button>
           </div>
         </div>

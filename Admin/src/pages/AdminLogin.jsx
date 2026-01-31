@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Eye, EyeOff, Lock, Mail, ShieldCheck } from "lucide-react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useAppContext } from "../context/AppContent";
 import Loading from "../components/Loading";
 
@@ -9,13 +9,8 @@ const AdminLogin = () => {
   //   const [formData, setFormData] = useState({ email: "", password: "" });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const {
-    handleAdminLogin,
-    setDisableForm,
-    disableForm,
-    setLoading,
-    isLoggedIn,
-  } = useAppContext();
+  const { handleAdminLogin, setDisableForm, disableForm, setLoading } =
+    useAppContext();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,10 +19,10 @@ const AdminLogin = () => {
     handleAdminLogin(email, password);
   };
 
-  const navigate = useNavigate();
-  useEffect(() => {
-    isLoggedIn && navigate("/admin/dashboard");
-  }, [isLoggedIn, navigate]);
+  // const navigate = useNavigate();
+  // useEffect(() => {
+  //   isLoggedIn && navigate("/admin/dashboard");
+  // }, [isLoggedIn, navigate]);
 
   return (
     <div className="h-screen overflow-y-auto flex flex-col items-center bg-[#f0f2f5] py-10">

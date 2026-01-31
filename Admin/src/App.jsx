@@ -11,6 +11,8 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminCreateAcct from "./pages/AdminCreateAcct";
 import { AppContextProvider } from "./context/AppContextProvider";
 import AdminDashboard from "./pages/AdminDashboard";
+import AllProducts from "./pages/AllProducts";
+import ProductInfo from "./pages/ProductInfo";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -33,6 +35,11 @@ const App = () => {
             element={<UploadProduct />}
           ></Route>
           <Route path="/admin/dashboard" element={<AdminDashboard />}></Route>
+          <Route path="/admin/products" element={<AllProducts />}></Route>
+          <Route
+            path="/admin/product-info/:id"
+            element={<ProductInfo />}
+          ></Route>
         </Route>
       </Route>,
     ),

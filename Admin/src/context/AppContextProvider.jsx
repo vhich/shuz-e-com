@@ -9,9 +9,35 @@ export const AppContextProvider = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
   const [disableForm, setDisableForm] = useState(false);
+  // 2. Global Admin States
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  // const [currentProduct, setCurrentProduct] = useState(null);
 
   const navigate = useNavigate();
+
+  const fetchAllProducts = useCallback(async () => {
+    try {
+      setLoading(true);
+      const { data } = await axios.get(
+        `http://10.102.130.138:4000/api/shuz/products`,
+      );
+      if (data.success) {
+        // Reverse to show the most recently uploaded products first
+        setProducts(data.data.reverse());
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Admin Fetch Error:", error);
+      alert(
+        "Failed to load inventory.\nPlease check internet connection and try again.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const handleAdminCreateAccount = async (formData) => {
     try {
@@ -108,6 +134,7 @@ export const AppContextProvider = (props) => {
       if (data.success) {
         setUserData(() => data.admin);
         setIsLoggedIn(true);
+        navigate("/admin/dashboard");
       }
     } catch (error) {
       console.log("Status Code:", error?.response?.status);
@@ -129,25 +156,34 @@ export const AppContextProvider = (props) => {
     }
   }, [navigate, backendUrl]);
 
+  // Delete logic remains identical
+  const deleteProduct = async (id) => {
+    if (window.confirm("Are you sure you want to delete this item?")) {
+      setLoading(true);
+      try {
+        const { data } = await axios.delete(
+          `http://10.102.130.138:4000/api/shuz/products/${id}`,
+        );
+        if (data.success) {
+          toast.success("Product removed");
+          setLoading(false);
+          navigate("/admin/products");
+        }
+      } catch (error) {
+        alert(
+          "Failed to delete product.\nPlease check internet connection and try again.",
+        );
+        console.log(error);
+      }
+    }
+  };
+
   useEffect(() => {
     const initBuyer = async () => {
       await getAdminAuthState();
     };
     initBuyer();
   }, [getAdminAuthState]);
-
-  useEffect(() => {
-    const onPageShow = (event) => {
-      if (event.persisted) {
-        // Page was loaded from bfcache (Back button)
-        // Force a re-check of auth status
-        window.location.reload();
-      }
-    };
-
-    window.addEventListener("load", onPageShow);
-    return () => window.removeEventListener("pageshow", onPageShow);
-  }, []);
 
   const globalState = {
     // Define any global state or functions here
@@ -163,6 +199,12 @@ export const AppContextProvider = (props) => {
     setDisableForm,
     loading,
     setLoading,
+    products,
+    setProducts,
+    fetchAllProducts,
+    editMode,
+    setEditMode,
+    deleteProduct,
   };
 
   return (

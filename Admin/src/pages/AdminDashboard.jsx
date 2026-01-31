@@ -2,8 +2,13 @@ import React from "react";
 import AdminNavbar from "../components/AdminNavbar";
 import SideNav from "../components/SideNav";
 import { FiPackage, FiTrendingUp, FiUsers, FiDollarSign } from "react-icons/fi";
+import BottomSpace from "./../components/BottomSpace";
+import { useEffect } from "react";
+import { useAppContext } from "../context/AppContent";
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
+  const { isLoggedIn } = useAppContext();
   // Dummy stats for now - we'll connect these to the DB later
   const stats = [
     {
@@ -35,6 +40,14 @@ const AdminDashboard = () => {
       color: "bg-lime-50 text-lime-600",
     },
   ];
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate("/");
+    }
+  }, [navigate, isLoggedIn]);
 
   return (
     <>
@@ -154,9 +167,7 @@ const AdminDashboard = () => {
               </div>
             </div>
             {/* to create space under the dashboad section */}
-            <p className="mb-10 opacity-0">
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ullam
-            </p>
+            <BottomSpace />
           </section>
         </div>
       </main>

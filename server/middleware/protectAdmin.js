@@ -37,3 +37,18 @@ export const protectAdmin = async (req, res, next) => {
     return res.status(401).json({ success: false, message });
   }
 };
+
+// middleware/adminAuth.js
+export const protectDeleteAll = (req, res, next) => {
+  const secret = req.headers["x-admin-secret"];
+  const MASTER_KEY = process.env.ADMIN_DELETE_PASS_KEY;
+
+  if (secret === MASTER_KEY) {
+    next(); // Key matches, proceed to controller
+  } else {
+    res.status(403).json({
+      success: false,
+      message: "Unauthorized: Invalid Admin Secret",
+    });
+  }
+};

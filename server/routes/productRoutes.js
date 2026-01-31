@@ -1,5 +1,12 @@
 import express from "express";
 import Product from "../models/product.js";
+import { upload } from "../middleware/upload.js";
+import {
+  removeAllProducts,
+  removeProduct,
+  updateProduct,
+} from "../controllers/productUpload.js";
+import { protectDeleteAll } from "../middleware/protectAdmin.js";
 const productRouter = express.Router();
 
 // Public route to get all products
@@ -25,5 +32,12 @@ productRouter.get("/shuz/products/:id", async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+productRouter.delete("/shuz/products/:id", removeProduct);
+productRouter.delete(
+  "/shuz/products/flush",
+  protectDeleteAll,
+  removeAllProducts,
+);
+productRouter.put("/update-product/:id", upload.single("image"), updateProduct);
 
 export default productRouter;

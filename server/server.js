@@ -15,48 +15,49 @@ const app = express();
 const PORT = process.env.PORT || 4001;
 connectDB();
 
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  // This allows ANY origin (localhost:3001, 3002, or your IP) to connect
-  res.setHeader("Access-Control-Allow-Origin", origin || "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS",
-  );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, X-Requested-With",
-  );
-  res.setHeader("Access-Control-Allow-Credentials", "true");
+// app.use((req, res, next) => {
+//   const origin = req.headers.origin;
+//   // This allows ANY origin (localhost:3001, 3002, or your IP) to connect
+//   res.setHeader("Access-Control-Allow-Origin", origin || "*");
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET, POST, PUT, DELETE, OPTIONS",
+//   );
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "Content-Type, Authorization, X-Requested-With",
+//   );
+//   res.setHeader("Access-Control-Allow-Credentials", "true");
 
-  // Handle the "pre-flight" check immediately
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-  next();
-});
+//   // Handle the "pre-flight" check immediately
+//   if (req.method === "OPTIONS") {
+//     return res.sendStatus(200);
+//   }
+//   next();
+// });
 
-// const allowedOrigins = [
-//   process.env.ADMIN_FRONTEND_URL,
-//   process.env.CLIENT_FRONTEND_URL,
-//   "http://10.102.130.138:3001/",
-//   "http://10.102.130.138:3002/",
-// ].filter(Boolean);
-// app.use(
-//   cors({
-//     origin: function (origin, callback) {
-//       if (!origin) return callback(null, true);
-//       if (allowedOrigins.indexOf(origin) !== -1) {
-//         callback(null, true);
-//       } else {
-//         callback(new Error("Not allowed by CORS"));
-//       }
-//     },
-//     credentials: true, // Required for cookies/headers
-//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Explicitly allow these
-//     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-//   }),
-// );
+const allowedOrigins = [
+  process.env.ADMIN_FRONTEND_URL,
+  process.env.CLIENT_FRONTEND_URL,
+  "http://10.102.130.138:3001",
+  "http://10.102.130.138:3002",
+].filter(Boolean);
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // Required for cookies/headers
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Explicitly allow these
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  }),
+);
+app.use(express.json());
 app.use(
   helmet({
     contentSecurityPolicy: true,
@@ -64,7 +65,6 @@ app.use(
   }),
 );
 app.use(morgan("dev"));
-app.use(express.json());
 app.use(cookieParser());
 app.use(urlencoded({ extended: true }));
 

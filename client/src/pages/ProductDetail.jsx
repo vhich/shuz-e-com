@@ -7,10 +7,11 @@ import { reviews } from "../assets/asset";
 import BestSeller from "../components/BestSeller";
 import { AppContent } from "../context/AppContent";
 import Loading from "../components/Loading";
+import { toast } from "react-toastify";
 
 const ProductDetail = () => {
   const { id } = useParams(); // Get ID from URL
-  const { backendUrl } = useContext(AppContent);
+  const { backendUrl, setCartItems, cartItems } = useContext(AppContent);
 
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -20,6 +21,56 @@ const ProductDetail = () => {
   // Helper variables for price
   const [discountPrice, setDiscountPrice] = useState(0);
   const [hasDiscountPrice, setHasDiscountPrice] = useState(false);
+
+  const addToCart = () => {
+    if (!selectedSize || selectedSize === null) {
+      toast.error("Please select a size first!");
+      return;
+    }
+
+    const cartKey = `${product._id}-${selectedSize}`;
+
+    // Find the stock for the specific size the user chose
+    const sizeData = product.sizes.find((s) => s.value === selectedSize);
+    const availableStock = sizeData ? sizeData.stock : 0;
+
+    setCartItems((prev) => {
+      const currentQtyInCart = prev[cartKey] ? prev[cartKey].quantity : 0;
+
+      // Check if adding one more exceeds stock
+      if (currentQtyInCart + 1 > availableStock) {
+        toast.error(
+          `Sorry, only ${availableStock} items available in Size ${selectedSize}`,
+        );
+        return prev; // Return unchanged state
+      }
+
+      const updatedCart = { ...prev };
+      if (updatedCart[cartKey]) {
+        updatedCart[cartKey].quantity += 1;
+      } else {
+        updatedCart[cartKey] = {
+          ...product,
+          size: selectedSize,
+          quantity: 1,
+        };
+      }
+
+      return updatedCart;
+    });
+    toast.success("Added to cart!");
+  };
+
+  const cartKey = product && `${product._id}-${selectedSize}`;
+  const currentQtyInCart = cartItems[cartKey]?.quantity || 0;
+
+  // 2. Find the stock for the selected size
+  const selectedSizeStock =
+    (product && product.sizes.find((s) => s.value === selectedSize)?.stock) ||
+    0;
+
+  // 3. Determine if the button should be disabled
+  const isMaxedOut = selectedSize && currentQtyInCart >= selectedSizeStock;
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });
@@ -119,9 +170,13 @@ const ProductDetail = () => {
 
                 <div className="mt-4 flex items-center justify-between">
                   {hasDiscountPrice ? (
-                    <div className="price flex flex-row-reverse gap-2 items-center mb-4">
+                    <div className="price flex gap-2 items-center mb-4">
                       <h6 className="discount_price text-red-600">
-                        ${discountPrice.toLocaleString()}
+                        $
+                        {discountPrice.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
                       </h6>
                       <h6 className="original_price text-gray-600 line-through!">
                         $
@@ -154,12 +209,12 @@ const ProductDetail = () => {
 
               <div className="stock my-10">
                 <span
-                  className={`text-gray-600 ${product.isAvailable && product.totalStockCount > 5 ? "bg-green-200 text-green-800" : "bg-red-100 text-red-500"} px-2 py-1 rounded`}
+                  className={`text-gray-600 ${product.isAvailable && product.totalStockCount >= 6 ? "bg-green-200 text-green-800" : "bg-red-100 text-red-500"} px-2 py-1 rounded`}
                 >
                   {product.isAvailable ? `In Stock` : "Out of Stock"}
                 </span>
 
-                {product.isAvailable && product.totalStockCount > 5 && (
+                {product.isAvailable && product.totalStockCount > 6 && (
                   <span className="text-sm ml-2 text-gray-600">
                     <span className="text-green-700"></span>
                     <span className="text-green-700">
@@ -168,7 +223,7 @@ const ProductDetail = () => {
                     item available
                   </span>
                 )}
-                {product.isAvailable && product.totalStockCount < 5 && (
+                {product.isAvailable && product.totalStockCount < 6 && (
                   <span className="text-sm ml-2 text-gray-600">
                     <span className="text-red-500">Hurry up!</span>only{" "}
                     <span className="text-red-500">
@@ -196,21 +251,19 @@ const ProductDetail = () => {
                       key={size.value}
                       onClick={() => setSelectedSize(size.value)}
                       disabled={size.stock === 0}
-                      className={`rounded-lg border-2 transition-all
+                      className={`rounded-lg border-2 transition-all px-0
                       ${
                         size.stock === 0
-                          ? "bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed"
+                          ? "bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed!"
                           : selectedSize === size.value
-                            ? "border-black bg-black text-white"
+                            ? "border-black bg-black text-white py-5"
                             : "border-gray-200 text-gray-900 hover:border-gray-400"
                       }
                     `}
                     >
                       {size.value}
                       {size.stock === 0 && (
-                        <span className="block text-[8px] uppercase">
-                          Sold Out
-                        </span>
+                        <span className="block uppercase">Sold Out</span>
                       )}
                     </button>
                   ))}
@@ -220,10 +273,15 @@ const ProductDetail = () => {
               {/* Action Buttons */}
               <div className="mt-10 flex gap-4">
                 <button
-                  disabled={product.stock === 0}
-                  className="flex-1 bg-black text-white px-8 py-4 rounded-full font-bold uppercase tracking-wide hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  onClick={addToCart}
+                  disabled={isMaxedOut}
+                  className={`w-full py-4 rounded-xl font-bold transition-all ${
+                    isMaxedOut
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-black text-white hover:bg-gray-800"
+                  }`}
                 >
-                  {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+                  {isMaxedOut ? "Max Stock Reached" : "Add to Cart"}
                 </button>
                 <button className="p-4 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors">
                   <svg

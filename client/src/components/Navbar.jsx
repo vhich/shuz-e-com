@@ -1,15 +1,19 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { assets, navLinks, userNavLinks } from "../assets/asset.js";
 import { ShoppingBag, User, Search } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { AppContent } from "../context/AppContent.jsx";
 
 const Navbar = () => {
   const [isHome] = useState(window.location.pathname === "/");
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
+  const { cartItems } = useContext(AppContent);
+
   const navigate = useNavigate();
   const location = useLocation();
+  const cartArray = Object.values(cartItems);
 
   // Define an array of paths where the cart should be HIDDEN
   const hideCartPaths = ["/login", "/account/create-account", "/cart"];
@@ -84,7 +88,7 @@ const Navbar = () => {
             <button className="cart relative" onClick={() => navigate("/cart")}>
               <ShoppingBag />
               <div className="cart_noft bg-red-600 rounded-full w-5 h-5 text-white flex justify-center items-center text-sm absolute -top-2 -right-3">
-                20
+                {cartArray && cartArray.length}
               </div>
             </button>
           )}
@@ -129,7 +133,7 @@ const Navbar = () => {
               >
                 <ShoppingBag />
                 <div className="cart_noft bg-red-600 rounded-full w-5 h-5 text-white flex justify-center items-center text-sm absolute -top-2 -right-3">
-                  20
+                  {cartArray && cartArray.length}
                 </div>
               </button>
             )}

@@ -1,6 +1,7 @@
 import React from "react";
 import { FaStar } from "react-icons/fa";
 import { Quote } from "lucide-react";
+import PropTypes from "prop-types";
 
 const ReviewCard = ({ review }) => {
   return (
@@ -38,5 +39,12 @@ const ReviewCard = ({ review }) => {
     </div>
   );
 };
-
+ReviewCard.propTypes = {
+  review: PropTypes.shape({
+    rate_given: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    title: PropTypes.number.isRequired,
+    comment: PropTypes.string.isRequired,
+  }).isRequired,
+};
 export default ReviewCard;

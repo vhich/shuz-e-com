@@ -34,8 +34,10 @@ const ProductCard = ({ product }) => {
           className="h-full object-contain"
         />
       </div>
-      <p className={`lg:text-xl! sm:text-sm! mb-2 hover:text-green-700`}>
-        {product.name}
+      <p className="lg:text-xl! sm:text-sm! mb-2 hover:text-green-700">
+        {product.name.length > 10
+          ? `${product.name.slice(0, 10)}...`
+          : product.name}
       </p>
       {hasDiscountPrice ? (
         <div className="price flex flex-wrap gap-2 items-center mb-4">

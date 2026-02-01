@@ -13,6 +13,7 @@ import { AppContextProvider } from "./context/AppContextProvider";
 import AdminDashboard from "./pages/AdminDashboard";
 import AllProducts from "./pages/AllProducts";
 import ProductInfo from "./pages/ProductInfo";
+import AdminOrders from "./pages/AminOrders";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -40,6 +41,7 @@ const App = () => {
             path="/admin/product-info/:id"
             element={<ProductInfo />}
           ></Route>
+          <Route path="/admin/orders" element={<AdminOrders />}></Route>
         </Route>
       </Route>,
     ),

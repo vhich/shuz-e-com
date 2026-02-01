@@ -11,8 +11,14 @@ import { Eye } from "lucide-react";
 import Loading from "../components/Loading";
 
 const AllProducts = () => {
-  const { products, fetchAllProducts, isLoggedIn, setEditMode, deleteProduct } =
-    useAppContext();
+  const {
+    products,
+    fetchAllProducts,
+    isLoggedIn,
+    setEditMode,
+    deleteProduct,
+    backendUrl,
+  } = useAppContext();
   const [showAll, setShowAll] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
@@ -34,6 +40,7 @@ const AllProducts = () => {
   const filteredProducts = useMemo(() => {
     let tempProducts = [...products];
 
+    // 1. Search Filter
     if (searchTerm) {
       tempProducts = tempProducts.filter(
         (p) =>
@@ -42,13 +49,14 @@ const AllProducts = () => {
       );
     }
 
+    // 2. Category Filter
     if (categoryFilter !== "All") {
       tempProducts = tempProducts.filter((p) =>
         p.categories.includes(categoryFilter),
       );
     }
 
-    // Sort Logic
+    // 3. Sort Logic
     if (sortOrder === "low-high") {
       tempProducts.sort((a, b) => a.price - b.price);
     } else if (sortOrder === "high-low") {
@@ -61,7 +69,20 @@ const AllProducts = () => {
       tempProducts = tempProducts.filter((p) => p.discount === 0);
     }
 
-    return tempProducts;
+    // 4. STOCK LOGIC (Added without destroying your filters)
+    return tempProducts.map((product) => {
+      // Sum up stock across all size variations
+      const totalStock = product.sizes.reduce(
+        (acc, s) => acc + Number(s.stock),
+        0,
+      );
+
+      return {
+        ...product,
+        totalStock,
+        isOutOfStock: totalStock === 0,
+      };
+    });
   }, [products, searchTerm, categoryFilter, sortOrder]);
 
   const displayedProducts = useMemo(() => {
@@ -76,7 +97,7 @@ const AllProducts = () => {
     ) {
       try {
         const { data } = await axios.delete(
-          `http://10.102.130.138:4000/api/shuz/products/flush`,
+          `${backendUrl}/shuz/products/flush`,
           {
             headers: {
               "x-admin-secret": adminSecret,
@@ -181,7 +202,7 @@ const AllProducts = () => {
                       displayedProducts.map((item) => (
                         <tr
                           key={item._id}
-                          className="hover:bg-gray-50 transition-colors group"
+                          className={`hover:bg-gray-50 transition-colors group`}
                         >
                           <td className="px-6 py-4">
                             <img
@@ -191,11 +212,19 @@ const AllProducts = () => {
                             />
                           </td>
                           <td className="px-6 py-4 font-bold text-gray-800">
-                            {item.discount > 0 && (
-                              <span className="line-clamp-1 text-red-400 text-sm!">
-                                {item.discount}% Discount
-                              </span>
-                            )}
+                            <span className="flex! gap-1">
+                              {item.discount > 0 && (
+                                <span className="line-clamp-1 text-green-700 text-sm!">
+                                  {item.discount}% Discount
+                                </span>
+                              )}
+                              {item.isOutOfStock && (
+                                <span className="line-clamp-1 text-sm! font-medium! text-red-400 ">
+                                  Out of stock!
+                                </span>
+                              )}
+                            </span>
+
                             <span className="line-clamp-1 font-medium!">
                               {item.name}
                             </span>

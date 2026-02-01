@@ -20,9 +20,7 @@ export const AppContextProvider = (props) => {
   const fetchAllProducts = useCallback(async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(
-        `http://10.102.130.138:4000/api/shuz/products`,
-      );
+      const { data } = await axios.get(`${backendUrl}/shuz/products`);
       if (data.success) {
         // Reverse to show the most recently uploaded products first
         setProducts(data.data.reverse());
@@ -37,13 +35,13 @@ export const AppContextProvider = (props) => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [backendUrl]);
 
   const handleAdminCreateAccount = async (formData) => {
     try {
       // Optional: Call backend logout to clear the cookie
       const { data } = await axios.post(
-        `${backendUrl}/register`,
+        `${backendUrl}/admin/register`,
         { ...formData },
         {
           withCredentials: true,
@@ -72,7 +70,7 @@ export const AppContextProvider = (props) => {
     try {
       // Optional: Call backend logout to clear the cookie
       const { data } = await axios.post(
-        `${backendUrl}/login`,
+        `${backendUrl}/admin/login`,
         { email, password },
         {
           withCredentials: true,
@@ -102,7 +100,7 @@ export const AppContextProvider = (props) => {
     try {
       // Optional: Call backend logout to clear the cookie
       const { data } = await axios.post(
-        `${backendUrl}/logout`,
+        `${backendUrl}/admin/logout`,
         {},
         {
           withCredentials: true,
@@ -125,7 +123,7 @@ export const AppContextProvider = (props) => {
   const getAdminAuthState = useCallback(async () => {
     try {
       const { data } = await axios.get(
-        `${backendUrl}/me?t=${new Date().getTime()}`,
+        `${backendUrl}/admin/me?t=${new Date().getTime()}`,
         {
           withCredentials: true,
         },
@@ -162,7 +160,7 @@ export const AppContextProvider = (props) => {
       setLoading(true);
       try {
         const { data } = await axios.delete(
-          `http://10.102.130.138:4000/api/shuz/products/${id}`,
+          `${backendUrl}/shuz/products/${id}`,
         );
         if (data.success) {
           toast.success("Product removed");

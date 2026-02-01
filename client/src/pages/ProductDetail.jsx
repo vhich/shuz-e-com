@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom"; // Added for URL ID
+import { useParams, useNavigate } from "react-router-dom"; // Added for URL ID
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import ReviewCard from "../components/ReviewCard";
@@ -11,46 +11,54 @@ import { toast } from "react-toastify";
 
 const ProductDetail = () => {
   const { id } = useParams(); // Get ID from URL
-  const { backendUrl, setCartItems, cartItems } = useContext(AppContent);
+  const { backendUrl, setCartItems, cartItems, setLoading } =
+    useContext(AppContent);
 
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [pagination, setPagination] = useState("description");
-  const [loading, setLoading] = useState(true);
 
   // Helper variables for price
   const [discountPrice, setDiscountPrice] = useState(0);
   const [hasDiscountPrice, setHasDiscountPrice] = useState(false);
 
+  const navigate = useNavigate();
+
   const addToCart = () => {
-    if (!selectedSize || selectedSize === null) {
+    if (!selectedSize) {
       toast.error("Please select a size first!");
       return;
     }
 
     const cartKey = `${product._id}-${selectedSize}`;
-
-    // Find the stock for the specific size the user chose
     const sizeData = product.sizes.find((s) => s.value === selectedSize);
     const availableStock = sizeData ? sizeData.stock : 0;
+
+    const finalPrice =
+      product.discount > 0
+        ? product.price - product.price * (product.discount / 100)
+        : product.price;
 
     setCartItems((prev) => {
       const currentQtyInCart = prev[cartKey] ? prev[cartKey].quantity : 0;
 
-      // Check if adding one more exceeds stock
       if (currentQtyInCart + 1 > availableStock) {
         toast.error(
           `Sorry, only ${availableStock} items available in Size ${selectedSize}`,
         );
-        return prev; // Return unchanged state
+        return prev;
       }
 
       const updatedCart = { ...prev };
+
       if (updatedCart[cartKey]) {
         updatedCart[cartKey].quantity += 1;
       } else {
+        const { discount, ...productWithoutDiscount } = product;
+
         updatedCart[cartKey] = {
-          ...product,
+          ...productWithoutDiscount,
+          price: finalPrice,
           size: selectedSize,
           quantity: 1,
         };
@@ -58,7 +66,9 @@ const ProductDetail = () => {
 
       return updatedCart;
     });
+
     toast.success("Added to cart!");
+    navigate("/cart");
   };
 
   const cartKey = product && `${product._id}-${selectedSize}`;
@@ -78,9 +88,7 @@ const ProductDetail = () => {
     const fetchProductDetail = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get(
-          `${backendUrl}/api/shuz/products/${id}`,
-        );
+        const { data } = await axios.get(`${backendUrl}/shuz/products/${id}`);
 
         if (data.success) {
           const fetchedProduct = data.data;
@@ -124,7 +132,6 @@ const ProductDetail = () => {
     fetchProductDetail();
   }, [id, backendUrl]);
 
-  if (loading) return <Loading />;
   if (!product)
     return (
       <div className="container py-20 text-center font-bold">
@@ -140,6 +147,7 @@ const ProductDetail = () => {
 
   return (
     <>
+      <Loading />
       <Navbar />
       <section className="min-h-screen py-12">
         <div className="container">

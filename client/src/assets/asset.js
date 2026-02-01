@@ -27,6 +27,11 @@ import brand_logo3 from "./images/brands/brand-logo3.png";
 import brand_logo4 from "./images/brands/brand-logo4.png";
 import brand_logo5 from "./images/brands/brand-logo5.png";
 
+import DinersClub from "./images/icons/DinersClub.png";
+import Mastercard from "./images/icons/Mastercard.png";
+import Stripe from "./images/icons/Stripe.png";
+import Visa from "./images/icons/Visa.png";
+
 const assets = {
   logo,
   logo_white,
@@ -38,6 +43,10 @@ const assets = {
   feature_icon2,
   feature_icon3,
   feature_icon4,
+  DinersClub,
+  Mastercard,
+  Visa,
+  Stripe,
   season_sale_img1,
   season_sale_img2,
   season_sale_img3,

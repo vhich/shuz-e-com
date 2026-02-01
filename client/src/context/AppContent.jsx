@@ -44,7 +44,7 @@ export const AppContextProvider = (props) => {
   useEffect(() => {
     const fetchNewProducts = async () => {
       try {
-        const { data } = await axios.get(`${backendUrl}/api/shuz/products`);
+        const { data } = await axios.get(`${backendUrl}/shuz/products`);
 
         if (data?.success) {
           // 2. Update state
@@ -56,8 +56,8 @@ export const AppContextProvider = (props) => {
         }
       } catch (error) {
         console.error("Error fetching products", error);
-        alert("Error fetching products");
-        window.location.href = "/";
+        // alert("Error fetching products");
+        // window.location.href = "/";
       }
     };
 

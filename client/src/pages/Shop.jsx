@@ -31,7 +31,7 @@ const Shop = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.get(`${backendUrl}/api/shuz/products`);
+        const { data } = await axios.get(`${backendUrl}/shuz/products`);
 
         if (data?.success) {
           // 2. Update state

@@ -12,6 +12,8 @@ import Cart from "./pages/Cart";
 import Shop from "./pages/Shop";
 import { AppContextProvider } from "./context/AppContent";
 import CheckoutPage from "./pages/CheckoutPage";
+import OrderSuccess from "./pages/OrderSuccess";
+import TrackOrder from "./pages/TrackOrder";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -29,6 +31,8 @@ const App = () => {
           <Route path="/cart" element={<Cart />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/order-success/:orderId" element={<OrderSuccess />} />
+          <Route path="/track?" element={<TrackOrder />} />
         </Route>
       </Route>,
     ),

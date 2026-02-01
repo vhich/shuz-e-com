@@ -54,6 +54,20 @@ const Footer = () => {
             <span className="cursor-pointer hover:text-white">Instagram</span>
             <span className="cursor-pointer hover:text-white">Facebook</span>
           </div>
+          <div className="card-icons flex justify-center items-center gap-3">
+            <div className="border border-gray-400 rounded-sm">
+              <img src={assets.Visa} className="w-10" />
+            </div>
+            <div className="border border-gray-400 rounded-sm">
+              <img src={assets.DinersClub} className="w-10" />{" "}
+            </div>
+            <div className="border border-gray-400 rounded-sm">
+              <img src={assets.Mastercard} className="w-10" />{" "}
+            </div>
+            <div className="border border-gray-400 roundedsmd">
+              <img src={assets.Stripe} className="w-10" />
+            </div>
+          </div>
         </div>
       </div>
     </footer>

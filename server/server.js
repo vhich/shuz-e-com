@@ -10,6 +10,7 @@ import router from "./routes/adminRoutes.js";
 import productRouter from "./routes/productRoutes.js";
 
 import os from "os";
+import orderRouter from "./routes/orderRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 4001;
@@ -37,8 +38,8 @@ connectDB();
 // });
 
 const allowedOrigins = [
-  process.env.ADMIN_FRONTEND_URL,
-  process.env.CLIENT_FRONTEND_URL,
+  process.env.ADMIN_FRONTEND_URL || "http://localhost:3001",
+  process.env.CLIENT_FRONTEND_URL || "http://localhost:3002",
   "http://10.102.130.138:3001",
   "http://10.102.130.138:3002",
 ].filter(Boolean);
@@ -74,6 +75,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/admin", router);
 app.use("/api", productRouter);
+app.use("/api/order", orderRouter);
 
 app.listen(PORT, "0.0.0.0", () => {
   const interfaces = os.networkInterfaces();

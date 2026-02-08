@@ -11,6 +11,9 @@ import productRouter from "./routes/productRoutes.js";
 
 import os from "os";
 import orderRouter from "./routes/orderRoutes.js";
+import clientRouter from "./routes/clientRoutes.js";
+import cartRouter from "./routes/cartRoutes.js";
+import { stripeWebhook } from "./controllers/orderController.js";
 
 const app = express();
 const PORT = process.env.PORT || 4001;
@@ -43,22 +46,44 @@ const allowedOrigins = [
   "http://10.102.130.138:3001",
   "http://10.102.130.138:3002",
 ].filter(Boolean);
+
 app.use(
   cors({
+    // This function allows any origin that your browser is currently using
     origin: function (origin, callback) {
+      // allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
+      return callback(null, true);
     },
-    credentials: true, // Required for cookies/headers
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Explicitly allow these
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cache-Control"],
   }),
 );
+
+// app.use(
+//   cors({
+//     origin: function (origin, callback) {
+//       if (!origin) return callback(null, true);
+//       if (allowedOrigins.indexOf(origin) !== -1) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error("Not allowed by CORS"));
+//       }
+//     },
+//     credentials: true, // Required for cookies/headers
+//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Explicitly allow these
+//     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+//   }),
+// );
+// STRIPE WEBHOOK MUST BE BEFORE express.json()
+app.post(
+  "/api/order/webhook",
+  express.raw({ type: "application/json" }),
+  stripeWebhook,
+);
 app.use(express.json());
+app.use(cookieParser());
 app.use(
   helmet({
     contentSecurityPolicy: true,
@@ -66,7 +91,6 @@ app.use(
   }),
 );
 app.use(morgan("dev"));
-app.use(cookieParser());
 app.use(urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
@@ -76,6 +100,8 @@ app.get("/", (req, res) => {
 app.use("/api/admin", router);
 app.use("/api", productRouter);
 app.use("/api/order", orderRouter);
+app.use("/api/client", clientRouter);
+app.use("/api/cart", cartRouter);
 
 app.listen(PORT, "0.0.0.0", () => {
   const interfaces = os.networkInterfaces();

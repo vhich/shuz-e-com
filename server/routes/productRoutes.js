@@ -15,7 +15,7 @@ productRouter.get("/shuz/products", async (req, res) => {
     const products = await Product.find().sort({ createdAt: -1 });
     res.status(200).json({ success: true, data: products });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error });
   }
 });
 
@@ -29,7 +29,7 @@ productRouter.get("/shuz/products/:id", async (req, res) => {
     }
     res.status(200).json({ success: true, data: product });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error });
   }
 });
 productRouter.delete("/shuz/products/:id", removeProduct);

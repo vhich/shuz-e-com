@@ -13,7 +13,7 @@ import { AppContextProvider } from "./context/AppContextProvider";
 import AdminDashboard from "./pages/AdminDashboard";
 import AllProducts from "./pages/AllProducts";
 import ProductInfo from "./pages/ProductInfo";
-import AdminOrders from "./pages/AminOrders";
+import AdminOrders from "./pages/AdminOrders";
 
 const App = () => {
   const router = createBrowserRouter(

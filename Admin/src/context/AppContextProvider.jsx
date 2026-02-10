@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "./AppContent";
 
 export const AppContextProvider = (props) => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl = `http://${window.location.hostname}:4000/api`;
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
   const [disableForm, setDisableForm] = useState(false);
@@ -16,6 +16,11 @@ export const AppContextProvider = (props) => {
   // const [currentProduct, setCurrentProduct] = useState(null);
 
   const navigate = useNavigate();
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn, navigate, backendUrl]);
 
   const fetchAllProducts = useCallback(async () => {
     try {
@@ -82,14 +87,10 @@ export const AppContextProvider = (props) => {
         window.location.href = "/admin/dashboard";
         setDisableForm(false);
         setLoading(false);
-      } else {
-        alert(data.message);
-        setDisableForm(false);
-        setLoading(false);
       }
     } catch (err) {
       console.error("Login failed", err);
-      alert(err?.response?.data.message);
+      alert(err?.response?.data?.message);
       setDisableForm(false);
       setLoading(false);
     }

@@ -72,7 +72,9 @@ export default function AdminOrders() {
           .includes(searchTerm.toLowerCase());
 
       const matchesStatus =
-        statusFilter === "All" || order.status === statusFilter;
+        statusFilter === "All" ||
+        order.status === statusFilter ||
+        order.paymentStatus.toLowerCase() === statusFilter;
 
       return matchesSearch && matchesStatus;
     });
@@ -88,6 +90,23 @@ export default function AdminOrders() {
       if (data.success) {
         fetchOrders();
         toast.success(`Order updated to ${newStatus}`);
+      }
+    } catch (err) {
+      console.log(err);
+
+      alert("Status update failed");
+    }
+  };
+  const updatePayment = async (orderId, newPayment) => {
+    setLoading(true);
+    try {
+      const { data } = await axios.post(`${backendUrl}/order/payment-status`, {
+        orderId,
+        paymentStatus: newPayment,
+      });
+      if (data.success) {
+        fetchOrders();
+        toast.success(data.message);
       }
     } catch (err) {
       console.log(err);
@@ -195,6 +214,10 @@ export default function AdminOrders() {
                   />
                 </div>
 
+                <p className="text-gray-500 text-sm">
+                  Showing {filteredOrders.length} of {orders.length} items
+                </p>
+
                 {/* --- 3. FILTER BAR --- */}
                 <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-6 flex flex-col md:flex-row gap-4 items-center">
                   <div className="relative flex-1 w-full">
@@ -213,16 +236,18 @@ export default function AdminOrders() {
                   <div className="flex items-center gap-3 w-full md:w-auto">
                     <Filter size={20} className="text-slate-400" />
                     <select
-                      className="bg-slate-50 border-none rounded-xl px-4 py-3 font-bold text-sm outline-none cursor-pointer"
+                      className="bg-slate-50 border-none rounded-xl px-4 py-3 font-medium text-sm outline-none cursor-pointer"
                       value={statusFilter}
                       onChange={(e) => setStatusFilter(e.target.value)}
                     >
-                      <option value="All">All Statuses</option>
+                      <option value="All">All</option>
                       <option value="Pending">Pending</option>
                       <option value="Processing">Processing</option>
                       <option value="Shipped">Shipped</option>
                       <option value="Delivered">Delivered</option>
                       <option value="Cancelled">Cancelled</option>
+                      <option value="paid">Paid</option>
+                      <option value="unpaid">Unpaid</option>
                     </select>
                   </div>
                 </div>
@@ -247,6 +272,9 @@ export default function AdminOrders() {
                           <th className="px-8 py-5">Products</th>
                           <th className="px-8 py-5">Amount</th>
                           <th className="px-8 py-5">Status Tracking</th>
+                          <th className="px-8 py-5 text-center whitespace-nowrap">
+                            Payment Status
+                          </th>
                           <th className="px-8 py-5 text-center">Control</th>
                         </tr>
                       </thead>
@@ -260,12 +288,30 @@ export default function AdminOrders() {
                               <span className="bg-slate-100 text-slate-900 px-3 py-1 rounded-lg text-xs! block w-fit! mb-1 group-hover:bg-white transition-colors">
                                 #{order.orderId}
                               </span>
-                              <p className="text-[11px] text-slate-400 font-bold">
-                                {new Date(order.createdAt).toLocaleDateString()}
+                              <p className=" text-slate-500 mt-1.5 flex flex-col gap-1">
+                                <span className="font-medium text-xs!">
+                                  {new Date(order.createdAt).toLocaleDateString(
+                                    "en-US",
+                                    {
+                                      month: "short",
+                                      day: "2-digit",
+                                      year: "numeric",
+                                    },
+                                  )}
+                                </span>
+                                <span className="text-xs!">
+                                  {new Date(order.createdAt).toLocaleTimeString(
+                                    [],
+                                    {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    },
+                                  )}
+                                </span>
                               </p>
                             </td>
                             <td className="px-8 py-6">
-                              <p className="font-black text-slate-900 text-sm leading-none mb-1">
+                              <p className="font-black text-slate-900 text-sm leading-none! mb-1">
                                 {order.customerDetails.firstName}{" "}
                                 {order.customerDetails.lastName}
                               </p>
@@ -291,7 +337,11 @@ export default function AdminOrders() {
                             </td>
                             <td className="px-8 py-6">
                               <p className="font-black text-slate-900 tracking-tight">
-                                ${order.total.toFixed(2)}
+                                $
+                                {order.total.toLocaleString(undefined, {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                })}
                               </p>
                               <p className="text-[10px] font-bold text-slate-400 uppercase">
                                 {order.paymentMethod}
@@ -324,6 +374,43 @@ export default function AdminOrders() {
                                   <option disabled>Cancelled</option>
                                 )}
                               </select>
+                            </td>
+                            <td className="px-8 py-6">
+                              <div className=" text-center">
+                                {order.paymentMethod !== "stripe" && (
+                                  <select
+                                    value={order.paymentStatus}
+                                    onChange={(e) =>
+                                      updatePayment(
+                                        order.orderId,
+                                        e.target.value,
+                                      )
+                                    }
+                                    className={`text-xs px-4 py-2 rounded-sm border-none outline-none cursor-pointer transition-all shadow-sm
+                          ${order.paymentStatus.toLowerCase() === "unpaid" ? "text-red-600 hover:bg-red-200" : ""}
+                          ${order.paymentStatus.toLowerCase() === "paid" ? "text-green-600 hover:bg-blue-200" : ""}`}
+                                  >
+                                    {order.paymentStatus.toLowerCase() ===
+                                    "unpaid" ? (
+                                      <>
+                                        <option value="unpaid">Unpaid</option>
+                                        <option value="paid">Paid</option>
+                                      </>
+                                    ) : (
+                                      <option disabled value="paid">
+                                        Paid
+                                      </option>
+                                    )}
+                                  </select>
+                                )}
+                                {order.paymentMethod === "stripe" && (
+                                  <small
+                                    className={`${order.paymentStatus.toLowerCase() === "unpaid" ? "text-red-500" : "text-green-500"}`}
+                                  >
+                                    {order.paymentStatus}
+                                  </small>
+                                )}
+                              </div>
                             </td>
                             <td className="px-8 py-6">
                               <div className="flex justify-center items-center gap-2">

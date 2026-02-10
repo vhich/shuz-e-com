@@ -139,7 +139,7 @@ const UploadProduct = () => {
       if (editMode) {
         // UPDATE LOGIC
         response = await axios.put(
-          `http://10.102.130.138:4000/api/update-product/${productId}`,
+          `${backendUrl}/update-product/${productId}`,
           formData,
           {
             withCredentials: true,

@@ -81,6 +81,7 @@ const AllProducts = () => {
         ...product,
         totalStock,
         isOutOfStock: totalStock === 0,
+        isLowStock: totalStock < 5,
       };
     });
   }, [products, searchTerm, categoryFilter, sortOrder]);
@@ -138,8 +139,8 @@ const AllProducts = () => {
                     Product Inventory
                   </h6>
                   <p className="text-gray-500 text-sm">
-                    Showing {displayedProducts.length} of{" "}
-                    {filteredProducts.length} items
+                    Showing {displayedProducts.length} of {products.length}{" "}
+                    items
                   </p>
                 </div>
                 <button
@@ -224,6 +225,11 @@ const AllProducts = () => {
                                 </span>
                               )}
                             </span>
+                            {item.isLowStock && (
+                              <span className="line-clamp-1 text-sm! font-medium! text-red-400 ">
+                                {item.totalStock} item(s) remaining
+                              </span>
+                            )}
 
                             <span className="line-clamp-1 font-medium!">
                               {item.name}

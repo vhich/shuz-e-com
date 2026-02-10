@@ -1,14 +1,11 @@
-import React, { useState, useMemo, useEffect, useContext } from "react";
+import React, { useState, useMemo, useContext } from "react";
 import PropTypes from "prop-types";
 import { Filter, X } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import Feature from "../components/Feature";
 import Newsletter from "../components/Newsletter";
 import Jumbotron from "../components/Jumbotron";
-
-import axios from "axios";
 import { AppContent } from "../context/AppContent";
-import Loading from "../components/Loading";
 
 const Shop = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -18,44 +15,17 @@ const Shop = () => {
   const [selectedPriceRange, setSelectedPriceRange] = useState("");
   const [sortBy, setSortBy] = useState("Default Sorting");
   const [currentPage, setCurrentPage] = useState(1);
-  const [allProducts, setAllProducts] = useState([]);
-  const [allCategories, setAllCategories] = useState([]);
 
   // --- LOGIC: DATA ---
   // --- LOGIC: DATA ---
-  const { setLoading } = useContext(AppContent);
-  const backendUrl =
-    import.meta.env.VITE_BACKEND_URL_NETWORK ||
-    import.meta.env.VITE_BACKEND_URL_LOCAL;
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const { data } = await axios.get(`${backendUrl}/shuz/products`);
-
-        if (data?.success) {
-          // 2. Update state
-          setAllProducts(data.data);
-          const products = data.data;
-          setAllCategories([...new Set(products.flatMap((p) => p.categories))]);
-        }
-      } catch (error) {
-        console.error("Error fetching products", error);
-      } finally {
-        // 3. Stop loading ONLY after data is set or error caught
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, [backendUrl]); // Added backendUrl as dependency for safety
+  const { allProduct, allCategories } = useContext(AppContent);
 
   // --- LOGIC: FILTERING & SORTING ---
   const filteredProducts = useMemo(() => {
     // Defensive check: if allProducts is empty, return empty
-    if (!allProducts || allProducts.length === 0) return [];
+    if (!allProduct || allProduct.length === 0) return [];
 
-    let result = [...allProducts];
+    let result = [...allProduct];
 
     // Category Filter (Fixing p.category -> p.categories)
     if (selectedCategories.length > 0) {
@@ -87,7 +57,7 @@ const Shop = () => {
     return result;
     // ADD allProducts HERE!
   }, [
-    allProducts,
+    allProduct,
     allCategories,
     selectedCategories,
     selectedPriceRange,
@@ -112,7 +82,6 @@ const Shop = () => {
 
   return (
     <>
-      <Loading />
       <Jumbotron text={"Shop"} />
       <div className="container">
         {/* --- MOBILE FILTER DRAWER --- */}

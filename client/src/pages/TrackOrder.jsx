@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, NavLink } from "react-router-dom";
 import {
   Package,
   Truck,
@@ -14,7 +14,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { toast } from "react-toastify";
-import Navbar from "../components/Navbar";
+// import Navbar from "../components/Navbar";
 import { useContext } from "react";
 import { AppContent } from "../context/AppContent";
 
@@ -87,12 +87,19 @@ export default function TrackOrder() {
 
   return (
     <>
-      <div className="bg-slate-100 mb-10 px-4">
-        <Navbar />
+      <div className="bg-slate-100 py-10 px-2">
+        {!orderData && (
+          <div className="w-full mx-auto flex justify-center mb-6">
+            <NavLink to={"/"} className={"flex! items-center gap-2 mx-auto"}>
+              <ArrowLeft /> Back home
+            </NavLink>
+          </div>
+        )}
+
         {/* 1. SEARCH FORM (Only shows if no orderData) */}
         {!orderData ? (
-          <div className="max-w-xl mx-auto bg-white p-10 rounded-md shadow-xl border border-slate-100 mt-10">
-            <h6 className="text-3xl font-black mb-2">Track Order</h6>
+          <div className="max-w-xl mx-auto bg-white p-10 rounded-md shadow-xl border border-slate-100">
+            <h6 className="text-3xl font-black">Track Order</h6>
             <p className="text-slate-500 mb-8 font-medium">
               Enter your details to see live delivery updates.
             </p>
@@ -121,7 +128,7 @@ export default function TrackOrder() {
           </div>
         ) : (
           /* 2. THE REDESIGN (The Grid Layout you requested) */
-          <div className="w-auto px-10 mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="w-auto lg:px-10 sm:px-4 md:px-8 mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
             <button
               onClick={() => setOrderData(null)}
               className="mb-6 flex items-center gap-2 text-slate-500 font-bold hover:text-black transition-colors"
@@ -157,8 +164,16 @@ export default function TrackOrder() {
               {/* LEFT SIDE: Progress & Items */}
               <div className="lg:col-span-8 space-y-6">
                 {/* Progress Card */}
-                <div className="bg-white p-8 rounded-4xl shadow-sm border border-slate-100">
-                  <h6 className="font-bold mb-12 text-lg">Delivery Status</h6>
+                <div className="bg-white lg:p-8 p-3 rounded-4xl shadow-sm border border-slate-100">
+                  <div className="flex items-center mb-12 gap-6 flex-wrap">
+                    <h6>Delivery Status</h6>
+                    <span
+                      className={`inline-flex! ${orderData.paymentStatus.toLowerCase() === "paid" ? "bg-green-100 text-green-500" : "bg-red-100 text-red-500"} py-1 px-3`}
+                    >
+                      {orderData.paymentStatus}
+                    </span>
+                  </div>
+
                   {orderData.status === "Cancelled" ? (
                     <div className="p-4 bg-red-50 rounded-2xl text-red-700 font-bold flex gap-3">
                       <XCircle /> Order Cancelled
@@ -198,7 +213,7 @@ export default function TrackOrder() {
                 </div>
 
                 {/* Items Card */}
-                <div className="bg-white p-8 rounded-4xl shadow-sm border border-slate-100">
+                <div className="bg-white lg:p-8 p-4 rounded-4xl shadow-sm border border-slate-100">
                   <h6 className="font-bold mb-6 text-lg">Items Summary</h6>
                   <div className="space-y-4">
                     {orderData.items.map((item) => (

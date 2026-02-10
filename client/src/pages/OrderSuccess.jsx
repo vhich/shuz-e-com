@@ -1,15 +1,33 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom";
-import { CheckCircle, Building2 } from "lucide-react";
-// import { AppContent } from "../context/AppContent";
+import { CheckCircle, Building2, CreditCard } from "lucide-react";
+import { AppContent } from "../context/AppContent";
 
 export default function OrderSuccess() {
   const { orderId } = useParams();
   const [searchParams] = useSearchParams();
-  const paymentType = searchParams.get("type"); // get 'transfer', 'cod', or 'stripe'
+
+  const { setCartItems, setOrderSuccess, orderSuccess } =
+    useContext(AppContent);
+
+  // Get variables from URL
+  const paymentType = searchParams.get("type"); // 'transfer', 'cod', or 'stripe'
+  const redirectStatus = searchParams.get("redirect_status"); // Provided by Stripe after redirect
 
   const isTransfer = paymentType === "transfer";
   const isCOD = paymentType === "cod";
+
+  // Logic to identify a Stripe payment success
+  const isStripeSuccess =
+    paymentType === "stripe" || redirectStatus === "succeeded";
+
+  useEffect(() => {
+    setOrderSuccess(false);
+    if (!orderSuccess) {
+      setCartItems({}); // Empty the cart after successful order
+      localStorage.removeItem("shuzCart");
+    }
+  }, []);
 
   return (
     <section className="min-h-screen bg-slate-50 flex items-center justify-center py-12 px-4">
@@ -30,7 +48,11 @@ export default function OrderSuccess() {
             />
           )}
           <h5 className="text-3xl font-black text-slate-900 mb-2 text-center px-4">
-            {isTransfer ? "One Last Step!" : "Order Confirmed!"}
+            {isTransfer
+              ? "One Last Step!"
+              : isStripeSuccess
+                ? "Payment Successful!"
+                : "Order Confirmed!"}
           </h5>
           <p className="text-slate-600 font-medium">
             Order ID: <span className="text-black font-bold">#{orderId}</span>
@@ -81,23 +103,23 @@ export default function OrderSuccess() {
             </div>
           ) : (
             <div className="space-y-6 text-center">
-              {/* <div className="flex justify-center gap-4">
-                <div className="flex flex-col items-center opacity-40">
-                  <Package size={24} />{" "}
-                  <span className="text-[10px]">Packed</span>
-                </div>
-                <div className="w-12 h-0.5 bg-slate-200 mt-3"></div>
-                <div className="flex flex-col items-center opacity-40">
-                  <ArrowRight size={24} />{" "}
-                  <span className="text-[10px]">Shipped</span>
-                </div>
-              </div> */}
               <p className="text-slate-600 leading-relaxed">
-                Thank you for shopping with Shuz! We&apos;ve received your order
-                and our team is already preparing your package.
+                {isStripeSuccess
+                  ? "Thank you! Your payment has been securely processed via Stripe. We've received your order and our team is already preparing your package."
+                  : "Thank you for shopping with Shuz! We've received your order and our team is already preparing your package."}
                 {isCOD &&
                   " Remember to have your cash or card ready at the time of delivery."}
               </p>
+
+              {/* Added a small Stripe confirmation badge */}
+              {isStripeSuccess && (
+                <div className="flex items-center justify-center gap-2 text-green-700 bg-green-100/50 py-2 px-4 rounded-full w-fit mx-auto border border-green-200">
+                  <CreditCard size={16} />
+                  <span className="text-xs font-bold uppercase tracking-wider">
+                    Verified Stripe Payment
+                  </span>
+                </div>
+              )}
             </div>
           )}
 

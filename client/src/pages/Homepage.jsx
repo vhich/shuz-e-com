@@ -9,11 +9,15 @@ import CategoryList from "../components/CategoryList";
 import Reviews from "../components/Reviews";
 import InfiniteBrandScroll from "../components/InfiniteBrandScroll";
 import Newsletter from "../components/Newsletter";
+import { NavLink } from "react-router-dom";
+// import { AppContent } from "../context/AppContent";
 
 const Homepage = () => {
+  // const { userData } = useContext(AppContent);
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });
   }, []);
+
   return (
     <>
       <section
@@ -29,7 +33,9 @@ const Homepage = () => {
             <p className="text-gray-600">
               Discover the latest styles and comfort in every step.
             </p>
-            <button className="pry-btn m-auto">Shop Now</button>{" "}
+            <NavLink to={"/shop"} className="pry-btn my-4 mx-auto block!">
+              Shop Now
+            </NavLink>
           </div>
           <div>
             {assets.xpro_1 && (
@@ -54,7 +60,9 @@ const Homepage = () => {
             <p className="mb-4">
               Get the latest running shoes at half price, don&apos;t miss it!
             </p>
-            <button className="pry-btn m-auto">Shop Now</button>
+            <NavLink to={"/shop"} className="pry-btn">
+              Shop Now
+            </NavLink>
           </div>
           <div className="flex justify-center relative z-10">
             {assets.running_shoe1 && (

@@ -5,55 +5,102 @@ import Jumbotron from "../components/Jumbotron";
 import { AppContent } from "../context/AppContent";
 import Reviews from "./../components/Reviews";
 import BestSeller from "./../components/BestSeller";
+import axios from "axios";
+import { toast } from "react-toastify";
 import { assets } from "../assets/asset";
 
 const Cart = () => {
-  const { setCartItems, cartItems } = useContext(AppContent);
+  const {
+    setCartItems,
+    cartItems,
+    backendUrl,
+    isLoggedIn,
+    userData,
+    allProduct,
+    setLoading,
+  } = useContext(AppContent);
   const navigate = useNavigate();
 
   // 1. CONVERT OBJECT TO ARRAY FOR DISPLAY
-  // This turns the cart object into a list we can map over
-  const cartArray = Object.values(cartItems);
+  const cartArray = Object.entries(cartItems);
 
-  // 2. Logic to update quantity
-  const updateQty = (itemKey, delta) => {
-    setCartItems((prev) => {
-      const updatedCart = { ...prev };
-      if (updatedCart[itemKey]) {
-        // Find the specific size object in the product's sizes array to check stock
-        const selectedSizeData = updatedCart[itemKey].sizes.find(
-          (s) => s.value === updatedCart[itemKey].size,
+  const updateQty = async (cartKey, newQty) => {
+    // 1. If user tries to go below 1, remove the item
+    if (newQty < 1) return removeItem(cartKey);
+
+    const item = cartItems[cartKey];
+    if (!item) return;
+
+    // 2. STOCK CHECK LOGIC
+    const productData = allProduct.find((p) => p._id === item._id);
+    const sizeInfo = productData?.sizes.find((s) => s.value === item.size);
+    const availableStock = sizeInfo ? sizeInfo.stock : 0;
+
+    // 3. Prevent increase if it exceeds stock
+    if (newQty > availableStock) {
+      toast.error(
+        `Sorry, only ${availableStock} items available in Size ${item.size}`,
+      );
+      return; // Stop the function here
+    }
+
+    // 4. Update UI (Instant feedback)
+    setCartItems((prev) => ({
+      ...prev,
+      [cartKey]: { ...prev[cartKey], quantity: newQty },
+    }));
+
+    // 5. Update Database (Background sync)
+    if (isLoggedIn && userData?._id) {
+      setLoading(true);
+      try {
+        const { data } = await axios.post(
+          backendUrl + "/cart/update",
+          {
+            cartKey,
+            productId: item._id,
+            size: item.size,
+            quantity: newQty,
+            clientId: userData._id,
+          },
+          { withCredentials: true },
         );
-        const currentQty = updatedCart[itemKey].quantity;
-        const maxStock = selectedSizeData ? selectedSizeData.stock : 99;
-
-        // Ensure quantity stays between 1 and the available stock
-        const newQty = Math.max(1, currentQty + delta);
-
-        if (newQty <= maxStock) {
-          updatedCart[itemKey].quantity = newQty;
+        if (data.success) {
+          toast.success(data.message);
         }
+      } catch (error) {
+        console.log("Sync error:", error);
+        alert(error?.data?.message);
+      } finally {
+        setLoading(false);
       }
-      return updatedCart;
-    });
+    }
   };
 
   // 3. Logic to remove item
-  const removeItem = (itemKey) => {
+  const removeItem = async (cartKey) => {
     setCartItems((prev) => {
-      const updatedCart = { ...prev };
-      delete updatedCart[itemKey];
-      return updatedCart;
+      const updated = { ...prev };
+      delete updated[cartKey];
+
+      if (isLoggedIn) {
+        axios.post(
+          backendUrl + "/cart/delete",
+          { cartKey },
+          { withCredentials: true },
+        );
+      }
+      return updated;
     });
   };
 
+  const newCartArray = Object.values(cartItems);
   // 4. Calculations
-  const subtotal = cartArray.reduce(
+  const subtotal = newCartArray.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0,
   );
-  const shipping = 0;
-  const total = subtotal + shipping;
+  const total = subtotal;
 
   // Use cartArray.length for the empty check
   if (cartArray.length === 0) {
@@ -81,9 +128,8 @@ const Cart = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             {/* List of Items */}
             <div className="lg:col-span-2 space-y-6">
-              {cartArray.map((item) => {
+              {cartArray.map(([itemKey, item]) => {
                 // The key in the object is "productId-size"
-                const itemKey = `${item._id}-${item.size}`;
 
                 return (
                   <div
@@ -124,17 +170,21 @@ const Cart = () => {
                       <div className="flex items-center justify-between mt-3">
                         <div className="flex items-center bg-gray-100 rounded-lg px-2">
                           <button
-                            onClick={() => updateQty(itemKey, -1)}
-                            className="p-1"
+                            onClick={() =>
+                              updateQty(itemKey, item.quantity - 1)
+                            }
                           >
                             <Minus size={16} />
                           </button>
+
                           <span className="px-4 font-semibold">
                             {item.quantity}
                           </span>
+
                           <button
-                            onClick={() => updateQty(itemKey, 1)}
-                            className="p-1"
+                            onClick={() =>
+                              updateQty(itemKey, item.quantity + 1)
+                            }
                           >
                             <Plus size={16} />
                           </button>

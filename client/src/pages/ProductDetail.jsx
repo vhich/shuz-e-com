@@ -6,15 +6,20 @@ import ReviewCard from "../components/ReviewCard";
 import { reviews } from "../assets/asset";
 import BestSeller from "../components/BestSeller";
 import { AppContent } from "../context/AppContent";
-import Loading from "../components/Loading";
 import { toast } from "react-toastify";
 
 const ProductDetail = () => {
   const { id } = useParams(); // Get ID from URL
-  const { backendUrl, setCartItems, cartItems, setLoading } =
-    useContext(AppContent);
-
-  const [product, setProduct] = useState(null);
+  const {
+    backendUrl,
+    setCartItems,
+    cartItems,
+    setLoading,
+    setProduct,
+    product,
+    isLoggedIn,
+    userData,
+  } = useContext(AppContent);
   const [selectedSize, setSelectedSize] = useState(null);
   const [pagination, setPagination] = useState("description");
 
@@ -23,53 +28,6 @@ const ProductDetail = () => {
   const [hasDiscountPrice, setHasDiscountPrice] = useState(false);
 
   const navigate = useNavigate();
-
-  const addToCart = () => {
-    if (!selectedSize) {
-      toast.error("Please select a size first!");
-      return;
-    }
-
-    const cartKey = `${product._id}-${selectedSize}`;
-    const sizeData = product.sizes.find((s) => s.value === selectedSize);
-    const availableStock = sizeData ? sizeData.stock : 0;
-
-    const finalPrice =
-      product.discount > 0
-        ? product.price - product.price * (product.discount / 100)
-        : product.price;
-
-    setCartItems((prev) => {
-      const currentQtyInCart = prev[cartKey] ? prev[cartKey].quantity : 0;
-
-      if (currentQtyInCart + 1 > availableStock) {
-        toast.error(
-          `Sorry, only ${availableStock} items available in Size ${selectedSize}`,
-        );
-        return prev;
-      }
-
-      const updatedCart = { ...prev };
-
-      if (updatedCart[cartKey]) {
-        updatedCart[cartKey].quantity += 1;
-      } else {
-        const { discount, ...productWithoutDiscount } = product;
-
-        updatedCart[cartKey] = {
-          ...productWithoutDiscount,
-          price: finalPrice,
-          size: selectedSize,
-          quantity: 1,
-        };
-      }
-
-      return updatedCart;
-    });
-
-    toast.success("Added to cart!");
-    navigate("/cart");
-  };
 
   const cartKey = product && `${product._id}-${selectedSize}`;
   const currentQtyInCart = cartItems[cartKey]?.quantity || 0;
@@ -81,6 +39,63 @@ const ProductDetail = () => {
 
   // 3. Determine if the button should be disabled
   const isMaxedOut = selectedSize && currentQtyInCart >= selectedSizeStock;
+
+  const addToCart = async () => {
+    if (!selectedSize) return toast.error("Select Size!");
+
+    const cartKey = `${product._id}-${selectedSize}`;
+
+    // No need to define sizeData here anymore since you have selectedSizeStock!
+
+    const finalPrice =
+      product.discount > 0
+        ? product.price - product.price * (product.discount / 100)
+        : product.price;
+
+    const newItem = {
+      _id: product._id,
+      name: product.name,
+      size: selectedSize,
+      price: finalPrice,
+      image: product.image,
+      quantity: 1,
+    };
+
+    setCartItems((prev) => {
+      const currentQty = prev[cartKey]?.quantity || 0;
+
+      // USE YOUR VARIABLE HERE:
+      if (currentQty + 1 > selectedSizeStock) {
+        toast.error(`Only ${selectedSizeStock} items available in this size!`);
+        return prev;
+      }
+
+      const updated = { ...prev };
+      if (updated[cartKey]) {
+        updated[cartKey].quantity += 1;
+      } else {
+        updated[cartKey] = newItem;
+      }
+
+      if (isLoggedIn) {
+        axios.post(
+          backendUrl + "/cart/update",
+          {
+            cartKey,
+            productId: product._id,
+            size: selectedSize,
+            quantity: updated[cartKey].quantity,
+            clientId: userData._id,
+          },
+          { withCredentials: true },
+        );
+      }
+      return updated;
+    });
+
+    toast.success("Added to cart!");
+    navigate("/cart");
+  };
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });
@@ -147,7 +162,6 @@ const ProductDetail = () => {
 
   return (
     <>
-      <Loading />
       <Navbar />
       <section className="min-h-screen py-12">
         <div className="container">
@@ -222,13 +236,13 @@ const ProductDetail = () => {
                   {product.isAvailable ? `In Stock` : "Out of Stock"}
                 </span>
 
-                {product.isAvailable && product.totalStockCount > 6 && (
+                {product.isAvailable && product.totalStockCount >= 6 && (
                   <span className="text-sm ml-2 text-gray-600">
                     <span className="text-green-700"></span>
                     <span className="text-green-700">
                       {product.totalStockCount}
                     </span>{" "}
-                    item available
+                    items available
                   </span>
                 )}
                 {product.isAvailable && product.totalStockCount < 6 && (

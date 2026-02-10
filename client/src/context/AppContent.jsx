@@ -2,67 +2,121 @@ import React, { createContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 // import { toast } from "react-toastify";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export const AppContent = createContext();
 
 export const AppContextProvider = (props) => {
-  const backendUrl =
-    import.meta.env.VITE_BACKEND_URL_NETWORK ||
-    import.meta.env.VITE_BACKEND_URL_LOCAL;
+  // This detects your current browser's IP/hostname
+  const hostname = window.location.hostname;
+  // use the dynamic IP address of the machine.
+
+  const backendUrl = `http://${hostname}:4000/api`;
+  const [isOpen, setIsOpen] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState(null);
   const [newProducts, setNewProducts] = useState(null);
   const [bestSellerProducts, setBestSellerProducts] = useState([]);
   const [productId, setProductId] = useState();
   const [loading, setLoading] = useState(true);
+  const [allProduct, setAllProduct] = useState([]);
   const [product, setProduct] = useState(); //to get the product detail in the product page
+  const [allCategories, setAllCategories] = useState([]);
+  const [token, setToken] = useState(null);
+  const [orderSuccess, setOrderSuccess] = useState(false);
   const [cartItems, setCartItems] = useState(() => {
     const savedCart = localStorage.getItem("shuzCart");
     return savedCart ? JSON.parse(savedCart) : {};
   });
 
+  const navigate = useNavigate();
   // Save to localStorage whenever cart changes
   useEffect(() => {
     localStorage.setItem("shuzCart", JSON.stringify(cartItems));
   }, [cartItems]);
 
+  const verifyClient = async () => {
+    try {
+      const response = await axios.get(backendUrl + "/client/check-auth", {
+        withCredentials: true,
+      });
+
+      if (response.data.success) {
+        const dbCart = response.data.client.cartData || {};
+        setUserData(response.data.client);
+        setIsLoggedIn(true);
+
+        // THE SAFE MERGE
+        setCartItems((prevGuestItems) => {
+          return { ...dbCart, ...prevGuestItems };
+        });
+      }
+    } catch (error) {
+      setIsLoggedIn(false);
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    verifyClient();
+  }, []);
+
+  const handleLogout = async () => {
+    setLoading(true);
+    try {
+      // withCredentials: true is vital to send the cookie
+      const response = await axios.post(
+        "http://localhost:4000/api/client/client-logout",
+        {},
+        {
+          withCredentials: true,
+          headers: { "Cache-Control": "no-cache" },
+        },
+      );
+      if (response.data.success) {
+        setIsLoggedIn(false);
+        setUserData(null); // Clear the object!
+        toast.success(response.data.message);
+        navigate("/");
+      }
+    } catch (error) {
+      toast.error(error?.data?.message);
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const { pathname } = useLocation();
 
   useEffect(() => {
-    const onPageLoad = () => {
-      setLoading(false);
-      console.log("Page fully loaded");
-    };
-
-    if (document.readyState === "complete") {
-      onPageLoad();
-    } else {
-      window.addEventListener("load", onPageLoad);
-      return () => window.removeEventListener("load", onPageLoad);
-    }
-  }, []);
-
-  useEffect(() => {
     const fetchNewProducts = async () => {
+      setLoading(true);
       try {
         const { data } = await axios.get(`${backendUrl}/shuz/products`);
 
         if (data?.success) {
           // 2. Update state
           const products = data.data;
+          setAllProduct(products);
 
-          setNewProducts(products.splice(0, 4));
+          setNewProducts(products.slice(0, 4));
           const filteredBestSellers = products.filter((p) => p.price > 500);
           setBestSellerProducts(filteredBestSellers);
+
+          setAllCategories([...new Set(products.flatMap((p) => p.categories))]);
+          setLoading(false);
         }
       } catch (error) {
         console.error("Error fetching products", error);
-        // alert("Error fetching products");
-        // window.location.href = "/";
+        alert("Error fetching products, try again!");
+        // window.location.reload();
       }
     };
 
     fetchNewProducts();
-    return undefined;
+    // return undefined;
   }, [backendUrl]);
 
   useEffect(() => {
@@ -73,15 +127,30 @@ export const AppContextProvider = (props) => {
     productId,
     setProductId,
     setLoading,
-    loading,
-    product,
-    setProduct,
-    newProducts,
+    setAllProduct,
     setNewProducts,
+    setProduct,
+    setAllCategories,
+    setCartItems,
+    setToken,
+    setIsLoggedIn,
+    setIsOpen,
+    setOrderSuccess,
+    loading,
+    allProduct,
+    product,
+    newProducts,
     bestSellerProducts,
+    allCategories,
     backendUrl,
     cartItems,
-    setCartItems,
+    token,
+    userData,
+    isLoggedIn,
+    isOpen,
+    orderSuccess,
+
+    handleLogout,
   };
 
   return (

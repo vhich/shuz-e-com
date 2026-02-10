@@ -72,16 +72,12 @@ const navLinks = [
 ];
 const userNavLinks = [
   {
-    id: "orders",
-    title: "Orders",
+    id: "track",
+    title: "Track Orders",
   },
   {
-    id: "address",
-    title: "Addresses",
-  },
-  {
-    id: "account_details",
-    title: "Account Details",
+    id: "address_details",
+    title: "Address Details",
   },
 ];
 

@@ -10,7 +10,8 @@ const Navbar = () => {
   const [isHome] = useState(window.location.pathname === "/");
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
-  const { cartItems } = useContext(AppContent);
+  const { cartItems, isLoggedIn, userData, handleLogout } =
+    useContext(AppContent);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -63,16 +64,53 @@ const Navbar = () => {
             </button>
             <button
               className={`user relative`}
+              onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
               onMouseEnter={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
               onMouseLeave={() => setIsUserDropdownOpen(false)}
             >
-              <User />
+              <div className="flex items-center">
+                {!isLoggedIn ? (
+                  <User />
+                ) : (
+                  <>
+                    {userData?.image ? (
+                      <div className="h-9 w-9 rounded-full overflow-hidden border-2 border-white shadow-md">
+                        <img
+                          src={userData.image}
+                          alt="user profile"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <User />
+                    )}
+                  </>
+                )}
+              </div>
 
               {/* user dropdown */}
               <ul
                 ref={dropdownRef}
-                className={`user_dropdown ${isUserDropdownOpen ? "block" : "hidden"} bg-gray-100 w-48 rounded-md absolute top-full -right-4/5 shadow-lg z-50`}
+                className={`user_dropdown ${isUserDropdownOpen ? "block" : "hidden"} bg-gray-100 w-48 rounded-md absolute top-full -right-4/5 shadow-lg overflow-hidden z-48`}
               >
+                {
+                  <>
+                    <div className="bg-slate-200 py-2 px-4">
+                      <small className="block! text-left!">
+                        {userData && userData.email}
+                      </small>
+                      <small className="block! text-left! mt-2 text-slate-500">
+                        {userData && userData.name}
+                      </small>
+                    </div>
+                    <NavLink
+                      to={`/orders`}
+                      className="py-3 px-4 border-b border-gray-300 hover:bg-gray-200"
+                    >
+                      My Orders
+                    </NavLink>
+                  </>
+                }
                 {userNavLinks.map((link) => (
                   <li key={link.id} className="w-full">
                     <NavLink
@@ -83,8 +121,24 @@ const Navbar = () => {
                     </NavLink>
                   </li>
                 ))}
+                {isLoggedIn ? (
+                  <li
+                    onClick={handleLogout}
+                    className="py-3 px-2.5 border-b border-gray-300 bg-red-200 text-red-500"
+                  >
+                    Logout
+                  </li>
+                ) : (
+                  <NavLink
+                    to={`/login`}
+                    className="py-3 px-2.5 border-b border-gray-300 hover:bg-gray-200"
+                  >
+                    Login
+                  </NavLink>
+                )}
               </ul>
             </button>
+
             {!shouldHideCart && (
               <button
                 className="cart relative"

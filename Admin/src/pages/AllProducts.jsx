@@ -81,7 +81,7 @@ const AllProducts = () => {
         ...product,
         totalStock,
         isOutOfStock: totalStock === 0,
-        isLowStock: totalStock < 5,
+        isLowStock: totalStock <= 5,
       };
     });
   }, [products, searchTerm, categoryFilter, sortOrder]);

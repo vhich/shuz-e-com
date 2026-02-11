@@ -24,9 +24,9 @@ const ProductInfo = () => {
     const fetchProductDetail = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get(
-          `http://10.102.130.138:4000/api/shuz/products/${id}`,
-        );
+        const { data } = await axios.get(`${backendUrl}/shuz/products/${id}`, {
+          headers: { "cache-control": "no-cache" },
+        });
 
         if (data.success) {
           const fetchedProduct = data.data;
@@ -158,13 +158,13 @@ const ProductInfo = () => {
                     )}
                   </div>
 
-                  <div className="border-t bg-gray-200 pl-4 border-gray-300">
+                  <div className="border-t bg-slate-200 border-gray-300">
                     <div>
-                      <table>
-                        <thead>
-                          <tr className=" border-b border-gray-200 text-gray-600 text-xs uppercase tracking-widest">
-                            <th className="pr-6 py-2 font-medium">Size</th>
-                            <th className="pr-6 py-2 font-medium">Stock</th>
+                      <table className="w-full">
+                        <thead className="bg-slate-300">
+                          <tr className=" border-b border-gray-200 text-slate-600 text-xs uppercase tracking-widest">
+                            <th className="py-2 font-medium">Size</th>
+                            <th className="py-2 font-medium">Stock</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -172,7 +172,7 @@ const ProductInfo = () => {
                             product.sizes?.map((s, index) => (
                               <tr
                                 key={s + `${index}`}
-                                className="py-2 text-gray-700"
+                                className="py-2 text-gray-700 text-center border-b border-gray-500"
                               >
                                 <td>{s.value}</td>
                                 <td>{s.stock}</td>

@@ -14,6 +14,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AllProducts from "./pages/AllProducts";
 import ProductInfo from "./pages/ProductInfo";
 import AdminOrders from "./pages/AdminOrders";
+import OrderDetails from "./pages/OrderDetails";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -42,6 +43,10 @@ const App = () => {
             element={<ProductInfo />}
           ></Route>
           <Route path="/admin/orders" element={<AdminOrders />}></Route>
+          <Route
+            path="/admin/order-details?"
+            element={<OrderDetails />}
+          ></Route>
         </Route>
       </Route>,
     ),

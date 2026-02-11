@@ -86,6 +86,7 @@ export default function CheckoutPage() {
           total: total,
         },
         {
+          withCredentials: true,
           headers: { "Cache-Control": "no-cache" },
         },
       );

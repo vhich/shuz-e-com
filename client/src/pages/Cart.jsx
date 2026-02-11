@@ -82,13 +82,18 @@ const Cart = () => {
     setCartItems((prev) => {
       const updated = { ...prev };
       delete updated[cartKey];
-
       if (isLoggedIn) {
-        axios.post(
-          backendUrl + "/cart/delete",
-          { cartKey },
-          { withCredentials: true },
-        );
+        try {
+          axios.post(
+            backendUrl + "/cart/delete",
+            { cartKey },
+            { withCredentials: true },
+          );
+        } catch (error) {
+          alert("An error occurred!", error);
+        } finally {
+          setLoading(false);
+        }
       }
       return updated;
     });

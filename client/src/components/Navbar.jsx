@@ -93,7 +93,7 @@ const Navbar = () => {
                 ref={dropdownRef}
                 className={`user_dropdown ${isUserDropdownOpen ? "block" : "hidden"} bg-gray-100 w-48 rounded-md absolute top-full -right-4/5 shadow-lg overflow-hidden z-48`}
               >
-                {
+                {isLoggedIn && (
                   <>
                     <div className="bg-slate-200 py-2 px-4">
                       <small className="block! text-left!">
@@ -103,14 +103,16 @@ const Navbar = () => {
                         {userData && userData.name}
                       </small>
                     </div>
-                    <NavLink
-                      to={`/orders`}
-                      className="py-3 px-4 border-b border-gray-300 hover:bg-gray-200"
-                    >
-                      My Orders
-                    </NavLink>
+                    {isLoggedIn && (
+                      <NavLink
+                        to={`/orders`}
+                        className="py-3 px-4 border-b border-gray-300 hover:bg-gray-200"
+                      >
+                        My Orders
+                      </NavLink>
+                    )}
                   </>
-                }
+                )}
                 {userNavLinks.map((link) => (
                   <li key={link.id} className="w-full">
                     <NavLink

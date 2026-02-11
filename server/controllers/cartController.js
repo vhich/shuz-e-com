@@ -38,7 +38,8 @@ export const updateCart = async (req, res) => {
 // DELETE ITEM
 export const deleteFromCart = async (req, res) => {
   try {
-    const { clientId, cartKey } = req.body;
+    const { cartKey } = req.body;
+    const clientId = req.clientId;
     const userData = await clientModel.findById(clientId);
     let cartData = userData.cartData;
 

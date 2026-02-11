@@ -45,19 +45,20 @@ const allowedOrigins = [
   process.env.CLIENT_FRONTEND_URL || "http://localhost:3002",
   "http://10.102.130.138:3001",
   "http://10.102.130.138:3002",
+  "http://10.55.95.138:3001",
+  "http://10.55.95.138:3002",
 ].filter(Boolean);
 
 app.use(
   cors({
-    // This function allows any origin that your browser is currently using
-    origin: function (origin, callback) {
-      // allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-      return callback(null, true);
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "Cache-Control"],
   }),
 );
 

@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export const generateToken = (id, res) => {
+export const generateToken = (id, res, tokenName) => {
   const durationInDays = 2;
   // Convert days to milliseconds for cookie maxAge
   const maxAge = durationInDays * 24 * 60 * 60 * 1000;
@@ -11,7 +11,7 @@ export const generateToken = (id, res) => {
   });
 
   // 2. Set the Cookie
-  res.cookie("ShuzAdminToken", token, {
+  res.cookie(tokenName, token, {
     httpOnly: true, // Prevents client-side JS from reading the cookie
     secure: process.env.NODE_ENV === "production", // Only sent over HTTPS in production
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // "Lax" is usually better than "Strict" for local dev

@@ -1,6 +1,8 @@
 import Order from "../models/order.js";
 import clientModel from "../models/users/clients.js";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import { generateToken } from "../utils/generateToken.js";
 
 export const googleAuth = async (req, res) => {
   try {
@@ -42,6 +44,70 @@ export const googleAuth = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+export const signup = async (req, res) => {
+  try {
+    const { firstName, lastName, email, password } = req.body;
+
+    // 1. Check if user already exists
+    const existingClient = await clientModel.findOne({ email });
+    if (existingClient) {
+      return res.json({ success: false, message: "User already exists" });
+    }
+
+    // 2. Hash the password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // 3. Create new client
+    const newClient = new clientModel({
+      name: `${firstName}${" "}${lastName}`,
+      email,
+      password: hashedPassword,
+    });
+
+    await newClient.save();
+
+    res.json({ success: true, message: "Account created successfully!" });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+export const loginClient = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const client = await clientModel.findOne({ email });
+    if (!client) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Sorry! User not found." });
+    }
+    if (client) {
+      const matchedPassword = await bcrypt.compare(password, client.password);
+      if (!matchedPassword) {
+        return res
+          .status(401)
+          .json({ success: false, message: "Invalid email or password" });
+      }
+    }
+    const token = generateToken(client._id, res, "ShuzClientToken");
+    await client.save();
+
+    res.json({
+      success: true,
+      message: "Login successful!",
+      client: {
+        _id: client._id,
+        email: client.email,
+        token,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
   }
 };
 

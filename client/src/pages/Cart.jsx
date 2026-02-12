@@ -69,8 +69,7 @@ const Cart = () => {
           toast.success(data.message);
         }
       } catch (error) {
-        console.log("Sync error:", error);
-        alert(error?.data?.message);
+        console.log("Sync error:", error?.data?.message);
       } finally {
         setLoading(false);
       }

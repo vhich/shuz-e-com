@@ -110,7 +110,7 @@ export const loginAdmin = async (req, res) => {
         _id: admin._id,
         loggedIn: admin.loggedIn,
         email: admin.email,
-        token: generateToken(admin._id, res),
+        token: generateToken(admin._id, res, "ShuzAdminToken"),
       },
     });
   } catch (error) {

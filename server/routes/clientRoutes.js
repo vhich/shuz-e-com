@@ -1,12 +1,21 @@
 import express from "express";
-import { googleAuth, logoutClient } from "../controllers/clientController.js";
+import {
+  googleAuth,
+  loginClient,
+  logoutClient,
+} from "../controllers/clientController.js";
 import jwt from "jsonwebtoken";
 import clientModel from "../models/users/clients.js";
 import authClient from "../middleware/authClient.js";
+import { signup } from "../controllers/clientController.js";
 
 const clientRouter = express.Router();
 
-clientRouter.post("/google-auth", googleAuth); // <--- Add this new route
+clientRouter.post("/google-auth", googleAuth);
+
+clientRouter.post("/signup", signup);
+clientRouter.post("/login", loginClient);
+
 clientRouter.post("/client-logout", logoutClient);
 clientRouter.get("/check-auth", async (req, res) => {
   try {

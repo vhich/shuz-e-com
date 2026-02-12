@@ -247,6 +247,16 @@ export default function TrackOrder() {
                     ))}
                   </div>
                 </div>
+                {orderData.customerDetails.additionalInfo !== "" && (
+                  <div className="bg-white lg:p-8 p-4 rounded-4xl shadow-sm border border-slate-100">
+                    <h6 className="font-bold mb-6 text-lg">
+                      Added Instruction
+                    </h6>
+                    <div className="space-y-4">
+                      <p>{orderData.customerDetails.additionalInfo}</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* RIGHT SIDE: Shipping & Payment */}

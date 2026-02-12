@@ -73,7 +73,7 @@ const Navbar = () => {
                   <User />
                 ) : (
                   <>
-                    {userData?.image ? (
+                    {userData?.image && userData.image !== "" ? (
                       <div className="h-9 w-9 rounded-full overflow-hidden border-2 border-white shadow-md">
                         <img
                           src={userData.image}
@@ -82,7 +82,9 @@ const Navbar = () => {
                         />
                       </div>
                     ) : (
-                      <User />
+                      <div className="h-9 w-9 bg-green-600 rounded-full overflow-hidden border-2 border-white shadow-md">
+                        <h6 className="text-white">{userData.name[0]}</h6>
+                      </div>
                     )}
                   </>
                 )}
@@ -91,7 +93,7 @@ const Navbar = () => {
               {/* user dropdown */}
               <ul
                 ref={dropdownRef}
-                className={`user_dropdown ${isUserDropdownOpen ? "block" : "hidden"} bg-gray-100 w-48 rounded-md absolute top-full -right-4/5 shadow-lg overflow-hidden z-48`}
+                className={`user_dropdown ${isUserDropdownOpen ? "block" : "hidden"} bg-gray-100 w-60 rounded-md absolute top-full -right-4/5 shadow-lg overflow-hidden z-48`}
               >
                 {isLoggedIn && (
                   <>

@@ -67,7 +67,7 @@ export const AppContextProvider = (props) => {
     try {
       // withCredentials: true is vital to send the cookie
       const response = await axios.post(
-        "http://localhost:4000/api/client/client-logout",
+        `${backendUrl}/client/client-logout`,
         {},
         {
           withCredentials: true,

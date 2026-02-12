@@ -151,7 +151,11 @@ const ClientOrders = () => {
                 {/* Footer: Action Button */}
                 <div className="px-6 py-4 bg-white border-t border-slate-50 flex justify-end">
                   <button
-                    onClick={() => navigate(`/track?id=${order.orderId}`)}
+                    onClick={() =>
+                      navigate(
+                        `/track?id=${order.orderId}&email=${order.customerDetails.email}`,
+                      )
+                    }
                     className="flex items-center gap-2 text-sm font-bold bg-slate-900 text-white px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-colors"
                   >
                     Track Shipment

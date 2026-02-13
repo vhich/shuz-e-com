@@ -24,18 +24,24 @@ export default function CheckoutPage() {
     backendUrl,
     userData,
     setOrderSuccess,
+    isLoggedIn,
   } = useContext(AppContent); // Pull real cart data
   const [orderID, setOrderId] = useState();
   const [clientSecret, setClientSecret] = useState("");
   const cartArray = Object.values(cartItems);
 
   const navigate = useNavigate();
-
+  useEffect(() => {
+    if (userData && isLoggedIn) {
+      setFormData({ ...userData });
+    }
+  }, [userData, isLoggedIn]);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     address: "",
+    optionalAddress: "",
     telephone: "",
     city: "",
     state: "",
@@ -43,6 +49,7 @@ export default function CheckoutPage() {
     additionalInfo: "",
     paymentMethod: "transfer", // Default method
   });
+  const defaultPaymentMethod = "transfer";
   const disablePaymentSelect =
     formData.email === "" ||
     formData.firstName === "" ||
@@ -201,11 +208,17 @@ export default function CheckoutPage() {
                         First Name <span className="text-red-500">*</span>
                       </label>
                       <input
+                        disabled={isLoggedIn && userData.name} // Disable if logged in and data exists
+                        value={
+                          (isLoggedIn && userData.name
+                            ? userData.name.split(" ")[0]
+                            : formData.firstName) || "" // Ensures the value is at least an empty string
+                        }
                         type="text"
                         name="firstName"
                         required
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all"
+                        className={`mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all ${isLoggedIn && userData.name ? "bg-gray-100 opacity-70" : ""}`}
                       />
                     </div>
                     <div>
@@ -213,11 +226,17 @@ export default function CheckoutPage() {
                         Last Name <span className="text-red-500">*</span>
                       </label>
                       <input
+                        disabled={isLoggedIn && userData.name} // Disable if logged in and data exists
+                        value={
+                          (isLoggedIn && userData.name
+                            ? userData.name.split(" ")[1]
+                            : formData.lastName) || "" // Ensures the value is at least an empty string
+                        }
                         type="text"
                         name="lastName"
                         required
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all"
+                        className={`mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all ${isLoggedIn && userData.name ? "bg-gray-100 opacity-70" : ""}`}
                       />
                     </div>
                     <div className="md:col-span-1">
@@ -225,11 +244,17 @@ export default function CheckoutPage() {
                         Email Address <span className="text-red-500">*</span>
                       </label>
                       <input
+                        disabled={isLoggedIn && userData.email} // Disable if logged in and data exists
+                        value={
+                          (isLoggedIn && userData.email
+                            ? userData.email
+                            : formData.email) || ""
+                        } // Show user email if logged in, else show form data
                         type="email"
                         name="email"
                         required
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all"
+                        className={`mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all ${isLoggedIn && userData.email ? "bg-gray-100 opacity-70" : ""}`}
                       />
                     </div>
                     <div className="md:col-span-1">
@@ -237,11 +262,17 @@ export default function CheckoutPage() {
                         Phone number <span className="text-red-500">*</span>
                       </label>
                       <input
+                        disabled={isLoggedIn && userData.telephone} // Disable if logged in and data exists
+                        value={
+                          (isLoggedIn && userData.phoneNumber
+                            ? userData.phoneNumber
+                            : formData.telephone) || ""
+                        }
                         type="number"
                         name="telephone"
                         required
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all"
+                        className={`mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all ${isLoggedIn && userData.phoneNumber ? "bg-gray-100 opacity-70" : ""}`}
                       />
                     </div>
                   </div>
@@ -255,11 +286,29 @@ export default function CheckoutPage() {
                   <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
                     <div className="md:col-span-6">
                       <label className="block text-sm font-medium text-slate-600">
-                        Street Address <span className="text-red-500">*</span>
+                        Address <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        disabled={isLoggedIn && userData.address} // Disable if logged in and data exists
+                        value={
+                          (isLoggedIn && userData.address.street
+                            ? userData.address.street
+                            : formData.address) || ""
+                        } // Show user address if logged in, else show form data
+                        type="text"
+                        name="address"
+                        required
+                        onChange={handleChange}
+                        className={`mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all ${isLoggedIn && userData.address ? "bg-gray-100 opacity-70" : ""}`}
+                      />
+                    </div>
+                    <div className="md:col-span-6">
+                      <label className="block text-sm font-medium text-slate-600">
+                        Address 2 (Optional)
                       </label>
                       <input
                         type="text"
-                        name="address"
+                        name="optionalAddress"
                         required
                         onChange={handleChange}
                         className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all"
@@ -270,11 +319,17 @@ export default function CheckoutPage() {
                         City <span className="text-red-500">*</span>
                       </label>
                       <input
+                        disabled={isLoggedIn && userData.address} // Disable if logged in and data exists
+                        value={
+                          (isLoggedIn && userData.address.city
+                            ? userData.address.city
+                            : formData.city) || ""
+                        }
                         type="text"
                         name="city"
                         required
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all"
+                        className={`mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all ${isLoggedIn && userData.address ? "bg-gray-100 opacity-70" : ""}`}
                       />
                     </div>
                     <div className="md:col-span-2">
@@ -282,11 +337,17 @@ export default function CheckoutPage() {
                         State <span className="text-red-500">*</span>
                       </label>
                       <input
+                        disabled={isLoggedIn && userData.address} // Disable if logged in and data exists
+                        value={
+                          (isLoggedIn && userData.address.state
+                            ? userData.address.state
+                            : formData.state) || ""
+                        }
                         type="text"
                         name="state"
                         required
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all"
+                        className={`mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all ${isLoggedIn && userData.address ? "bg-gray-100 opacity-70" : ""}`}
                       />
                     </div>
                     <div className="md:col-span-2">
@@ -295,10 +356,16 @@ export default function CheckoutPage() {
                         <span className="text-red-500 opacity-0">*</span>
                       </label>
                       <input
+                        disabled={isLoggedIn && userData.address} // Disable if logged in and data exists
+                        value={
+                          (isLoggedIn && userData.address.zipCode
+                            ? userData.address.zipCode
+                            : formData.zip) || ""
+                        }
                         type="text"
                         name="zip"
                         onChange={handleChange}
-                        className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all"
+                        className={`mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all ${isLoggedIn && userData.address ? "bg-gray-100 opacity-70" : ""}`}
                       />
                     </div>
                   </div>
@@ -346,7 +413,7 @@ export default function CheckoutPage() {
                             type="radio"
                             name="paymentMethod"
                             value={method.id}
-                            checked={formData.paymentMethod === method.id}
+                            checked={defaultPaymentMethod === method.id}
                             onChange={handleChange}
                             className="w-4 h-4 accent-black"
                             disabled={disablePaymentSelect}
@@ -446,7 +513,7 @@ export default function CheckoutPage() {
                     form="checkout-form"
                     className={`w-full! pry-btn transition-colors mt-8! ${formData.paymentMethod === "stripe" || disablePaymentSelect ? "cursor-not-allowed! opacity-50" : "opacity-100"}`}
                   >
-                    Place Order ({formData.paymentMethod})
+                    Place Order ({defaultPaymentMethod})
                   </button>
 
                   <p className="text-[10px] text-slate-400 mt-4 text-center px-4">
@@ -529,7 +596,7 @@ export default function CheckoutPage() {
                     <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
                       <div className="md:col-span-6">
                         <label className="block text-sm font-medium text-slate-600">
-                          Street Address <span className="text-red-500">*</span>
+                          Address <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="text"
@@ -537,6 +604,19 @@ export default function CheckoutPage() {
                           required
                           onChange={handleChange}
                           value={formData.address}
+                          className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all"
+                        />
+                      </div>
+                      <div className="md:col-span-6">
+                        <label className="block text-sm font-medium text-slate-600">
+                          Address 2 (Optional)
+                        </label>
+                        <input
+                          type="text"
+                          name="optionalAddress"
+                          required
+                          onChange={handleChange}
+                          value={formData.optionalAddress}
                           className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all"
                         />
                       </div>

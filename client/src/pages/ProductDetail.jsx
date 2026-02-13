@@ -193,7 +193,7 @@ const ProductDetail = () => {
                 <div className="mt-4 flex items-center justify-between">
                   {hasDiscountPrice ? (
                     <div className="price flex gap-2 items-center mb-4">
-                      <h6 className="discount_price text-red-600">
+                      <h6 className="discount_price text-green-600">
                         $
                         {discountPrice.toLocaleString(undefined, {
                           minimumFractionDigits: 2,

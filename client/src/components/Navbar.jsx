@@ -82,8 +82,8 @@ const Navbar = () => {
                         />
                       </div>
                     ) : (
-                      <div className="h-9 w-9 bg-green-600 rounded-full overflow-hidden border-2 border-white shadow-md">
-                        <h6 className="text-white">{userData.name[0]}</h6>
+                      <div className="h-9 w-9 grid place-items-center bg-green-600 rounded-full overflow-hidden border-2 border-white shadow-md">
+                        <b className="text-white text-xl">{userData.name[0]}</b>
                       </div>
                     )}
                   </>

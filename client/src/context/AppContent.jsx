@@ -124,7 +124,7 @@ export const AppContextProvider = (props) => {
   }, [pathname]);
   const globalState = {
     // Define any global state or functions here
-    productId,
+    setUserData,
     setProductId,
     setLoading,
     setAllProduct,
@@ -136,6 +136,7 @@ export const AppContextProvider = (props) => {
     setIsLoggedIn,
     setIsOpen,
     setOrderSuccess,
+    productId,
     loading,
     allProduct,
     product,

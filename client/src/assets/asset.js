@@ -31,6 +31,7 @@ import DinersClub from "./images/icons/DinersClub.png";
 import Mastercard from "./images/icons/Mastercard.png";
 import Stripe from "./images/icons/Stripe.png";
 import Visa from "./images/icons/Visa.png";
+import userImg from "./images/user-img.png";
 
 const assets = {
   logo,
@@ -50,6 +51,7 @@ const assets = {
   season_sale_img1,
   season_sale_img2,
   season_sale_img3,
+  userImg,
 };
 
 const navLinks = [
@@ -76,8 +78,8 @@ const userNavLinks = [
     title: "Track Orders",
   },
   {
-    id: "address_details",
-    title: "Address Details",
+    id: "profile",
+    title: "My Profile",
   },
 ];
 

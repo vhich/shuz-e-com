@@ -16,6 +16,7 @@ import OrderSuccess from "./pages/OrderSuccess";
 import TrackOrder from "./pages/TrackOrder";
 import Login from "./pages/Login";
 import ClientOrders from "./pages/ClientOrders";
+import ClientProfile from "./pages/ClientProfile";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -37,6 +38,7 @@ const App = () => {
           <Route path="/track?" element={<TrackOrder />} />
           <Route path="/login" element={<Login />} />
           <Route path="/orders" element={<ClientOrders />} />
+          <Route path="/profile" element={<ClientProfile />} />
         </Route>
       </Route>,
     ),

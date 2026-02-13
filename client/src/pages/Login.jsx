@@ -26,7 +26,7 @@ const Login = () => {
     if (isLoggedIn) {
       navigate("/");
     }
-  }, []);
+  }, [isLoggedIn, navigate]);
   const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -65,7 +65,14 @@ const Login = () => {
 
         if (data.success) {
           toast.success(data.message);
-          setCurrentState("login");
+          formData.email = "";
+          formData.password = "";
+          formData.confirmPassword = "";
+          formData.firstName = "";
+          formData.lastName = "";
+          setTimeout(() => {
+            setCurrentState("login");
+          }, 500);
         } else {
           toast.error(data.message);
         }

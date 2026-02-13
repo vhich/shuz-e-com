@@ -3,6 +3,7 @@ import clientModel from "../models/users/clients.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { generateToken } from "../utils/generateToken.js";
+import { v2 as cloudinary } from "cloudinary";
 
 export const googleAuth = async (req, res) => {
   try {
@@ -121,5 +122,81 @@ export const logoutClient = async (req, res) => {
     return res.json({ success: true, message: "Logged out successfully!" });
   } catch (error) {
     return res.json({ success: false, message: error.message });
+  }
+};
+
+// client info controllers
+// 1. Update Profile Data (Name, Address, Phone)
+export const updateProfile = async (req, res) => {
+  try {
+    const clientId = req.clientId;
+    let updates = req.body;
+
+    const client = await clientModel.findById(clientId);
+    if (!client) return res.json({ success: false, message: "User not found" });
+
+    // SECURITY: Prevent Google users from changing Name/Email
+    if (client.authSource === "google") {
+      delete updates.name;
+      delete updates.email;
+    }
+
+    const updatedClient = await clientModel
+      .findByIdAndUpdate(
+        clientId,
+        { $set: updates },
+        { new: true, runValidators: true },
+      )
+      .select("-password");
+
+    res.json({
+      success: true,
+      user: updatedClient,
+      message: "Profile updated!",
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// 2. Update Profile Image (Cloudinary)
+export const updateProfileImage = async (req, res) => {
+  try {
+    const clientId = req.clientId;
+    if (!req.file)
+      return res.json({ success: false, message: "No image provided" });
+
+    const image = await cloudinary.uploader.upload(req.file.path, {
+      resource_type: "image",
+      folder: "shuz_profiles",
+    });
+
+    const updatedClient = await clientModel
+      .findByIdAndUpdate(clientId, { image: image.secure_url }, { new: true })
+      .select("-password");
+
+    res.json({ success: true, user: updatedClient });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// 3. Delete Account
+export const deleteAccount = async (req, res) => {
+  try {
+    const { clientId } = req;
+    await clientModel.findByIdAndDelete(clientId);
+
+    res.clearCookie("ShuzClientToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    });
+
+    res.json({ success: true, message: "Account deleted." });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
   }
 };

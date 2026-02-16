@@ -1,9 +1,5 @@
-// export const adminLinks = [
-//     {
-//         id:'account-setting',
-//         link: 'account setting'
-//     },
-//     {
-//         id: ''
-//     }
-// ]
+import noftSound from "./notification-sound.mp3";
+
+export const assets = {
+  noftSound,
+};

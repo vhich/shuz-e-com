@@ -3,9 +3,16 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "./AppContent";
+import { io } from "socket.io-client";
+import { assets } from "../assets/assets";
 
 export const AppContextProvider = (props) => {
   const backendUrl = `http://${window.location.hostname}:4000/api`;
+  const socketBackendUrl =
+    window.location.hostname === "localhost"
+      ? "http://localhost:4000"
+      : `${window.location.origin}`; // Or simply window.location.origin if they share a domain
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
   const [disableForm, setDisableForm] = useState(false);
@@ -13,14 +20,117 @@ export const AppContextProvider = (props) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [isNewNotification, setIsNewNotification] = useState(false);
   // const [currentProduct, setCurrentProduct] = useState(null);
 
   const navigate = useNavigate();
+  const currentAdminId = userData?.id;
+  const hasUnread = notifications.some((n) => {
+    const readBy = n.readBy || [];
+    return !readBy.some((r) => r.adminId === currentAdminId);
+  });
+
+  useEffect(() => {
+    if (hasUnread) {
+      setIsNewNotification(true);
+    } else {
+      setIsNewNotification(false);
+    }
+  }, [hasUnread, notifications]);
+
   useEffect(() => {
     if (!isLoggedIn) {
-      navigate("/");
+      setUserData(null);
     }
-  }, [isLoggedIn, navigate, backendUrl]);
+    if (isLoggedIn) {
+      const socket = io(socketBackendUrl, {
+        withCredentials: true,
+        transports: ["websocket", "polling"], // Force these to ensure compatibility
+      });
+      const fetchNotifications = async () => {
+        // Join the admin room
+        socket.emit("joinAdminRoom");
+        socket.on("newNotification", (notif) => {
+          toast.info(`🔔 ${notif.title}: \n${notif.content}`);
+          setNotifications((prev) => [notif, ...prev]);
+          console.log("New Notif ReadBy:", notif.readBy);
+          setIsNewNotification(true);
+
+          const audio = new Audio(assets.noftSound);
+
+          // Play with a more robust promise handler
+          const playPromise = audio.play();
+
+          if (playPromise !== undefined) {
+            playPromise
+              .then(() => {
+                console.log("Audio playing successfully");
+              })
+              .catch((error) => {
+                // This usually logs: "The play() request was interrupted by a call to pause()"
+                // or "User didn't interact with the document first"
+                console.log(
+                  "Playback prevented. Click anywhere on the page to enable sound." +
+                    error,
+                );
+              });
+          }
+        });
+      };
+      fetchNotifications();
+
+      return () => socket.off("newNotification");
+    }
+  }, [isLoggedIn, socketBackendUrl]);
+
+  const fetchAllNotifications = useCallback(async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/admin/notifications`, {
+        withCredentials: true,
+      });
+      if (data.success) {
+        setNotifications(data.notifications);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  }, [backendUrl]);
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchAllNotifications();
+    }
+  }, [isLoggedIn, fetchAllNotifications]);
+
+  const handleReadNotification = async (id) => {
+    setLoading(true);
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/admin/notifications/read/${id}`,
+        {
+          withCredentials: true,
+          adminId: currentAdminId, // Pass the admin ID to mark as read for this specific admin
+        },
+      );
+      if (data.success) {
+        // Update local state so the dot disappears instantly
+        setNotifications((prev) =>
+          prev.map((n) => (n._id === id ? data.notification : n)),
+        );
+        if (
+          data.notification.readBy.some((r) => r.adminId === currentAdminId)
+        ) {
+          setIsNewNotification(false);
+        }
+      }
+    } catch (err) {
+      console.error("Error marking read", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchAllProducts = useCallback(async () => {
     try {
@@ -204,6 +314,12 @@ export const AppContextProvider = (props) => {
     editMode,
     setEditMode,
     deleteProduct,
+    fetchAllNotifications,
+    handleReadNotification,
+    setNotifications,
+    notifications,
+    isNewNotification,
+    hasUnread,
   };
 
   return (

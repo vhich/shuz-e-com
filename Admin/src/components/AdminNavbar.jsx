@@ -13,15 +13,16 @@ import {
 } from "lucide-react";
 import SidenavLinks from "./SidenavLinks";
 import { useAppContext } from "../context/AppContent";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import Loading from "./Loading";
 
 const AdminNavbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { handleAdminLogout, userData } = useAppContext();
+  const { handleAdminLogout, userData, isNewNotification } = useAppContext();
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Define an array of paths where the cart should be HIDDEN
   const hideCartPaths = ["/admin/upload-product"];
@@ -60,9 +61,12 @@ const AdminNavbar = () => {
             >
               <Menu size={24} />
             </button>
-            <span className="self-center text-xl! font-bold! hidden md:inline-block lg:inline-block whitespace-nowrap text-gray-900">
+            <NavLink
+              to="/admin/dashboard"
+              className="self-center text-xl! font-bold! hidden md:inline-block lg:inline-block whitespace-nowrap text-gray-900"
+            >
               Shuz<span className="text-gray-900">Panel</span>
-            </span>
+            </NavLink>
           </div>
 
           {/* RIGHT: Actions */}
@@ -75,9 +79,16 @@ const AdminNavbar = () => {
             )}
 
             {/* Notification Bell */}
-            <button className="relative p-2 text-gray-500 rounded-lg hover:bg-gray-100 transition-colors">
+            <button
+              className="relative p-2 text-gray-500 rounded-lg hover:bg-gray-100 transition-colors"
+              onClick={() => navigate("/admin/notifications")}
+            >
               <Bell size={20} />
-              <span className="absolute top-2 right-2.5 block w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
+
+              {/* The Red Dot - Only shows if there are unread notifications for THIS admin */}
+              {isNewNotification && (
+                <span className="absolute top-2 right-2.5 block w-2.5 h-2.5 bg-red-500 border border-white rounded-full animate-pulse"></span>
+              )}
             </button>
 
             {/* User Dropdown */}

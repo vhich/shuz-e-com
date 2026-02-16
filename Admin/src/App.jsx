@@ -15,6 +15,7 @@ import AllProducts from "./pages/AllProducts";
 import ProductInfo from "./pages/ProductInfo";
 import AdminOrders from "./pages/AdminOrders";
 import OrderDetails from "./pages/OrderDetails";
+import NotificationPage from "./pages/NotificationPage";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -46,6 +47,10 @@ const App = () => {
           <Route
             path="/admin/order-details?"
             element={<OrderDetails />}
+          ></Route>
+          <Route
+            path="/admin/notifications"
+            element={<NotificationPage />}
           ></Route>
         </Route>
       </Route>,

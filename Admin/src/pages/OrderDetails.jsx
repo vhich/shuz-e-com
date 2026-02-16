@@ -23,12 +23,16 @@ export default function OrderDetails() {
   const [email, setEmail] = useState(searchParams.get("email") || "");
   const [orderData, setOrderData] = useState(null);
 
-  const { backendUrl, loading, setLoading } = useAppContext();
+  const { backendUrl, loading, setLoading, isLoggedIn } = useAppContext();
 
   const steps = ["Pending", "Processing", "Shipped", "Delivered"];
   const currentStepIndex = orderData ? steps.indexOf(orderData.status) : -1;
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    !isLoggedIn && navigate("/");
+  }, [isLoggedIn, navigate]);
 
   // --- LOGIC: Fetch Order ---
   const fetchStatus = useCallback(
@@ -48,7 +52,7 @@ export default function OrderDetails() {
         setLoading(false);
       }
     },
-    [backendUrl, orderId, email],
+    [backendUrl, orderId, email, setLoading],
   );
 
   // --- LOGIC: Cancel Order ---

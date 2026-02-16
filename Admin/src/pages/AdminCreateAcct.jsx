@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   User,
   Mail,
@@ -7,7 +7,7 @@ import {
   UserPlus,
   ArrowLeft,
 } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContent";
 import Loading from "../components/Loading";
 
@@ -19,8 +19,18 @@ const AdminCreateAcct = () => {
     password: "",
     adminKey: "",
   });
-  const { handleAdminCreateAccount, setLoading, setDisableForm, disableForm } =
-    useAppContext();
+  const {
+    handleAdminCreateAccount,
+    setLoading,
+    setDisableForm,
+    disableForm,
+    isLoggedIn,
+  } = useAppContext();
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    isLoggedIn && navigate("/admin/dashboard");
+  }, [isLoggedIn, navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -64,7 +74,7 @@ const AdminCreateAcct = () => {
                     <input
                       type="text"
                       required
-                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-green-500 outline-none transition-all"
+                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-gray-500 outline-none transition-all"
                       placeholder="John"
                       onChange={(e) =>
                         setFormData({ ...formData, firstName: e.target.value })
@@ -83,7 +93,7 @@ const AdminCreateAcct = () => {
                     <input
                       type="text"
                       required
-                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-green-500 outline-none transition-all"
+                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-gray-500 outline-none transition-all"
                       placeholder="Doe"
                       onChange={(e) =>
                         setFormData({ ...formData, lastName: e.target.value })
@@ -105,7 +115,7 @@ const AdminCreateAcct = () => {
                   <input
                     type="email"
                     required
-                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-green-500 outline-none transition-all"
+                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-gray-500 outline-none transition-all"
                     placeholder="admin@brand.com"
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
@@ -127,7 +137,7 @@ const AdminCreateAcct = () => {
                     <input
                       type="password"
                       required
-                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-green-500 outline-none transition-all"
+                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-gray-500 outline-none transition-all"
                       placeholder="••••••••"
                       onChange={(e) =>
                         setFormData({ ...formData, password: e.target.value })
@@ -148,7 +158,7 @@ const AdminCreateAcct = () => {
                     <input
                       type="text"
                       required
-                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-green-500 outline-none transition-all"
+                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-gray-500 outline-none transition-all"
                       placeholder="KEY-1234"
                       onChange={(e) =>
                         setFormData({ ...formData, adminKey: e.target.value })

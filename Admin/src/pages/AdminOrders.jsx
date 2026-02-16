@@ -18,14 +18,14 @@ import SideNav from "../components/SideNav";
 import BottomSpace from "../components/BottomSpace";
 import { useAppContext } from "../context/AppContent";
 import AdminNavbar from "../components/AdminNavbar";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
 
-  const { loading, setLoading, backendUrl } = useAppContext();
+  const { loading, setLoading, backendUrl, isLoggedIn } = useAppContext();
 
   axios.defaults.withCredentials = true;
 
@@ -119,6 +119,11 @@ export default function AdminOrders() {
   useEffect(() => {
     fetchOrders();
   }, []);
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    !isLoggedIn && navigate("/");
+  }, [isLoggedIn, navigate]);
 
   // Inside your component:
   const scrollRef = useRef(null);

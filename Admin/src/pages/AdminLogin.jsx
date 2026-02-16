@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Eye, EyeOff, Lock, Mail, ShieldCheck } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContent";
 import Loading from "../components/Loading";
 
@@ -9,8 +9,13 @@ const AdminLogin = () => {
   //   const [formData, setFormData] = useState({ email: "", password: "" });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { handleAdminLogin, setDisableForm, disableForm, setLoading } =
-    useAppContext();
+  const {
+    handleAdminLogin,
+    setDisableForm,
+    disableForm,
+    setLoading,
+    isLoggedIn,
+  } = useAppContext();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,11 +23,11 @@ const AdminLogin = () => {
     setDisableForm(true);
     handleAdminLogin(email, password);
   };
+  const navigate = useNavigate();
 
-  // const navigate = useNavigate();
-  // useEffect(() => {
-  //   isLoggedIn && navigate("/admin/dashboard");
-  // }, [isLoggedIn, navigate]);
+  useEffect(() => {
+    isLoggedIn && navigate("/admin/dashboard");
+  }, [isLoggedIn, navigate]);
 
   return (
     <div className="h-screen overflow-y-auto flex flex-col items-center bg-[#f0f2f5] py-10">
@@ -47,7 +52,7 @@ const AdminLogin = () => {
               <input
                 type="email"
                 required
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded focus:border-green-600 focus:bg-white transition-all outline-none text-gray-700"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded focus:border-gray-600 focus:bg-white transition-all outline-none text-gray-700"
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
@@ -64,7 +69,7 @@ const AdminLogin = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 required
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded focus:border-green-600 focus:bg-white transition-all outline-none text-gray-700"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded focus:border-gray-600 focus:bg-white transition-all outline-none text-gray-700"
                 onChange={(e) => setPassword(e.target.value)}
               />
               <button
@@ -104,18 +109,12 @@ const AdminLogin = () => {
       </div>
 
       {/* Footer Links */}
-      <div className="mt-6 flex gap-4 text-sm text-gray-500 font-medium">
-        <NavLink
-          to="/admin/change-password"
-          className="hover:text-green-600 transition-colors"
-        >
-          Lost your password?
-        </NavLink>
-        <span>&bull;</span>
-        <NavLink to="/shop" className="hover:text-green-600 transition-colors">
-          Back to Site
-        </NavLink>
-      </div>
+      <NavLink
+        to="/admin/change-password"
+        className="hover:text-green-600 transition-colors text-sm! font-medium! text-left! mt-4 text-gray-600"
+      >
+        Lost your password?
+      </NavLink>
     </div>
   );
 };

@@ -12,11 +12,15 @@ import { HiArrowLeft } from "react-icons/hi2";
 const ProductInfo = () => {
   const [product, setProduct] = useState(null);
 
-  const { backendUrl, setLoading, deleteProduct, setEditMode } =
+  const { backendUrl, setLoading, deleteProduct, setEditMode, isLoggedIn } =
     useAppContext();
 
   const { id } = useParams();
+
   const navigate = useNavigate();
+  useEffect(() => {
+    !isLoggedIn && navigate("/");
+  }, [isLoggedIn, navigate]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });

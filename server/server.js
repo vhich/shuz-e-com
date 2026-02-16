@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import connectDB from "./config/database.js";
+import { createServer } from "http";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -14,31 +15,36 @@ import orderRouter from "./routes/orderRoutes.js";
 import clientRouter from "./routes/clientRoutes.js";
 import cartRouter from "./routes/cartRoutes.js";
 import { stripeWebhook } from "./controllers/orderController.js";
+import { Server } from "socket.io";
 
 const app = express();
+const httpServer = createServer(app);
+
+// Initialize Socket.io
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:3002", // Your frontend URL
+    credentials: true,
+  },
+});
+
+app.set("socketio", io);
+
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
+
+  // Join a specific room (e.g., 'admins') to avoid blasting updates to regular customers
+  socket.on("joinAdminRoom", () => {
+    socket.join("admins");
+    console.log("Admin joined the notification room");
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+  });
+});
 const PORT = process.env.PORT || 4001;
 connectDB();
-
-// app.use((req, res, next) => {
-//   const origin = req.headers.origin;
-//   // This allows ANY origin (localhost:3001, 3002, or your IP) to connect
-//   res.setHeader("Access-Control-Allow-Origin", origin || "*");
-//   res.setHeader(
-//     "Access-Control-Allow-Methods",
-//     "GET, POST, PUT, DELETE, OPTIONS",
-//   );
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "Content-Type, Authorization, X-Requested-With",
-//   );
-//   res.setHeader("Access-Control-Allow-Credentials", "true");
-
-//   // Handle the "pre-flight" check immediately
-//   if (req.method === "OPTIONS") {
-//     return res.sendStatus(200);
-//   }
-//   next();
-// });
 
 const allowedOrigins = [
   process.env.ADMIN_FRONTEND_URL || "http://localhost:3001",
@@ -62,21 +68,6 @@ app.use(
   }),
 );
 
-// app.use(
-//   cors({
-//     origin: function (origin, callback) {
-//       if (!origin) return callback(null, true);
-//       if (allowedOrigins.indexOf(origin) !== -1) {
-//         callback(null, true);
-//       } else {
-//         callback(new Error("Not allowed by CORS"));
-//       }
-//     },
-//     credentials: true, // Required for cookies/headers
-//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Explicitly allow these
-//     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-//   }),
-// );
 // STRIPE WEBHOOK MUST BE BEFORE express.json()
 app.post(
   "/api/order/webhook",
@@ -104,7 +95,7 @@ app.use("/api/order", orderRouter);
 app.use("/api/client", clientRouter);
 app.use("/api/cart", cartRouter);
 
-app.listen(PORT, "0.0.0.0", () => {
+httpServer.listen(PORT, "0.0.0.0", () => {
   const interfaces = os.networkInterfaces();
   let ipAddress = "localhost";
 

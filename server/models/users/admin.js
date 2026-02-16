@@ -15,7 +15,6 @@ const adminSchema = new mongoose.Schema(
     },
     adminKey: { type: String, required: true },
     role: { type: String, default: "admin" },
-    loggedIn: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
@@ -27,5 +26,5 @@ adminSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-const Admin = mongoose.model("Admin", adminSchema);
+const Admin = mongoose.model("admins", adminSchema);
 export default Admin;

@@ -1,4 +1,11 @@
 import mongoose from "mongoose";
+const readBySchema = new mongoose.Schema(
+  {
+    adminId: { type: mongoose.Schema.Types.ObjectId, ref: "admins" },
+    readAt: { type: Date, default: Date.now },
+  },
+  { _id: false },
+); // <--- This prevents the extra ID generation
 
 const notificationSchema = new mongoose.Schema({
   title: { type: String, required: true },
@@ -13,15 +20,30 @@ const notificationSchema = new mongoose.Schema({
     enum: ["low", "medium", "high"],
     default: "low",
   },
-  metadata: {
+  // Who is this for? (null = All Admins, id = Specific User)
+  recipient: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "client",
+    default: null,
+  },
+  loginData: {
     ip: String,
     device: String,
     location: String,
   },
-  // To track who has seen it
-  readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "Admin" }],
-  createdAt: { type: Date, default: Date.now },
+  orderData: {
+    orderId: { type: mongoose.Schema.Types.ObjectId, ref: "orders" },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "clients" },
+    email: String,
+    paymentMethod: String,
+    paymentStatus: String,
+  },
+  // FIX: Track exactly which Admins have read it, or if a Client has read it
+  readBy: [readBySchema], // For Admin notifications
+  isRead: { type: Boolean, default: false }, // For individual Client notifications
+
+  createdAt: { type: Date, default: Date.now, expires: "30d" }, // Auto-delete after 30 days
 });
 
-const Notification = mongoose.model("Notification", notificationSchema);
+const Notification = mongoose.model("notifications", notificationSchema);
 export default Notification;

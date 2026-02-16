@@ -9,6 +9,10 @@ import { protectAdmin } from "../middleware/protectAdmin.js";
 import { setSecurityHeaders } from "../middleware/securityHeader.js";
 import { upload } from "../middleware/upload.js";
 import { createProduct } from "../controllers/productUpload.js";
+import {
+  getAdminNotifications,
+  markAsRead,
+} from "../controllers/notificationController.js";
 
 const router = express.Router();
 
@@ -28,5 +32,8 @@ router.post(
 
 // Protected Data Routes
 router.get("/me", protectAdmin, getAdminData);
+// adminRoute.js
+router.post("/notifications/read/:notificationId", markAsRead);
+router.get("/notifications", protectAdmin, getAdminNotifications);
 
 export default router;

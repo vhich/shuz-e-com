@@ -3,6 +3,9 @@ import { validateFields } from "../utils/validator.js";
 import { generateToken } from "../utils/generateToken.js";
 import bcrypt from "bcryptjs";
 import geoip from "geoip-lite";
+import { UAParser } from "ua-parser-js";
+import { createNotification } from "../utils/notificationHelper.js";
+import notificationModel from "../models/notification.js";
 
 /**
  * @desc    Register a new admin
@@ -64,16 +67,22 @@ export const loginAdmin = async (req, res) => {
     const admin = await Admin.findOne({ email });
 
     // Get IP Address (handles local and proxy IPs)
-    const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    // const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    let ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    if (ip === "::1" || ip === "127.0.0.1") {
+      ip = "Localhost";
+    }
 
-    // Get Device/Browser info
-    const device = req.headers["user-agent"];
+    const parser = new UAParser(req.headers["user-agent"]);
+    const deviceResult = parser.getResult();
+
+    const deviceString = `${deviceResult.browser.name} on ${deviceResult.os.name} ${deviceResult.os.version}`;
 
     // Get Location from IP
     const geo = geoip.lookup(ip);
     const locationString = geo
       ? `${geo.city}, ${geo.country}`
-      : "Unknown Location";
+      : "Development Server";
 
     console.log("Request Body:", req.body);
     if (!admin) {
@@ -89,17 +98,21 @@ export const loginAdmin = async (req, res) => {
           .status(401)
           .json({ success: false, message: "Invalid email or password" });
       }
-      if (admin && matchedPassword) {
-        if (admin.loggedIn === true) {
-          return res.status(401).json({
-            success: false,
-            message: "This admin is logged in already. Use a different email.",
-          });
-        }
-      }
+      // Log the login attempt with device and location info
     }
 
-    admin.loggedIn = true;
+    // Inside your adminLogin controller after successful password check:
+    await createNotification(req, {
+      title: "Admin Login Detected",
+      content: `Admin ${admin.email} accessed the dashboard.`,
+      type: "auth",
+      priority: "high",
+      loginData: {
+        ip: ip, // The IP logic we did earlier
+        device: deviceString, // The UA-Parser logic
+        location: locationString, // The GeoIP logic
+      },
+    });
 
     await admin.save();
 

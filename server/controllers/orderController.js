@@ -2,6 +2,8 @@ import Order from "../models/order.js";
 import Product from "../models/product.js"; // Adjust based on your file name
 import clientModel from "../models/users/clients.js";
 import Stripe from "stripe";
+import { createNotification } from "../utils/notificationHelper.js";
+import { checkStockLevels } from "../utils/inventoryHelper.js";
 
 // orderController.js
 
@@ -134,6 +136,14 @@ export const placeOrder = async (req, res) => {
             $inc: { "sizes.$.stock": -item.quantity }, // The $ is a positional operator for the matched size
           },
         );
+
+        // 2. FETCH the updated product to check its new stock levels
+        const updatedProduct = await Product.findById(item._id);
+
+        // 3. PASS the actual product document to the checker
+        if (updatedProduct) {
+          await checkStockLevels(req, updatedProduct);
+        }
       }),
     );
 
@@ -142,6 +152,26 @@ export const placeOrder = async (req, res) => {
       message: "Order placed successfully!",
       order: newOrder,
     });
+
+    // After order is successfully saved:
+    await createNotification(req, {
+      title: "New Order Received! 👟",
+      content: `A new order for ${newOrder.items.length} items has been placed.`,
+      type: "order",
+      priority: "medium",
+      orderData: {
+        orderId: newOrder._id,
+        userId: newOrder.userId,
+        email: newOrder.email,
+        paymentMethod: newOrder.paymentMethod,
+        paymentStatus: newOrder.paymentStatus,
+      },
+    });
+
+    if (updatedProduct) {
+      console.log("✅ Stock levels updated successfully for the order.");
+      checkStockLevels(req, updatedProduct); // Check if we need to send low stock or out of stock notifications
+    }
   } catch (error) {
     console.error("Order Error:", error);
     res

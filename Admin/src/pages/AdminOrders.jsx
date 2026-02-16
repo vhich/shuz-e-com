@@ -21,41 +21,34 @@ import AdminNavbar from "../components/AdminNavbar";
 import { NavLink, useNavigate } from "react-router-dom";
 
 export default function AdminOrders() {
-  const [orders, setOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
 
-  const { loading, setLoading, backendUrl, isLoggedIn } = useAppContext();
-
-  axios.defaults.withCredentials = true;
-
-  const fetchOrders = async () => {
-    setLoading(true);
-    try {
-      const { data } = await axios.get(`${backendUrl}/order/list`);
-      if (data.success) setOrders(data.orders.reverse());
-    } catch (err) {
-      alert("Failed to load orders");
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { loading, setLoading, backendUrl, isLoggedIn, fetchOrders, orders } =
+    useAppContext();
 
   // --- KPI CALCULATIONS ---
   const stats = useMemo(() => {
-    const totalRevenue = orders.reduce(
-      (sum, o) => (o.status !== "Cancelled" ? sum + o.total : sum),
-      0,
-    );
-    const pendingOrders = orders.filter((o) => o.status === "Pending").length;
-    const completedOrders = orders.filter(
-      (o) => o.status === "Delivered",
-    ).length;
+    const confirmedRevenue = orders.reduce((sum, o) => {
+      // Standardizing case to avoid 'Paid' vs 'paid' bugs
+      const isPaid = o.paymentStatus?.toLowerCase() === "paid";
+      const isDelivered = o.status?.toLowerCase() === "delivered";
+      const isNotCancelled = o.status?.toLowerCase() !== "cancelled";
+
+      // Strictly: Only money from successful, finished transactions
+      return isPaid && isDelivered && isNotCancelled ? sum + o.total : sum;
+    }, 0);
+
+    // New Metric: Total Cash Handled (Money currently in your account, including pending deliveries)
+    const cashInHand = orders.reduce((sum, o) => {
+      return o.paymentStatus?.toLowerCase() === "paid" ? sum + o.total : sum;
+    }, 0);
+
     return {
-      totalRevenue,
-      pendingOrders,
-      completedOrders,
+      confirmedRevenue, // Money from finished business
+      cashInHand, // Total money received (may include items not yet shipped)
+      pendingOrders: orders.filter((o) => o.status === "Pending").length,
+      completedOrders: orders.filter((o) => o.status === "Delivered").length,
       totalOrders: orders.length,
     };
   }, [orders]);
@@ -118,6 +111,14 @@ export default function AdminOrders() {
 
   useEffect(() => {
     fetchOrders();
+    return () => {
+      setLoading(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    document.title = "Admin Dashboard - Orders";
+    document.body.style.overflowY = "hidden";
   }, []);
 
   const navigate = useNavigate();
@@ -166,7 +167,7 @@ export default function AdminOrders() {
       <main className="w-screen">
         <div className="grid lg:grid-cols-[15%_85%] sm:grid-cols-1">
           <SideNav />
-          <section className="bg-gray-50 h-screen w-full overflow-y-auto py-12 px-2 md:px-10 lg:px-15">
+          <section className="bg-green-50 h-screen w-full overflow-y-auto py-12 px-2 md:px-10 lg:px-15">
             <div className="bg-slate-50 font-sans">
               <div className="mx-auto">
                 {/* --- 1. TOP NAV & STATS --- */}
@@ -193,10 +194,25 @@ export default function AdminOrders() {
                 </div>
 
                 {/* --- 2. KPI TILES --- */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-10">
                   <StatCard
-                    title="Total Revenue"
-                    value={`$${stats.totalRevenue.toLocaleString()}`}
+                    title="Confirmed Revenue"
+                    value={`$${stats.confirmedRevenue.toLocaleString(
+                      undefined,
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      },
+                    )}`}
+                    icon={<DollarSign className="text-green-600" />}
+                    color="bg-green-100"
+                  />
+                  <StatCard
+                    title="Cash in Hand"
+                    value={`$${stats.cashInHand.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}`}
                     icon={<DollarSign className="text-green-600" />}
                     color="bg-green-100"
                   />

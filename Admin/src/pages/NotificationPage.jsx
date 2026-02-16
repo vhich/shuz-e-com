@@ -7,8 +7,10 @@ import {
   ShieldAlert,
   Info,
   Clock,
+  ArrowLeft,
 } from "lucide-react";
 import AdminNavbar from "../components/AdminNavbar";
+import { NavLink } from "react-router-dom";
 
 const NotificationPage = () => {
   const { notifications, handleReadNotification, userData } = useAppContext();
@@ -39,9 +41,13 @@ const NotificationPage = () => {
           <h6 className="text-2xl font-black text-slate-900 flex items-center gap-3">
             <Bell className="text-slate-400" /> Notifications
           </h6>
-          <small className="text-slate-400 tracking-widest">
-            <i>Visible to all admin</i>
-          </small>
+          <NavLink
+            to="/admin/dashboard"
+            className="text-sm! text-blue-500 hover:underline flex! items-center gap-1"
+          >
+            <ArrowLeft size={14} />
+            Back to Dashboard
+          </NavLink>
         </div>
 
         <div className="space-y-3">

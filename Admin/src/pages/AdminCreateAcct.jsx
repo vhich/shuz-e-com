@@ -39,9 +39,14 @@ const AdminCreateAcct = () => {
     handleAdminCreateAccount(formData);
   };
 
+  useEffect(() => {
+    document.title = "Admin Dashboard - Create Account";
+    document.body.style.overflowY = "auto"; // Ensure scrolling is enabled on this page
+  }, []);
+
   return (
     <>
-      <div className="h-screen overflow-y-auto bg-gray-50 px-4 py-2">
+      <div className="h-screen overflow-y-auto bg-green-50 px-4 py-2">
         {/* Form Card */}
         <div>
           {/* Right Side: Registration Form */}

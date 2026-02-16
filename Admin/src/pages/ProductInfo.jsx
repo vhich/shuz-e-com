@@ -21,6 +21,10 @@ const ProductInfo = () => {
   useEffect(() => {
     !isLoggedIn && navigate("/");
   }, [isLoggedIn, navigate]);
+  useEffect(() => {
+    document.title = "Admin Dashboard - Product Details";
+    document.body.style.overflowY = "hidden";
+  }, []);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });
@@ -66,7 +70,7 @@ const ProductInfo = () => {
       <main className="w-screen">
         <div className="grid lg:grid-cols-[15%_85%] sm:grid-cols-1">
           <SideNav />
-          <section className="bg-gray-50 h-screen w-full overflow-y-auto py-12 px-2 md:px-10 lg:px-15">
+          <section className="bg-green-50 h-screen w-full overflow-y-auto py-12 px-2 md:px-10 lg:px-15">
             <div className="flex flex-row-reverse mb-12">
               <NavLink
                 to="/admin/products"

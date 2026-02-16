@@ -49,7 +49,7 @@ const AdminNavbar = () => {
   ];
 
   return (
-    <nav className="bg-white border-b border-gray-200 w-full z-30">
+    <nav className="bg-green-200 border-b border-gray-200 w-full z-30">
       <Loading />
       <div className="px-4 lg:px-6">
         <div className="flex items-center justify-between">
@@ -63,7 +63,7 @@ const AdminNavbar = () => {
             </button>
             <NavLink
               to="/admin/dashboard"
-              className="self-center text-xl! font-bold! hidden md:inline-block lg:inline-block whitespace-nowrap text-gray-900"
+              className="self-center text-xl! font-bold! hidden! md:inline-block! lg:inline-block! whitespace-nowrap text-gray-900"
             >
               Shuz<span className="text-gray-900">Panel</span>
             </NavLink>

@@ -51,6 +51,13 @@ const UploadProduct = () => {
     { value: "11", suffix: "11", stock: 0 },
   ]);
 
+  useEffect(() => {
+    document.title = editMode
+      ? "Admin Dashboard - Edit Product"
+      : "Admin Dashboard - Add Product";
+    document.body.style.overflowY = "hidden";
+  }, [editMode]);
+
   // LOGIC: Check for Edit Data on Mount
   useEffect(() => {
     if (!isLoggedIn) {
@@ -216,7 +223,7 @@ const UploadProduct = () => {
       <main className="w-screen">
         <div className="grid lg:grid-cols-[15%_85%] sm:grid-cols-1">
           <SideNav />
-          <section className="bg-gray-50 h-screen w-full overflow-y-auto py-12 px-2 md:px-10 lg:px-15">
+          <section className="bg-green-50 h-screen w-full overflow-y-auto py-12 px-2 md:px-10 lg:px-15">
             <div className="relative bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="bg-green-700 py-8 px-4 text-white">
                 <h6>Product Management</h6>

@@ -78,6 +78,9 @@ export default function OrderDetails() {
     }
   }, [searchParams, fetchStatus]);
   useEffect(() => {
+    document.title = orderData
+      ? `Order #${orderData.orderId} - ${orderData.status}`
+      : "Track Your Order";
     if (orderData === null) {
       document.body.style.overflowY = "hidden";
     } else {
@@ -113,7 +116,7 @@ export default function OrderDetails() {
 
         {/* 1. SEARCH FORM (Only shows if no orderData) */}
         {!orderData ? (
-          <div className="max-w-xl mx-auto bg-white p-10 rounded-md shadow-xl border border-slate-100 overflow-auto">
+          <div className="max-w-xl mx-auto bg-green-50 p-10 rounded-md shadow-xl border border-slate-100 overflow-auto">
             <h6 className="text-3xl font-black">Track Order</h6>
             <p className="text-slate-500 mb-8 font-medium">
               Enter your details to see live delivery updates.

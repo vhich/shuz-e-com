@@ -22,9 +22,11 @@ export const AppContextProvider = (props) => {
   const [editMode, setEditMode] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [isNewNotification, setIsNewNotification] = useState(false);
+  const [orders, setOrders] = useState([]);
   // const [currentProduct, setCurrentProduct] = useState(null);
 
   const navigate = useNavigate();
+
   const currentAdminId = userData?.id;
   const hasUnread = notifications.some((n) => {
     const readBy = n.readBy || [];
@@ -41,6 +43,7 @@ export const AppContextProvider = (props) => {
 
   useEffect(() => {
     if (!isLoggedIn) {
+      // Ensure scrolling is enabled on this page
       setUserData(null);
     }
     if (isLoggedIn) {
@@ -83,6 +86,19 @@ export const AppContextProvider = (props) => {
       return () => socket.off("newNotification");
     }
   }, [isLoggedIn, socketBackendUrl]);
+
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const { data } = await axios.get(`${backendUrl}/order/list`);
+      if (data.success) setOrders(data.orders.reverse());
+    } catch (err) {
+      alert("Failed to load orders");
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchAllNotifications = useCallback(async () => {
     try {
@@ -317,6 +333,9 @@ export const AppContextProvider = (props) => {
     fetchAllNotifications,
     handleReadNotification,
     setNotifications,
+    fetchOrders,
+    orders,
+    setOrders,
     notifications,
     isNewNotification,
     hasUnread,

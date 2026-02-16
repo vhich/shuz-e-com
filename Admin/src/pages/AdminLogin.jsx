@@ -29,8 +29,13 @@ const AdminLogin = () => {
     isLoggedIn && navigate("/admin/dashboard");
   }, [isLoggedIn, navigate]);
 
+  useEffect(() => {
+    document.title = "Admin Dashboard - Login";
+    document.body.style.overflowY = "auto"; // Ensure scrolling is enabled on this page
+  }, []);
+
   return (
-    <div className="h-screen overflow-y-auto flex flex-col items-center bg-[#f0f2f5] py-10">
+    <div className="h-screen overflow-y-auto flex flex-col items-center bg-green-50 py-10">
       {/* Logo Area */}
       <div className="mb-6 flex flex-col items-center">
         <div className="w-16 h-16 bg-white shadow-sm rounded-2xl flex items-center justify-center my-4 border border-gray-100">

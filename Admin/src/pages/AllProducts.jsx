@@ -123,6 +123,11 @@ const AllProducts = () => {
     }
   }, [navigate, isLoggedIn]);
 
+  useEffect(() => {
+    document.title = "Admin Dashboard - Products";
+    document.body.style.overflowY = "hidden";
+  }, []);
+
   return (
     <>
       <Loading />
@@ -130,7 +135,7 @@ const AllProducts = () => {
       <main className="w-screen">
         <div className="grid lg:grid-cols-[15%_85%] sm:grid-cols-1">
           <SideNav />
-          <section className="bg-gray-50 h-screen w-full overflow-y-auto py-12 px-2 md:px-10 lg:px-15">
+          <section className="bg-green-50 h-screen w-full overflow-y-auto py-12 px-2 md:px-10 lg:px-15">
             <div className="p-4 sm:p-8 bg-white rounded-xl shadow-sm border border-gray-100">
               {/* HEADER SECTION */}
               <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
@@ -193,7 +198,7 @@ const AllProducts = () => {
                       <th className="px-6 py-4 font-medium">Product Name</th>
                       <th className="px-6 py-4 font-medium">Category</th>
                       <th className="px-6 py-4 font-medium">Price / DP</th>
-                      <th className="px-6 py-4 font-medium text-right">
+                      <th className="px-6 py-4 font-medium text-center">
                         Action
                       </th>
                     </tr>
@@ -275,7 +280,7 @@ const AllProducts = () => {
                             </td>
                           )}
 
-                          <td className="px-6 py-4 text-center flex">
+                          <td className="px-6 py-4 text-center flex justify-center">
                             <button
                               onClick={() => deleteProduct(item._id)}
                               className="text-gray-400 hover:text-red-600 transition-colors p-2"

@@ -154,7 +154,7 @@ const ClientProfile = () => {
 
         {/* 2. Profile Photo Section */}
         <div
-          className={`flex flex-col items-center mb-12 bg-slate-200 rounded-2xl py-6 ${isEditing && isGoogleUser && "hidden"}`}
+          className={`flex flex-col items-center mb-12 bg-green-200 rounded-2xl py-6 ${isEditing && isGoogleUser && "hidden"}`}
         >
           <div className="relative group">
             <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-2xl">
@@ -184,9 +184,7 @@ const ClientProfile = () => {
             <p className="text-xl! font-medium! text-slate-900">
               {userData.name}
             </p>
-            <p className="text-sm font-medium text-slate-400">
-              {userData.email}
-            </p>
+            <p className="font-medium text-green-800">{userData.email}</p>
             {isGoogleUser && (
               <span className="font-medium! text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full mt-2 inline-block uppercase">
                 Verified Google Account
@@ -203,11 +201,11 @@ const ClientProfile = () => {
                 <User size={20} />
                 Full Name
               </label>
-              <b
-                className={`text-gray-800 tracking-wide ${isEditing ? "hidden" : "block"}`}
+              <p
+                className={`text-gray-800 tracking-wide ${isEditing ? "hidden" : "block"} font-medium!`}
               >
                 {userData.name}
-              </b>
+              </p>
             </div>
 
             <input
@@ -227,11 +225,11 @@ const ClientProfile = () => {
                 <Phone size={20} />
                 Contact Phone
               </label>
-              <b
-                className={`text-gray-800 tracking-wide ${isEditing ? "hidden" : "block"}`}
+              <p
+                className={`text-gray-800 tracking-wide ${isEditing ? "hidden" : "block"} font-medium!`}
               >
                 {userData.phoneNumber || "Not set"}
-              </b>
+              </p>
             </div>
             <input
               type="text"
@@ -247,7 +245,58 @@ const ClientProfile = () => {
             />
           </div>
 
-          <div className="border border-slate-400 rounded-2xl p-6">
+          {!isEditing && (
+            <div className="border border-slate-400 rounded-2xl p-6">
+              <h6 className=" text-slate-600 uppercase ml-1 mb-8 flex items-center gap-2">
+                <MapPin size={25} />
+                Shipping Address
+              </h6>
+              <div className="grid grid-cols-2 items-baseline justify-between bg-slate-100 p-2 mb-4 rounded-lg">
+                <label className="text-[12px] font-bold text-slate-600 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  Address:
+                </label>
+                <p
+                  className={`text-gray-800 tracking-wide ${isEditing ? "hidden" : "block"} font-medium! line-clamp-1 text-left`}
+                >
+                  {userData.address.street || "Not set"}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 items-baseline justify-between bg-slate-100 p-2 mb-4 rounded-lg">
+                <label className="text-[12px] font-bold text-slate-600 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  State:
+                </label>
+                <p
+                  className={`text-gray-800 tracking-wide ${isEditing ? "hidden" : "block"} font-medium! text-left`}
+                >
+                  {userData.address.state || "Not set"}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 items-baseline justify-between bg-slate-100 p-2 mb-4 rounded-lg">
+                <label className="text-[12px] font-bold text-slate-600 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  City:
+                </label>
+                <p
+                  className={`text-gray-800 tracking-wide ${isEditing ? "hidden" : "block"} font-medium! text-left`}
+                >
+                  {userData.address.city || "Not set"}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 items-baseline justify-between bg-slate-100 p-2 mb-4 rounded-lg">
+                <label className="text-[12px] font-bold text-slate-600 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  Zipcode:
+                </label>
+                <p
+                  className={`text-gray-800 tracking-wide ${isEditing ? "hidden" : "block"} font-medium! text-left`}
+                >
+                  {userData.address.zipCode || "Not set"}
+                </p>
+              </div>
+            </div>
+          )}
+
+          <div
+            className={`border border-slate-400 rounded-2xl p-6 ${!isEditing && "hidden"}`}
+          >
             <h6 className=" text-slate-600 uppercase ml-1 mb-8 flex items-center gap-2">
               <MapPin size={25} /> Shipping Address
             </h6>
@@ -292,7 +341,7 @@ const ClientProfile = () => {
 
         {/* 4. Danger Zone */}
         {!isEditing && (
-          <div className="mt-16 pt-8 border-t border-red-50 flex flex-row-reverse">
+          <div className="mt-9 pt-8 border-t border-red-50 flex flex-row-reverse">
             <button
               onClick={() => setShowDeleteModal(true)}
               className="p-3.5 flex items-center gap-2 bg-red-200 text-red-700 hover:text-red-800 hover:bg-red-300 rounded-2xl transition-all"

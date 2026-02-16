@@ -49,7 +49,7 @@ const ClientOrders = () => {
   return (
     <div className="bg-slate-50 min-h-screen pb-12 px-4">
       <Navbar />
-      <div className="max-w-6xl mx-auto">
+      <div className="container">
         <div className="flex items-center gap-3 mb-8">
           <Package size={28} className="text-slate-800" />
           <h4 className="text-2xl font-black text-slate-900 uppercase tracking-tight">
@@ -79,12 +79,12 @@ const ClientOrders = () => {
                 {/* Header: ID and Date */}
                 <div className="bg-slate-100 px-6 py-4 flex flex-wrap justify-between items-center border-b border-slate-100 gap-4">
                   <div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
-                      Order ID
-                    </p>
-                    <p className="font-mono font-bold text-slate-900">
+                    <span className="text-[10px] font-bold text-slate-400 tracking-widest mb-1">
+                      Order ID:{" "}
+                    </span>
+                    <span className="font-mono font-bold text-slate-900">
                       #{order.orderId}
-                    </p>
+                    </span>
                     <p className=" text-slate-500 mt-1.5 flex items-center gap-1.5">
                       <span className="font-medium text-xs!">
                         {new Date(order.createdAt).toLocaleDateString("en-US", {
@@ -156,9 +156,9 @@ const ClientOrders = () => {
                         `/track?id=${order.orderId}&email=${order.customerDetails.email}`,
                       )
                     }
-                    className="flex items-center gap-2 text-sm font-bold bg-slate-900 text-white px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-colors"
+                    className="flex items-center gap-2 text-sm! font-medium! bg-slate-900 text-white px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-colors"
                   >
-                    Track Shipment
+                    Track Order
                     <ChevronRight size={16} />
                   </button>
                 </div>

@@ -93,11 +93,11 @@ const Navbar = () => {
               {/* user dropdown */}
               <ul
                 ref={dropdownRef}
-                className={`user_dropdown ${isUserDropdownOpen ? "block" : "hidden"} bg-gray-100 w-60 rounded-md absolute top-full -right-4/5 shadow-lg overflow-hidden z-48`}
+                className={`user_dropdown ${isUserDropdownOpen ? "block" : "hidden"} bg-white w-60 rounded-md absolute top-full -right-4/5 shadow-lg overflow-hidden z-48`}
               >
                 {isLoggedIn && (
                   <>
-                    <div className="bg-slate-200 py-2 px-4">
+                    <div className="bg-green-100 py-2 px-4">
                       <small className="block! text-left!">
                         {userData && userData.email}
                       </small>
@@ -106,12 +106,14 @@ const Navbar = () => {
                       </small>
                     </div>
                     {isLoggedIn && (
-                      <NavLink
-                        to={`/orders`}
-                        className="py-3 px-4 border-b border-gray-300 hover:bg-gray-200"
-                      >
-                        My Orders
-                      </NavLink>
+                      <li className="w-full">
+                        <NavLink
+                          to={`/orders`}
+                          className="py-3 border-b border-gray-300 hover:bg-gray-200"
+                        >
+                          My Orders
+                        </NavLink>
+                      </li>
                     )}
                   </>
                 )}
@@ -119,7 +121,7 @@ const Navbar = () => {
                   <li key={link.id} className="w-full">
                     <NavLink
                       to={`/${link.id}`}
-                      className="py-3 px-2.5 border-b border-gray-300 hover:bg-gray-200"
+                      className="py-3 border-b border-gray-300 hover:bg-gray-200"
                     >
                       {link.title}
                     </NavLink>
@@ -128,17 +130,19 @@ const Navbar = () => {
                 {isLoggedIn ? (
                   <li
                     onClick={handleLogout}
-                    className="py-3 px-2.5 border-b border-gray-300 bg-red-200 text-red-500"
+                    className="logout py-3 border-b border-gray-300 bg-slate-100 text-slate-700"
                   >
                     Logout
                   </li>
                 ) : (
-                  <NavLink
-                    to={`/login`}
-                    className="py-3 px-2.5 border-b border-gray-300 hover:bg-gray-200"
-                  >
-                    Login
-                  </NavLink>
+                  <li className="w-full">
+                    <NavLink
+                      to={`/login`}
+                      className="py-3 border-b border-gray-300 hover:bg-gray-200"
+                    >
+                      Login
+                    </NavLink>
+                  </li>
                 )}
               </ul>
             </button>

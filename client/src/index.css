@@ -196,6 +196,15 @@ button {
   width: 90%;
   margin: auto;
 }
+.user_dropdown a {
+  padding-left: 1rem;
+}
+.user_dropdown .logout {
+  padding-left: 1rem;
+}
+.user_dropdown li {
+  text-align: left;
+}
 
 @media (max-width: 1000px) {
   .container {

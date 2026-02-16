@@ -26,16 +26,10 @@ export default function CheckoutPage() {
     setOrderSuccess,
     isLoggedIn,
   } = useContext(AppContent); // Pull real cart data
+
   const [orderID, setOrderId] = useState();
   const [clientSecret, setClientSecret] = useState("");
   const cartArray = Object.values(cartItems);
-
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (userData && isLoggedIn) {
-      setFormData({ ...userData });
-    }
-  }, [userData, isLoggedIn]);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -49,7 +43,38 @@ export default function CheckoutPage() {
     additionalInfo: "",
     paymentMethod: "transfer", // Default method
   });
-  const defaultPaymentMethod = "transfer";
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (userData && isLoggedIn) {
+      setFormData({
+        ...userData,
+        paymentMethod: "transfer",
+        firstName: userData.name ? userData.name.split(" ")[0] : "",
+        lastName: userData.name ? userData.name.split(" ")[1] : "",
+        email: userData.email || "",
+        address: userData.address.street || "",
+        city: userData.address.city || "",
+        state: userData.address.state || "",
+        zip: userData.address.zipCode || "",
+      });
+    } else {
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        address: "",
+        optionalAddress: "",
+        telephone: "",
+        city: "",
+        state: "",
+        zip: "",
+        additionalInfo: "",
+        paymentMethod: "transfer",
+      });
+    }
+  }, [userData, isLoggedIn]);
+
   const disablePaymentSelect =
     formData.email === "" ||
     formData.firstName === "" ||
@@ -121,8 +146,11 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isLoggedIn && userData.address && userData.address.street) {
+      delete userData.address.street; // Remove street to avoid confusion with the "address" field in the form
+    }
     setLoading(true);
-    if (formData.telephone.length < 10) {
+    if (!isLoggedIn && formData.telephone.length < 10) {
       toast.error("Invalid Phone number");
       setLoading(false);
       return;
@@ -289,7 +317,11 @@ export default function CheckoutPage() {
                         Address <span className="text-red-500">*</span>
                       </label>
                       <input
-                        disabled={isLoggedIn && userData.address} // Disable if logged in and data exists
+                        disabled={
+                          isLoggedIn &&
+                          userData.address &&
+                          userData.address.street
+                        } // Disable if logged in and data exists
                         value={
                           (isLoggedIn && userData.address.street
                             ? userData.address.street
@@ -309,7 +341,6 @@ export default function CheckoutPage() {
                       <input
                         type="text"
                         name="optionalAddress"
-                        required
                         onChange={handleChange}
                         className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring focus:ring-gray-400 focus:outline-none transition-all"
                       />
@@ -413,7 +444,7 @@ export default function CheckoutPage() {
                             type="radio"
                             name="paymentMethod"
                             value={method.id}
-                            checked={defaultPaymentMethod === method.id}
+                            checked={formData.paymentMethod === method.id}
                             onChange={handleChange}
                             className="w-4 h-4 accent-black"
                             disabled={disablePaymentSelect}
@@ -513,7 +544,7 @@ export default function CheckoutPage() {
                     form="checkout-form"
                     className={`w-full! pry-btn transition-colors mt-8! ${formData.paymentMethod === "stripe" || disablePaymentSelect ? "cursor-not-allowed! opacity-50" : "opacity-100"}`}
                   >
-                    Place Order ({defaultPaymentMethod})
+                    Place Order ({formData.paymentMethod})
                   </button>
 
                   <p className="text-[10px] text-slate-400 mt-4 text-center px-4">

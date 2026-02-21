@@ -77,10 +77,14 @@ export default function AdminOrders() {
   const updateStatus = async (orderId, newStatus) => {
     setLoading(true);
     try {
-      const { data } = await axios.post(`${backendUrl}/order/status`, {
-        orderId,
-        status: newStatus,
-      });
+      const { data } = await axios.post(
+        `${backendUrl}/order/status`,
+        {
+          orderId,
+          status: newStatus,
+        },
+        { withCredentials: true },
+      );
       if (data.success) {
         fetchOrders();
         toast.success(`Order updated to ${newStatus}`);
@@ -94,10 +98,14 @@ export default function AdminOrders() {
   const updatePayment = async (orderId, newPayment) => {
     setLoading(true);
     try {
-      const { data } = await axios.post(`${backendUrl}/order/payment-status`, {
-        orderId,
-        paymentStatus: newPayment,
-      });
+      const { data } = await axios.post(
+        `${backendUrl}/order/payment-status`,
+        {
+          orderId,
+          paymentStatus: newPayment,
+        },
+        { withCredentials: true },
+      );
       if (data.success) {
         fetchOrders();
         toast.success(data.message);
@@ -405,8 +413,22 @@ export default function AdminOrders() {
                                       >
                                         Processing
                                       </option>
-                                      <option value="Shipped">Shipped</option>
-                                      <option value="Delivered">
+                                      <option
+                                        value="Shipped"
+                                        disabled={
+                                          order.paymentStatus.toLowerCase() !==
+                                          "paid"
+                                        }
+                                      >
+                                        Shipped
+                                      </option>
+                                      <option
+                                        value="Delivered"
+                                        disabled={
+                                          order.paymentStatus.toLowerCase() !==
+                                          "paid"
+                                        }
+                                      >
                                         Delivered
                                       </option>
                                       <option

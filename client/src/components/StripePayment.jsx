@@ -6,6 +6,7 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { toast } from "react-toastify";
+// import { useNavigate } from 'react-router-dom';
 
 // StripePayment.jsx
 
@@ -14,6 +15,7 @@ const StripePayment = ({ amount, orderId, paymentType }) => {
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!stripe || !elements) return;
@@ -23,25 +25,26 @@ const StripePayment = ({ amount, orderId, paymentType }) => {
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        // Now using dynamic props for the return URL
+        // Redirects user after payment
         return_url: `${window.location.origin}/order-success/${orderId}?type=${paymentType}`,
       },
     });
 
     if (error) {
-      toast.error(error.message);
+      // Show error to customer (e.g., card declined)
+      console.error(error.message);
+      alert(error.message);
     }
+
     setIsProcessing(false);
+    toast.info("Redirecting to payment confirmation...");
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4 w-fit"
-      disabled={isProcessing || !stripe}
-    >
+    <form onSubmit={handleSubmit} className="space-y-4">
       <PaymentElement />
       <button
+        type="submit"
         disabled={isProcessing || !stripe}
         className="w-full bg-black text-white py-4 rounded-xl font-bold hover:bg-slate-800 transition-all disabled:bg-slate-400"
       >

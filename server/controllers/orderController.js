@@ -13,8 +13,8 @@ export const stripeWebhook = async (req, res) => {
   const sig = req.headers["stripe-signature"];
   let event;
 
-  // Use the 'stripe' instance defined above
   try {
+    // req.body MUST be the raw buffer, not a parsed JSON object
     event = stripe.webhooks.constructEvent(
       req.body,
       sig,
@@ -24,25 +24,33 @@ export const stripeWebhook = async (req, res) => {
     console.log(`❌ Webhook Error: ${err.message}`);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
-
   if (event.type === "payment_intent.succeeded") {
     const paymentIntent = event.data.object;
+    // Ensure this matches the key name used in createPaymentIntent metadata
     const orderId = paymentIntent.metadata.orderId;
+    console.log(`🔔 Payment succeeded for Order ID: ${orderId}`);
 
     try {
-      // Use findOneAndUpdate to match your custom 'orderId' string
-      await Order.findOneAndUpdate(
-        { orderId: orderId },
+      const updatedOrder = await Order.findOneAndUpdate(
+        { orderId: orderId }, // Search by your custom string ID
         {
-          paymentStatus: "Paid", // Updated to match your String schema
+          paymentStatus: "Paid",
           status: "Pending",
         },
+        { new: true },
       );
-      console.log(`✅ Order ${orderId} successfully updated to PAID.`);
+      console.log(updatedOrder);
+
+      if (updatedOrder) {
+        console.log(`✅ Order ${orderId} successfully updated to PAID.`);
+      } else {
+        console.log(`⚠️ Order ${orderId} not found in database.`);
+      }
     } catch (error) {
       console.error(`❌ DB Update Error: ${error.message}`);
     }
   }
+
   res.json({ received: true });
 };
 
@@ -50,10 +58,9 @@ export const createPaymentIntent = async (req, res) => {
   try {
     const { items, clientId, orderId, customerDetails, total } = req.body;
 
-    // Use findOneAndUpdate with upsert: true
-    // This prevents the "Duplicate Key" error if the frontend calls this twice
+    // 1. Create/Update Order record
     await Order.findOneAndUpdate(
-      { orderId: orderId }, // Search by this
+      { orderId: orderId },
       {
         user: clientId || null,
         items,
@@ -63,16 +70,19 @@ export const createPaymentIntent = async (req, res) => {
         paymentStatus: "Unpaid",
         status: "Pending",
       },
-      { upsert: true, new: true }, // Create if doesn't exist, update if it does
+      { upsert: true, new: true },
     );
 
+    // 2. Create Stripe Intent with consistent metadata
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(total * 100),
       currency: "usd",
-      metadata: { orderId },
+      metadata: { orderId: orderId }, // Key name must match webhook
       automatic_payment_methods: { enabled: true },
     });
+    console.log(paymentIntent.metadata);
 
+    // 3. Clear cart if user is logged in
     if (clientId && clientId !== "null") {
       await clientModel.findByIdAndUpdate(clientId, { cartData: {} });
     }
@@ -83,7 +93,7 @@ export const createPaymentIntent = async (req, res) => {
     });
   } catch (error) {
     console.error("Stripe Error:", error);
-    res.json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 

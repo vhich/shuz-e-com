@@ -102,9 +102,12 @@ export const AppContextProvider = (props) => {
 
   const fetchAllNotifications = useCallback(async () => {
     try {
-      const { data } = await axios.get(`${backendUrl}/admin/notifications`, {
-        withCredentials: true,
-      });
+      const { data } = await axios.get(
+        `${backendUrl}/admin/notifications?limit=10`,
+        {
+          withCredentials: true,
+        },
+      );
       if (data.success) {
         setNotifications(data.notifications);
       } else {

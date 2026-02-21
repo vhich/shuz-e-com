@@ -1,6 +1,6 @@
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import { Autoplay, Navigation } from "swiper/modules";
 import { HiArrowLeft, HiArrowRight } from "react-icons/hi2"; // Modern icons
 import { reviews } from "../assets/asset";
 import ReviewCard from "./ReviewCard";
@@ -12,7 +12,7 @@ import "swiper/css/pagination";
 const Reviews = () => {
   return (
     <section className="py-20 relative">
-      <div className="container relative">
+      <div className="max-w-6xl mx-auto relative">
         <h4 className="text-4xl font-bold text-gray-900 mb-6 capitalize text-center">
           Happy customer reviews
         </h4>
@@ -39,8 +39,8 @@ const Reviews = () => {
           }}
         >
           {reviews.map((review, index) => (
-            <SwiperSlide className="my-8">
-              <ReviewCard review={review} key={index} />
+            <SwiperSlide className="my-8" key={index}>
+              <ReviewCard review={review} />
             </SwiperSlide>
           ))}
         </Swiper>

@@ -24,6 +24,7 @@ export default function CheckoutPage() {
     backendUrl,
     userData,
     setOrderSuccess,
+    orderSuccess,
     isLoggedIn,
   } = useContext(AppContent); // Pull real cart data
 
@@ -127,6 +128,7 @@ export default function CheckoutPage() {
         setClientSecret(response.data.clientSecret);
         setOrderSuccess(true);
         setOrderId(orderId);
+        console.log(orderId);
       }
     } catch (error) {
       console.error("Stripe Init Error", error);
@@ -143,6 +145,11 @@ export default function CheckoutPage() {
       initStripePayment();
     }
   }, [formData.paymentMethod, clientSecret]);
+  useEffect(() => {
+    if (orderSuccess) {
+      console.log("State orderID:" + orderID);
+    }
+  }, [orderID]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -37,8 +37,9 @@ export const getAdminNotifications = async (req, res) => {
       .find({ recipient: null })
       .sort({ createdAt: -1 })
       .limit(20);
-
-    res.json({ success: true, notifications });
+    const limit = parseInt(req.query.limit) || 10;
+    const limitedNotifications = notifications.slice(0, limit);
+    res.json({ success: true, notifications: limitedNotifications });
   } catch (error) {
     res.json({ success: false, message: error.message });
   }

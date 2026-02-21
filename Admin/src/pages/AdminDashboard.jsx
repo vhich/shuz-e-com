@@ -725,7 +725,7 @@ const AdminDashboard = () => {
                         <th className="px-6 py-4">telephone</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-50">
+                    <tbody className="divide-y divide-gray-50 text-sm!">
                       {customerStats.list.map((customer, index) => (
                         <tr key={index}>
                           <td className="px-6 py-4">{customer.name}</td>

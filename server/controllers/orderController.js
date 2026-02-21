@@ -152,6 +152,7 @@ export const placeOrder = async (req, res) => {
 
         // 3. PASS the actual product document to the checker
         if (updatedProduct) {
+          console.log("✅ Stock levels updated successfully for the order.");
           await checkStockLevels(req, updatedProduct);
         }
       }),
@@ -177,11 +178,6 @@ export const placeOrder = async (req, res) => {
         paymentStatus: newOrder.paymentStatus,
       },
     });
-
-    if (updatedProduct) {
-      console.log("✅ Stock levels updated successfully for the order.");
-      checkStockLevels(req, updatedProduct); // Check if we need to send low stock or out of stock notifications
-    }
   } catch (error) {
     console.error("Order Error:", error);
     res

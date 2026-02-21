@@ -68,7 +68,6 @@ const UploadProduct = () => {
     // If location.state contains a product, we are in Edit Mode
     if (location.state && location.state.product) {
       const p = location.state.product;
-      setEditMode(true);
       setProductId(p._id);
       setProductData({
         name: p.name,
@@ -107,6 +106,10 @@ const UploadProduct = () => {
     }
   };
 
+  useEffect(() => {
+    console.log(editMode);
+  }, [editMode]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -142,35 +145,33 @@ const UploadProduct = () => {
     }
 
     try {
-      let response;
-      if (editMode) {
-        // UPDATE LOGIC
-        response = await axios.put(
-          `${backendUrl}/update-product/${productId}`,
-          formData,
-          {
+      let response = editMode
+        ? await axios.put(
+            `${backendUrl}/update-product/${productId}`,
+            formData,
+            {
+              withCredentials: true,
+              headers: { "Content-Type": "multipart/form-data" },
+            },
+          )
+        : await axios.post(`${backendUrl}/admin/add-product`, formData, {
             withCredentials: true,
             headers: { "Content-Type": "multipart/form-data" },
-          },
-        );
-      } else {
-        // UPLOAD LOGIC
-        response = await axios.post(`${backendUrl}/add-product`, formData, {
-          withCredentials: true,
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-      }
+          });
 
       if (response.data.success) {
         toast.success(editMode ? "Product Updated!" : "Product Published!");
         setIsModalOpen(false);
         setEditMode(false);
+        setProductId(null);
         navigate("/admin/products");
+      } else {
+        toast.error(response.data.message || "Operation failed");
       }
     } catch (err) {
       console.log(err);
 
-      toast.error("Operation failed");
+      toast.error(err?.response?.data?.message || "Operation failed");
     } finally {
       setLoading(false);
       setDisableForm(false);
@@ -208,6 +209,28 @@ const UploadProduct = () => {
     setRecentProduct(previewData);
     setIsModalOpen(true);
   }
+  const closePreviewProduct = () => {
+    setIsModalOpen(false);
+    if (editMode) {
+      setEditMode(false);
+      setProductId(null);
+    }
+    setProductData({
+      name: "",
+      sku: "",
+      price: "",
+      discount: 0,
+      description: "",
+    });
+    setSelectedCategories([]);
+    setSizes([
+      { value: "8", suffix: "08", stock: 0 },
+      { value: "9", suffix: "09", stock: 0 },
+      { value: "10", suffix: "10", stock: 0 },
+      { value: "11", suffix: "11", stock: 0 },
+    ]);
+    setImagePreview(null);
+  };
 
   return (
     <>
@@ -215,7 +238,8 @@ const UploadProduct = () => {
       {isModalOpen && (
         <ProductPreview
           product={recentProduct}
-          onClose={() => setIsModalOpen(false)}
+          onClose={closePreviewProduct}
+          editMode={editMode}
           handleSubmit={(e) => handleSubmit(e)}
         />
       )}

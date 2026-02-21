@@ -294,7 +294,6 @@ export const AppContextProvider = (props) => {
         );
         if (data.success) {
           toast.success("Product removed");
-          setLoading(false);
           navigate("/admin/products");
         }
       } catch (error) {
@@ -302,6 +301,9 @@ export const AppContextProvider = (props) => {
           "Failed to delete product.\nPlease check internet connection and try again.",
         );
         console.log(error);
+      } finally {
+        setLoading(false);
+        fetchAllProducts();
       }
     }
   };

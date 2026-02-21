@@ -1,8 +1,7 @@
 import React from "react";
-import { useAppContext } from "../context/AppContent";
+// import { useAppContext } from "../context/AppContent";
 
-const ProductPreview = ({ product, onClose, handleSubmit }) => {
-  const { editMode } = useAppContext();
+const ProductPreview = ({ product, onClose, handleSubmit, editMode }) => {
   return (
     <div className="fixed inset-0 z-45 flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
       <div className="bg-white w-full max-w-5xl max-h-[90vh] rounded-4xl overflow-hidden shadow-2xl flex flex-col md:flex-row relative animate-in fade-in zoom-in duration-300">

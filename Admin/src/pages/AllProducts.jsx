@@ -18,6 +18,7 @@ const AllProducts = () => {
     setEditMode,
     deleteProduct,
     backendUrl,
+    editMode,
   } = useAppContext();
   const [showAll, setShowAll] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,6 +31,10 @@ const AllProducts = () => {
   useEffect(() => {
     fetchAllProducts();
   }, [fetchAllProducts]);
+
+  useEffect(() => {
+    console.log(editMode);
+  }, [editMode]);
 
   // 2. useMemo Hooks (Top Level - NEVER inside a function)
   const uniqueCategories = useMemo(() => {
@@ -357,7 +362,7 @@ const AllProducts = () => {
                 <div className="mt-8 text-center">
                   <button
                     onClick={() => setShowAll(!showAll)}
-                    className="px-8 py-3 bg-gray-900 text-white rounded-full font-bold text-sm uppercase tracking-widest hover:bg-black transition-all shadow-lg"
+                    className="px-8 py-3  font-medium! text-sm uppercase tracking-widest transition-all"
                   >
                     {showAll
                       ? "Show Less"

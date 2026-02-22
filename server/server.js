@@ -64,6 +64,8 @@ app.use(
     origin: [
       "http://localhost:3001",
       "http://localhost:3002",
+      "https://shuz-e-com-frontend-client.onrender.com",
+      "https://shuz-e-com-frontend-admin.onrender.com",
       "https://shuz-e-com-frontend-admin.onrender.com/api",
       "https://shuz-e-com-frontend-client.onrender.com/api",
       process.env.CLIENT_FRONTEND_URL,

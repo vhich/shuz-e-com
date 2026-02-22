@@ -63,13 +63,7 @@ export const AppContextProvider = (props) => {
     setLoading(true);
     try {
       // withCredentials: true is vital to send the cookie
-      const response = await api.post(
-        `${backendUrl}/client/logout`,
-        {},
-        {
-          withCredentials: true,
-        },
-      );
+      const response = await api.post(`${backendUrl}/client/logout`, {});
       if (response.data.success) {
         setIsLoggedIn(false);
         setUserData(null); // Clear the object!

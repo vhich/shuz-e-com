@@ -56,7 +56,6 @@ const ClientProfile = () => {
       const response = await api.post(
         `${backendUrl}/client/update-image`,
         image,
-        { headers: { "Cache-Control": "no-cache" } },
       );
       if (response.data.success) {
         setUserData(response.data.user);

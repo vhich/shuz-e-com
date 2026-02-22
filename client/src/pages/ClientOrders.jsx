@@ -13,9 +13,7 @@ const ClientOrders = () => {
   const fetchUserOrders = async () => {
     setLoading(true);
     try {
-      const response = await api.get(`${backendUrl}/order/orders`, {
-        headers: { "Cache-Control": "no-cache" },
-      });
+      const response = await api.get(`${backendUrl}/order/orders`);
       if (response.data.success) {
         setOrders(response.data.orders.reverse()); // Newest first
       } else {

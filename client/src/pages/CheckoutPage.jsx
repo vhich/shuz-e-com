@@ -119,9 +119,6 @@ export default function CheckoutPage() {
           customerDetails: formData,
           total: total,
         },
-        {
-          headers: { "Cache-Control": "no-cache" },
-        },
       );
 
       if (response.data.success) {

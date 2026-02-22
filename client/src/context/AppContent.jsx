@@ -88,7 +88,6 @@ export const AppContextProvider = (props) => {
 
   useEffect(() => {
     const fetchNewProducts = async () => {
-      setLoading(true);
       try {
         const { data } = await axios.get(`${backendUrl}/shuz/products`);
 
@@ -102,12 +101,13 @@ export const AppContextProvider = (props) => {
           setBestSellerProducts(filteredBestSellers);
 
           setAllCategories([...new Set(products.flatMap((p) => p.categories))]);
-          setLoading(false);
         }
       } catch (error) {
         console.error("Error fetching products", error);
         alert("Error fetching products, try again!");
         // window.location.reload();
+      } finally {
+        setLoading(false);
       }
     };
 

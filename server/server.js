@@ -50,7 +50,7 @@ connectDB();
 const allowedOrigins = [
   process.env.ADMIN_FRONTEND_URL || "http://localhost:3001",
   process.env.CLIENT_FRONTEND_URL || "http://localhost:3002",
-  "https://shuz-e-com-frontend.onrender.com/",
+  "https://shuz-e-com-frontend.onrender.com",
 ].filter(Boolean);
 
 app.use(
@@ -94,7 +94,7 @@ app.use("/api/order", orderRouter);
 app.use("/api/client", clientRouter);
 app.use("/api/cart", cartRouter);
 
-app.listen(PORT, "0.0.0.0", () => {
+httpServer.listen(PORT, "0.0.0.0", () => {
   const interfaces = os.networkInterfaces();
   let ipAddress = "localhost";
 

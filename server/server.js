@@ -83,9 +83,10 @@ app.use(
 // app.options("{/*path}?", cors());
 app.use(
   helmet({
-    contentSecurityPolicy: false, // Strongly suggested to keep this false until the site is stable
+    contentSecurityPolicy: false,
+    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }, // Helps with OAuth/Stripe
     crossOriginResourcePolicy: { policy: "cross-origin" },
-    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+    referrerPolicy: { policy: "no-referrer" },
   }),
 );
 app.use(cookieParser());

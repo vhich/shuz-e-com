@@ -13,7 +13,7 @@ const ClientOrders = () => {
   const fetchUserOrders = async () => {
     setLoading(true);
     try {
-      const response = await api.get(`${backendUrl}/order/client-orders`, {
+      const response = await api.get(`${backendUrl}/order/orders`, {
         headers: { "Cache-Control": "no-cache" },
       });
       if (response.data.success) {

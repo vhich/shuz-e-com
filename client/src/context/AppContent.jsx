@@ -64,10 +64,10 @@ export const AppContextProvider = (props) => {
     try {
       // withCredentials: true is vital to send the cookie
       const response = await api.post(
-        `${backendUrl}/client/client-logout`,
+        `${backendUrl}/client/logout`,
         {},
         {
-          headers: { "Cache-Control": "no-cache" },
+          withCredentials: true,
         },
       );
       if (response.data.success) {

@@ -20,7 +20,7 @@ clientRouter.post("/google-auth", googleAuth);
 clientRouter.post("/signup", signup);
 clientRouter.post("/login", loginClient);
 
-clientRouter.post("/client-logout", logoutClient);
+clientRouter.post("/logout", logoutClient);
 clientRouter.get("/check-auth", async (req, res) => {
   try {
     const token = req.cookies.ShuzClientToken;

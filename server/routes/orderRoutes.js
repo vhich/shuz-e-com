@@ -20,13 +20,13 @@ orderRouter.post("/place", placeOrder);
 
 orderRouter.post("/cancel/:orderId", clientCancelOrder);
 orderRouter.get("/track", trackOrder);
-orderRouter.get("/client-orders", authClient, clientOrders);
+orderRouter.get("/orders", authClient, clientOrders);
 
 // --- ADMIN ROUTES ---
 orderRouter.post("/status", protectAdmin, updateStatus);
 orderRouter.post("/payment-status", protectAdmin, updatePayment);
-orderRouter.get("/list", allOrders);
 
+orderRouter.get("/list", allOrders);
 orderRouter.post("/create-payment-intent", createPaymentIntent);
 
 export default orderRouter;

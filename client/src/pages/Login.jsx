@@ -88,10 +88,14 @@ const Login = () => {
     if (currentState === "login") {
       try {
         setLoading(true);
-        const { data } = await api.post(backendUrl + "/client/login", {
-          email,
-          password,
-        });
+        const { data } = await api.post(
+          backendUrl + "/client/login",
+          {
+            email,
+            password,
+          },
+          { "Cache-Control": "no-cache" },
+        );
 
         if (data.success) {
           toast.success(data.message);

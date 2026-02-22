@@ -60,11 +60,8 @@ connectDB();
 app.use(
   cors({
     origin: [
-      "http://localhost:3001/",
-      "http://localhost:3002/",
       "http://localhost:3001",
       "http://localhost:3002",
-      "https://shuz-e-com-frontend-client.onrender.com/",
       "https://shuz-e-com-frontend-client.onrender.com",
       "https://shuz-e-com-frontend-client.onrender.com/api",
       process.env.CLIENT_FRONTEND_URL,
@@ -80,6 +77,12 @@ app.use(
   }),
 );
 
+// STRIPE WEBHOOK MUST BE BEFORE express.json()
+app.post(
+  "/api/order/webhook",
+  express.raw({ type: "application/json" }),
+  stripeWebhook,
+);
 // app.options("{/*path}?", cors());
 app.use(
   helmet({
@@ -91,13 +94,6 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.json());
-
-// STRIPE WEBHOOK MUST BE BEFORE express.json()
-app.post(
-  "/api/order/webhook",
-  express.raw({ type: "application/json" }),
-  stripeWebhook,
-);
 
 app.use(morgan("dev"));
 app.use(urlencoded({ extended: true }));

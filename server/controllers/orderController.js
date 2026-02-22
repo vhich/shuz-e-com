@@ -24,7 +24,10 @@ export const stripeWebhook = async (req, res) => {
     console.log(`❌ Webhook Error: ${err.message}`);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
-  if (event.type === "payment_intent.succeeded") {
+  if (
+    event.type === "checkout.session.completed" ||
+    event.type === "payment_intent.succeeded"
+  ) {
     const paymentIntent = event.data.object;
     // Ensure this matches the key name used in createPaymentIntent metadata
     const orderId = paymentIntent.metadata.orderId;

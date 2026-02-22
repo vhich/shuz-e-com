@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "react-toastify";
 // import axios from "axios";
-import api from "../../config/axiosConfig";
+import api from "../config/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "./AppContent";
 import { io } from "socket.io-client";

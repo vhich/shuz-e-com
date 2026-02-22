@@ -11,6 +11,7 @@ import {
 import { protectAdmin } from "../middleware/protectAdmin.js";
 import { createPaymentIntent } from "../controllers/orderController.js";
 import authClient from "../middleware/authClient.js";
+import { stripeWebhook } from "../controllers/orderController.js";
 
 const orderRouter = express.Router();
 
@@ -28,5 +29,6 @@ orderRouter.post("/payment-status", protectAdmin, updatePayment);
 
 orderRouter.get("/list", allOrders);
 orderRouter.post("/create-payment-intent", createPaymentIntent);
+orderRouter.post("/webhook", stripeWebhook);
 
 export default orderRouter;

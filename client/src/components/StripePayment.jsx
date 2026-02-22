@@ -15,6 +15,10 @@ const StripePayment = ({ amount, orderId, paymentType }) => {
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
 
+  const paymentElementOptions = {
+    layout: "tabs",
+  };
+
   // const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,7 +46,7 @@ const StripePayment = ({ amount, orderId, paymentType }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <PaymentElement />
+      <PaymentElement options={paymentElementOptions} />
       <button
         type="submit"
         disabled={isProcessing || !stripe}

@@ -86,7 +86,14 @@ app.post(
 // app.options("{/*path}?", cors());
 app.use(
   helmet({
-    contentSecurityPolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "https://js.stripe.com"], // Allow Stripe scripts
+        frameSrc: ["'self'", "https://js.stripe.com"], // Allow the payment iframe
+        connectSrc: ["'self'", "https://api.stripe.com"], // Allow talking to Stripe API
+      },
+    },
     crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }, // Helps with OAuth/Stripe
     crossOriginResourcePolicy: { policy: "cross-origin" },
     referrerPolicy: { policy: "no-referrer" },

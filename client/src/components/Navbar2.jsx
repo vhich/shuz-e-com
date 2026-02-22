@@ -50,7 +50,7 @@ const Navbar2 = () => {
               <Search />
             </button>
             <button
-              className="user"
+              className="user relative"
               onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
             >
               <div className="flex items-center">
@@ -75,60 +75,62 @@ const Navbar2 = () => {
                 )}
               </div>
               {/* user dropdown */}
-              <ul
-                ref={dropdownRef}
-                className={`user_dropdown ${isUserDropdownOpen ? "block" : "hidden"} bg-white w-60 rounded-md absolute top-full -right-4/5 shadow-lg overflow-hidden z-48`}
-              >
-                {isLoggedIn && (
-                  <>
-                    <div className="bg-green-100 py-2 px-4">
-                      <small className="block! text-left!">
-                        {userData && userData.email}
-                      </small>
-                      <small className="block! text-left! mt-2 text-slate-500">
-                        {userData && userData.name}
-                      </small>
-                    </div>
-                    {isLoggedIn && (
-                      <li className="w-full">
-                        <NavLink
-                          to={`/orders`}
-                          className="py-3 border-b border-gray-300 hover:bg-gray-200"
-                        >
-                          My Orders
-                        </NavLink>
-                      </li>
-                    )}
-                  </>
-                )}
-                {userNavLinks.map((link) => (
-                  <li key={link.id} className="w-full">
-                    <NavLink
-                      to={`/${link.id}`}
-                      className="py-3 border-b border-gray-300 hover:bg-gray-200"
+              {isUserDropdownOpen && (
+                <ul
+                  ref={dropdownRef}
+                  className={`user_dropdown bg-white w-60 rounded-md absolute top-full -right-4/5 shadow-lg overflow-hidden z-48`}
+                >
+                  {isLoggedIn && (
+                    <>
+                      <div className="bg-green-100 py-2 px-4">
+                        <small className="block! text-left!">
+                          {userData && userData.email}
+                        </small>
+                        <small className="block! text-left! mt-2 text-slate-500">
+                          {userData && userData.name}
+                        </small>
+                      </div>
+                      {isLoggedIn && (
+                        <li className="w-full">
+                          <NavLink
+                            to={`/orders`}
+                            className="py-3 border-b border-gray-300 hover:bg-gray-200"
+                          >
+                            My Orders
+                          </NavLink>
+                        </li>
+                      )}
+                    </>
+                  )}
+                  {userNavLinks.map((link) => (
+                    <li key={link.id} className="w-full">
+                      <NavLink
+                        to={`/${link.id}`}
+                        className="py-3 border-b border-gray-300 hover:bg-gray-200"
+                      >
+                        {link.title}
+                      </NavLink>
+                    </li>
+                  ))}
+                  {isLoggedIn ? (
+                    <li
+                      onClick={handleLogout}
+                      className="logout py-3 border-b border-gray-300 bg-slate-100 text-slate-700"
                     >
-                      {link.title}
-                    </NavLink>
-                  </li>
-                ))}
-                {isLoggedIn ? (
-                  <li
-                    onClick={handleLogout}
-                    className="logout py-3 border-b border-gray-300 bg-slate-100 text-slate-700"
-                  >
-                    Logout
-                  </li>
-                ) : (
-                  <li className="w-full">
-                    <NavLink
-                      to={`/login`}
-                      className="py-3 border-b border-gray-300 hover:bg-gray-200"
-                    >
-                      Login
-                    </NavLink>
-                  </li>
-                )}
-              </ul>
+                      Logout
+                    </li>
+                  ) : (
+                    <li className="w-full">
+                      <NavLink
+                        to={`/login`}
+                        className="py-3 border-b border-gray-300 hover:bg-gray-200"
+                      >
+                        Login
+                      </NavLink>
+                    </li>
+                  )}
+                </ul>
+              )}
             </button>
             {!shouldHideCart && (
               <button

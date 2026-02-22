@@ -24,7 +24,9 @@ const httpServer = createServer(app);
 // Initialize Socket.io
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://shuz-e-com-frontend.onrender.com", // Your frontend URL
+    origin:
+      "https://shuz-e-com-frontend.onrender.com" ||
+      "https://shuz-e-com-frontend-client.onrender.com/api", // Your frontend URL
     credentials: true,
   },
 });
@@ -56,8 +58,10 @@ connectDB();
 app.use(
   cors({
     origin: [
-      "https://shuz-e-com-frontend.onrender.com",
-      "https://shuz-e-com-admin.onrender.com",
+      "https://shuz-e-com-frontend-client.onrender.com/",
+      "https://shuz-e-com-frontend-client.onrender.com",
+      "https://shuz-e-com-frontend-client.onrender.com/api",
+      process.env.CLIENT_FRONTEND_URL,
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // MUST include OPTIONS

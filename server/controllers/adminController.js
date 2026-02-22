@@ -140,7 +140,9 @@ export const logoutAdmin = async (req, res) => {
   try {
     res.cookie("ShuzAdminToken", "", {
       httpOnly: true,
-      expires: new Date(0), // Sets expiration to the past to delete it immediately
+      secure: true,
+      sameSite: "None",
+      expires: new Date(0),
       path: "/",
     });
     const admin = await Admin.findById(req.admin._id);

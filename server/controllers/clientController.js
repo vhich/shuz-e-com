@@ -114,10 +114,11 @@ export const loginClient = async (req, res) => {
 
 export const logoutClient = async (req, res) => {
   try {
-    // Use setHeader to manually force the browser's hand
-    res.cookie("ShuzAdminToken", "", {
+    res.cookie("ShuzClientToken", "", {
       httpOnly: true,
-      expires: new Date(0), // Sets expiration to the past to delete it immediately
+      secure: true, // Must match login
+      sameSite: "None", // Must match login
+      expires: new Date(0),
       path: "/",
     });
 

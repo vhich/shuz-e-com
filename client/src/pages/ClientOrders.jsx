@@ -17,7 +17,7 @@ const ClientOrders = () => {
       if (response.data.success) {
         setOrders(response.data.orders.reverse()); // Newest first
       } else {
-        alert(response.data.message);
+        console.log("Failed to fetch orders:", response.data.message);
       }
     } catch (error) {
       console.error("Error fetching orders:", error);

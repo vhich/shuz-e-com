@@ -9,7 +9,7 @@ import { urlencoded } from "express";
 import cookieParser from "cookie-parser";
 import router from "./routes/adminRoutes.js";
 import productRouter from "./routes/productRoutes.js";
-
+import { rateLimiter } from "./middleware/rateLimiter.js";
 import os from "os";
 import orderRouter from "./routes/orderRoutes.js";
 import clientRouter from "./routes/clientRoutes.js";
@@ -18,6 +18,7 @@ import { stripeWebhook } from "./controllers/orderController.js";
 import { Server } from "socket.io";
 
 const app = express();
+app.set("trust proxy", 1);
 const httpServer = createServer(app);
 
 // Initialize Socket.io
@@ -43,7 +44,7 @@ io.on("connection", (socket) => {
     console.log("User disconnected");
   });
 });
-const PORT = process.env.PORT || 4001;
+const PORT = process.env.PORT || 10000;
 connectDB();
 
 const allowedOrigins = [
@@ -89,6 +90,7 @@ app.get("/", (req, res) => {
   res.send("Secure API is running");
 });
 
+app.use("/api", rateLimiter);
 app.use("/api/admin", router);
 app.use("/api", productRouter);
 app.use("/api/order", orderRouter);

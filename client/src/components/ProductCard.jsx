@@ -4,9 +4,10 @@ import PropTypes from "prop-types";
 import { AppContent } from "../context/AppContent";
 
 const ProductCard = ({ product }) => {
-  const { setProductId, loading } = useContext(AppContent);
+  const { setProductId, loading, setIsSearchOpen } = useContext(AppContent);
   const navigate = useNavigate();
   const setProductIdUrl = () => {
+    setIsSearchOpen(false);
     setProductId(product._id);
     navigate(`/product/${product._id}`);
   };

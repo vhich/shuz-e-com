@@ -5,7 +5,7 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Mainlayout from "./layouts/Mainlayout";
+import MainLayout from "./layouts/MainLayout";
 import UploadProduct from "./pages/UploadProduct";
 import AdminLogin from "./pages/AdminLogin";
 import AdminCreateAcct from "./pages/AdminCreateAcct";
@@ -16,6 +16,7 @@ import ProductInfo from "./pages/ProductInfo";
 import AdminOrders from "./pages/AdminOrders";
 import OrderDetails from "./pages/OrderDetails";
 import NotificationPage from "./pages/NotificationPage";
+import NotFound from "./pages/NotFound";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -24,11 +25,12 @@ const App = () => {
         <Route
           element={
             <AppContextProvider>
-              <Mainlayout />
+              <MainLayout />
             </AppContextProvider>
           }
         >
           <Route index element={<AdminLogin />}></Route>
+          <Route path="*" element={<NotFound />}></Route>
           <Route
             path="/admin/account/create-account"
             element={<AdminCreateAcct />}

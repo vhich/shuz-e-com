@@ -5,7 +5,7 @@ import Jumbotron from "../components/Jumbotron";
 import { AppContent } from "../context/AppContent";
 import Reviews from "./../components/Reviews";
 import BestSeller from "./../components/BestSeller";
-import axios from "axios";
+// import axios from "axios";
 import { toast } from "react-toastify";
 import { assets } from "../assets/asset";
 
@@ -18,6 +18,7 @@ const Cart = () => {
     userData,
     allProduct,
     setLoading,
+    api,
   } = useContext(AppContent);
   const navigate = useNavigate();
 
@@ -54,17 +55,13 @@ const Cart = () => {
     if (isLoggedIn && userData?._id) {
       setLoading(true);
       try {
-        const { data } = await axios.post(
-          backendUrl + "/cart/update",
-          {
-            cartKey,
-            productId: item._id,
-            size: item.size,
-            quantity: newQty,
-            clientId: userData._id,
-          },
-          { withCredentials: true },
-        );
+        const { data } = await api.post(backendUrl + "/cart/update", {
+          cartKey,
+          productId: item._id,
+          size: item.size,
+          quantity: newQty,
+          clientId: userData._id,
+        });
         if (data.success) {
           toast.success(data.message);
         }
@@ -83,11 +80,7 @@ const Cart = () => {
       delete updated[cartKey];
       if (isLoggedIn) {
         try {
-          axios.post(
-            backendUrl + "/cart/delete",
-            { cartKey },
-            { withCredentials: true },
-          );
+          api.post(backendUrl + "/cart/delete", { cartKey });
         } catch (error) {
           alert("An error occurred!", error);
         } finally {

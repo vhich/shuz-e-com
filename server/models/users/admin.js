@@ -15,6 +15,10 @@ const adminSchema = new mongoose.Schema(
     },
     adminKey: { type: String, required: true },
     role: { type: String, default: "admin" },
+    lockUntil: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true },
 );

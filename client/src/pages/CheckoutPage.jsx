@@ -4,7 +4,7 @@ import NewArrivals from "./../components/NewArrivals";
 import Newsletter from "./../components/Newsletter";
 import { AppContent } from "../context/AppContent"; // Import Context
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
 import { toast } from "react-toastify";
 import { ShoppingBag } from "lucide-react";
 
@@ -26,6 +26,7 @@ export default function CheckoutPage() {
     setOrderSuccess,
     orderSuccess,
     isLoggedIn,
+    api,
   } = useContext(AppContent); // Pull real cart data
 
   const [orderID, setOrderId] = useState();
@@ -109,7 +110,7 @@ export default function CheckoutPage() {
     const orderId = generateOrderId();
 
     try {
-      const response = await axios.post(
+      const response = await api.post(
         backendUrl + "/order/create-payment-intent",
         {
           items: Object.values(cartItems),
@@ -119,7 +120,6 @@ export default function CheckoutPage() {
           total: total,
         },
         {
-          withCredentials: true,
           headers: { "Cache-Control": "no-cache" },
         },
       );
@@ -175,7 +175,7 @@ export default function CheckoutPage() {
 
     try {
       // 3. Send to Backend
-      const response = await axios.post(`${backendUrl}/order/place`, orderData);
+      const response = await api.post(`${backendUrl}/order/place`, orderData);
 
       if (response.data.success) {
         // 4. Handle Success

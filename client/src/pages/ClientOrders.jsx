@@ -1,20 +1,19 @@
 import React, { useEffect, useState, useContext } from "react";
 import { AppContent } from "../context/AppContent";
-import axios from "axios";
+// import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Package, ChevronRight, Clock, CheckCircle2 } from "lucide-react";
 import Navbar from "../components/Navbar";
 
 const ClientOrders = () => {
-  const { backendUrl, setLoading, isLoggedIn } = useContext(AppContent);
+  const { backendUrl, setLoading, isLoggedIn, api } = useContext(AppContent);
   const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
 
   const fetchUserOrders = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${backendUrl}/order/client-orders`, {
-        withCredentials: true,
+      const response = await api.get(`${backendUrl}/order/client-orders`, {
         headers: { "Cache-Control": "no-cache" },
       });
       if (response.data.success) {

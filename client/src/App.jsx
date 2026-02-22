@@ -17,6 +17,7 @@ import TrackOrder from "./pages/TrackOrder";
 import Login from "./pages/Login";
 import ClientOrders from "./pages/ClientOrders";
 import ClientProfile from "./pages/ClientProfile";
+import NotFound from "./pages/NotFound";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -30,6 +31,7 @@ const App = () => {
           }
         >
           <Route index element={<Homepage />} />
+          <Route path="*" element={<NotFound />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/shop" element={<Shop />} />

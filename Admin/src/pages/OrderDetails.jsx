@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { useSearchParams, useNavigate, NavLink } from "react-router-dom";
 import {
   Package,
@@ -23,7 +23,7 @@ export default function OrderDetails() {
   const [email, setEmail] = useState(searchParams.get("email") || "");
   const [orderData, setOrderData] = useState(null);
 
-  const { backendUrl, loading, setLoading, isLoggedIn } = useAppContext();
+  const { backendUrl, loading, setLoading, isLoggedIn, api } = useAppContext();
 
   const steps = ["Pending", "Processing", "Shipped", "Delivered"];
   const currentStepIndex = orderData ? steps.indexOf(orderData.status) : -1;
@@ -40,7 +40,7 @@ export default function OrderDetails() {
       if (e) e.preventDefault();
       try {
         setLoading(true);
-        const { data } = await axios.get(
+        const { data } = await api.get(
           `${backendUrl}/order/track?orderId=${orderId}&email=${email}`,
         );
         if (data.success) {
@@ -52,14 +52,14 @@ export default function OrderDetails() {
         setLoading(false);
       }
     },
-    [backendUrl, orderId, email, setLoading],
+    [backendUrl, orderId, email, setLoading, api],
   );
 
   // --- LOGIC: Cancel Order ---
   const handleCancel = async (id, customerEmail) => {
     if (!window.confirm("Are you sure you want to cancel?")) return;
     try {
-      const res = await axios.post(`${backendUrl}/order/cancel/${id}`, {
+      const res = await api.post(`${backendUrl}/order/cancel/${id}`, {
         email: customerEmail,
       });
       if (res.data.success) {

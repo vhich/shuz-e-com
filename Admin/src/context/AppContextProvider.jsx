@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+// import axios from "axios";
+import api from "../../../server/config/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "./AppContent";
 import { io } from "socket.io-client";
@@ -90,7 +91,7 @@ export const AppContextProvider = (props) => {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get(`${backendUrl}/order/list`);
+      const { data } = await api.get(`${backendUrl}/order/list`);
       if (data.success) setOrders(data.orders.reverse());
     } catch (err) {
       alert("Failed to load orders");
@@ -102,11 +103,8 @@ export const AppContextProvider = (props) => {
 
   const fetchAllNotifications = useCallback(async () => {
     try {
-      const { data } = await axios.get(
+      const { data } = await api.get(
         `${backendUrl}/admin/notifications?limit=10`,
-        {
-          withCredentials: true,
-        },
       );
       if (data.success) {
         setNotifications(data.notifications);
@@ -126,10 +124,9 @@ export const AppContextProvider = (props) => {
   const handleReadNotification = async (id) => {
     setLoading(true);
     try {
-      const { data } = await axios.post(
+      const { data } = await api.post(
         `${backendUrl}/admin/notifications/read/${id}`,
         {
-          withCredentials: true,
           adminId: currentAdminId, // Pass the admin ID to mark as read for this specific admin
         },
       );
@@ -154,7 +151,7 @@ export const AppContextProvider = (props) => {
   const fetchAllProducts = useCallback(async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`${backendUrl}/shuz/products`);
+      const { data } = await api.get(`${backendUrl}/shuz/products`);
       if (data.success) {
         // Reverse to show the most recently uploaded products first
         setProducts(data.data.reverse());
@@ -174,13 +171,9 @@ export const AppContextProvider = (props) => {
   const handleAdminCreateAccount = async (formData) => {
     try {
       // Optional: Call backend logout to clear the cookie
-      const { data } = await axios.post(
-        `${backendUrl}/admin/register`,
-        { ...formData },
-        {
-          withCredentials: true,
-        },
-      );
+      const { data } = await api.post(`${backendUrl}/admin/register`, {
+        ...formData,
+      });
       if (data.success) {
         toast.success(data.message);
         setIsLoggedIn(true);
@@ -203,13 +196,10 @@ export const AppContextProvider = (props) => {
   const handleAdminLogin = async (email, password) => {
     try {
       // Optional: Call backend logout to clear the cookie
-      const { data } = await axios.post(
-        `${backendUrl}/admin/login`,
-        { email, password },
-        {
-          withCredentials: true,
-        },
-      );
+      const { data } = await api.post(`${backendUrl}/admin/login`, {
+        email,
+        password,
+      });
       if (data.success) {
         toast.success(data.message);
         setIsLoggedIn(true);
@@ -229,13 +219,7 @@ export const AppContextProvider = (props) => {
     setLoading(true);
     try {
       // Optional: Call backend logout to clear the cookie
-      const { data } = await axios.post(
-        `${backendUrl}/admin/logout`,
-        {},
-        {
-          withCredentials: true,
-        },
-      );
+      const { data } = await api.post(`${backendUrl}/admin/logout`, {});
       if (data.success) {
         setLoading(false);
         toast.success(data.message);
@@ -252,11 +236,8 @@ export const AppContextProvider = (props) => {
 
   const getAdminAuthState = useCallback(async () => {
     try {
-      const { data } = await axios.get(
+      const { data } = await api.get(
         `${backendUrl}/admin/me?t=${new Date().getTime()}`,
-        {
-          withCredentials: true,
-        },
       );
 
       if (data.success) {
@@ -289,9 +270,7 @@ export const AppContextProvider = (props) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
       setLoading(true);
       try {
-        const { data } = await axios.delete(
-          `${backendUrl}/shuz/products/${id}`,
-        );
+        const { data } = await api.delete(`${backendUrl}/shuz/products/${id}`);
         if (data.success) {
           toast.success("Product removed");
           navigate("/admin/products");
@@ -344,6 +323,7 @@ export const AppContextProvider = (props) => {
     notifications,
     isNewNotification,
     hasUnread,
+    api,
   };
 
   return (

@@ -8,7 +8,7 @@ const Navbar2 = () => {
   const [isHome] = useState(window.location.pathname === "/");
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
-  const { cartItems, isLoggedIn, handleLogout, userData } =
+  const { cartItems, isLoggedIn, handleLogout, userData, setIsSearchOpen } =
     useContext(AppContent);
   const cartArray = Object.values(cartItems);
 
@@ -46,7 +46,7 @@ const Navbar2 = () => {
             <img src={assets.logo} alt="logo image" />
           </NavLink>
           <div className="actions flex gap-4">
-            <button className="search">
+            <button onClick={() => setIsSearchOpen(true)} className={`search`}>
               <Search />
             </button>
             <button

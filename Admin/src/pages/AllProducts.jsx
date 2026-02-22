@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { toast } from "react-toastify";
 import { useAppContext } from "../context/AppContent";
 import AdminNavbar from "../components/AdminNavbar";
@@ -19,6 +19,7 @@ const AllProducts = () => {
     deleteProduct,
     backendUrl,
     editMode,
+    api,
   } = useAppContext();
   const [showAll, setShowAll] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -102,14 +103,11 @@ const AllProducts = () => {
       window.confirm("⚠️ WARNING: This will permanently delete EVERY product!")
     ) {
       try {
-        const { data } = await axios.delete(
-          `${backendUrl}/shuz/products/flush`,
-          {
-            headers: {
-              "x-admin-secret": adminSecret,
-            },
+        const { data } = await api.delete(`${backendUrl}/shuz/products/flush`, {
+          headers: {
+            "x-admin-secret": adminSecret,
           },
-        );
+        });
         if (data.success) {
           toast.success("Inventory cleared");
           fetchAllProducts();

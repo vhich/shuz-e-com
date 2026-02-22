@@ -29,6 +29,10 @@ const clientSchema = new mongoose.Schema(
 
     // Helpful for admin tracking
     isAdmin: { type: Boolean, default: false },
+    lockUntil: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true, minimize: false },
 );

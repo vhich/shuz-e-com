@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-import axios from "axios";
+// import axios from "axios";
 import Navbar from "../components/Navbar";
 import { AppContent } from "../context/AppContent";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +18,7 @@ const Login = () => {
     confirmPassword: "",
   });
 
-  const { isLoggedIn, backendUrl, setLoading } = useContext(AppContent);
+  const { isLoggedIn, backendUrl, setLoading, api } = useContext(AppContent);
 
   const navigate = useNavigate();
 
@@ -58,7 +58,7 @@ const Login = () => {
       try {
         const { confirmPassword, ...signupData } = formData;
         setLoading(true);
-        const { data } = await axios.post(
+        const { data } = await api.post(
           backendUrl + "/client/signup",
           signupData,
         );
@@ -88,16 +88,10 @@ const Login = () => {
     if (currentState === "login") {
       try {
         setLoading(true);
-        const { data } = await axios.post(
-          backendUrl + "/client/login",
-          {
-            email,
-            password,
-          },
-          {
-            withCredentials: true,
-          },
-        );
+        const { data } = await api.post(backendUrl + "/client/login", {
+          email,
+          password,
+        });
 
         if (data.success) {
           toast.success(data.message);
@@ -122,16 +116,12 @@ const Login = () => {
     const decoded = jwtDecode(credentialResponse.credential);
 
     try {
-      const res = await axios.post(
-        backendUrl + "/client/google-auth",
-        {
-          name: decoded.name,
-          email: decoded.email,
-          image: decoded.picture,
-          googleId: decoded.sub,
-        },
-        { withCredentials: true },
-      );
+      const res = await api.post(backendUrl + "/client/google-auth", {
+        name: decoded.name,
+        email: decoded.email,
+        image: decoded.picture,
+        googleId: decoded.sub,
+      });
 
       if (res.data.success) {
         window.location.href = "/"; // Redirect on success
@@ -224,7 +214,7 @@ const Login = () => {
           </div>
           {currentState === "login" ? (
             <p className="text-center text-gray-600 text-xs! mt-4">
-              Don't have and account yet?{" "}
+              Don&apos;t have and account yet?{" "}
               <span
                 onClick={() => setCurrentState("sign up")}
                 className="cursor-pointer text-blue-600 text-xs!"

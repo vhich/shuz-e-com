@@ -10,7 +10,7 @@ const Navbar = () => {
   const [isHome] = useState(window.location.pathname === "/");
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
-  const { cartItems, isLoggedIn, userData, handleLogout } =
+  const { cartItems, isLoggedIn, userData, handleLogout, setIsSearchOpen } =
     useContext(AppContent);
 
   const navigate = useNavigate();
@@ -59,7 +59,7 @@ const Navbar = () => {
             ))}
           </div>
           <div className="actions flex gap-4">
-            <button className={`search`}>
+            <button onClick={() => setIsSearchOpen(true)} className={`search`}>
               <Search />
             </button>
             <button

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { toast } from "react-toastify";
 import {
   Package,
@@ -24,8 +24,15 @@ export default function AdminOrders() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
 
-  const { loading, setLoading, backendUrl, isLoggedIn, fetchOrders, orders } =
-    useAppContext();
+  const {
+    loading,
+    setLoading,
+    backendUrl,
+    isLoggedIn,
+    fetchOrders,
+    orders,
+    api,
+  } = useAppContext();
 
   // --- KPI CALCULATIONS ---
   const stats = useMemo(() => {
@@ -77,14 +84,10 @@ export default function AdminOrders() {
   const updateStatus = async (orderId, newStatus) => {
     setLoading(true);
     try {
-      const { data } = await axios.post(
-        `${backendUrl}/order/status`,
-        {
-          orderId,
-          status: newStatus,
-        },
-        { withCredentials: true },
-      );
+      const { data } = await api.post(`${backendUrl}/order/status`, {
+        orderId,
+        status: newStatus,
+      });
       if (data.success) {
         fetchOrders();
         toast.success(`Order updated to ${newStatus}`);
@@ -98,14 +101,10 @@ export default function AdminOrders() {
   const updatePayment = async (orderId, newPayment) => {
     setLoading(true);
     try {
-      const { data } = await axios.post(
-        `${backendUrl}/order/payment-status`,
-        {
-          orderId,
-          paymentStatus: newPayment,
-        },
-        { withCredentials: true },
-      );
+      const { data } = await api.post(`${backendUrl}/order/payment-status`, {
+        orderId,
+        paymentStatus: newPayment,
+      });
       if (data.success) {
         fetchOrders();
         toast.success(data.message);
@@ -176,7 +175,7 @@ export default function AdminOrders() {
         <div className="grid lg:grid-cols-[15%_85%] sm:grid-cols-1">
           <SideNav />
           <section className="bg-green-50 h-screen w-full overflow-y-auto py-12 px-2 md:px-10 lg:px-15">
-            <div className="bg-slate-50 font-sans">
+            <div>
               <div className="mx-auto">
                 {/* --- 1. TOP NAV & STATS --- */}
                 <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">

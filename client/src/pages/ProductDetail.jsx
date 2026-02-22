@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom"; // Added for URL ID
-import axios from "axios";
+// import axios from "axios";
 import Navbar from "../components/Navbar";
 import ReviewCard from "../components/ReviewCard";
 import { reviews } from "../assets/asset";
@@ -19,6 +19,7 @@ const ProductDetail = () => {
     product,
     isLoggedIn,
     userData,
+    api,
   } = useContext(AppContent);
   const [selectedSize, setSelectedSize] = useState(null);
   const [pagination, setPagination] = useState("description");
@@ -78,17 +79,13 @@ const ProductDetail = () => {
       }
 
       if (isLoggedIn) {
-        axios.post(
-          backendUrl + "/cart/update",
-          {
-            cartKey,
-            productId: product._id,
-            size: selectedSize,
-            quantity: updated[cartKey].quantity,
-            clientId: userData._id,
-          },
-          { withCredentials: true },
-        );
+        api.post(backendUrl + "/cart/update", {
+          cartKey,
+          productId: product._id,
+          size: selectedSize,
+          quantity: updated[cartKey].quantity,
+          clientId: userData._id,
+        });
       }
       return updated;
     });
@@ -103,7 +100,7 @@ const ProductDetail = () => {
     const fetchProductDetail = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get(`${backendUrl}/shuz/products/${id}`);
+        const { data } = await api.get(`${backendUrl}/shuz/products/${id}`);
 
         if (data.success) {
           const fetchedProduct = data.data;

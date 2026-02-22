@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import api from "../../../server/config/axiosConfig";
 
 export const AppContent = createContext();
 
@@ -25,6 +26,7 @@ export const AppContextProvider = (props) => {
   const [allCategories, setAllCategories] = useState([]);
   const [token, setToken] = useState(null);
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [cartItems, setCartItems] = useState(() => {
     const savedCart = localStorage.getItem("shuzCart");
     return savedCart ? JSON.parse(savedCart) : {};
@@ -38,9 +40,7 @@ export const AppContextProvider = (props) => {
 
   const verifyClient = async () => {
     try {
-      const response = await axios.get(backendUrl + "/client/check-auth", {
-        withCredentials: true,
-      });
+      const response = await api.get(backendUrl + "/client/check-auth");
 
       if (response.data.success) {
         const dbCart = response.data.client.cartData || {};
@@ -66,11 +66,10 @@ export const AppContextProvider = (props) => {
     setLoading(true);
     try {
       // withCredentials: true is vital to send the cookie
-      const response = await axios.post(
+      const response = await api.post(
         `${backendUrl}/client/client-logout`,
         {},
         {
-          withCredentials: true,
           headers: { "Cache-Control": "no-cache" },
         },
       );
@@ -136,6 +135,7 @@ export const AppContextProvider = (props) => {
     setIsLoggedIn,
     setIsOpen,
     setOrderSuccess,
+    setIsSearchOpen,
     productId,
     loading,
     allProduct,
@@ -150,6 +150,8 @@ export const AppContextProvider = (props) => {
     isLoggedIn,
     isOpen,
     orderSuccess,
+    api,
+    isSearchOpen,
 
     handleLogout,
   };

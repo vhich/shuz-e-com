@@ -1,6 +1,6 @@
 import React, { useState, useContext, useRef } from "react";
 import { AppContent } from "../context/AppContent";
-import axios from "axios";
+// import axios from "axios";
 import { toast } from "react-toastify";
 import {
   User,
@@ -12,9 +12,8 @@ import {
   Trash2,
   AlertTriangle,
   Camera,
-  Home,
 } from "lucide-react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { assets } from "../assets/asset";
 import { useEffect } from "react";
@@ -27,6 +26,7 @@ const ClientProfile = () => {
     setIsLoggedIn,
     isLoggedIn,
     setLoading,
+    api,
   } = useContext(AppContent);
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -53,10 +53,10 @@ const ClientProfile = () => {
     image.append("image", file);
     try {
       setLoading(true);
-      const response = await axios.post(
+      const response = await api.post(
         `${backendUrl}/client/update-image`,
         image,
-        { withCredentials: true, headers: { "Cache-Control": "no-cache" } },
+        { headers: { "Cache-Control": "no-cache" } },
       );
       if (response.data.success) {
         setUserData(response.data.user);
@@ -75,7 +75,7 @@ const ClientProfile = () => {
   const handleUpdate = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.post(
+      const { data } = await api.post(
         `${backendUrl}/client/update-profile`,
         formData,
         { withCredentials: true },
@@ -98,10 +98,9 @@ const ClientProfile = () => {
   const handleDelete = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.delete(
-        `${backendUrl}/client/delete-account`,
-        { withCredentials: true },
-      );
+      const { data } = await api.delete(`${backendUrl}/client/delete-account`, {
+        withCredentials: true,
+      });
       if (data.success) {
         setIsLoggedIn(false);
         setUserData(null);
@@ -109,7 +108,7 @@ const ClientProfile = () => {
         toast.warn("Account removed.");
       }
     } catch (err) {
-      toast.error("Error deleting account");
+      toast.error("Error deleting account", err);
     } finally {
       setLoading(false);
     }

@@ -47,16 +47,12 @@ io.on("connection", (socket) => {
 const PORT = process.env.PORT || 10000;
 connectDB();
 
-const allowedOrigins = [
-  process.env.ADMIN_FRONTEND_URL || "http://localhost:3001",
-  process.env.CLIENT_FRONTEND_URL || "http://localhost:3002",
-  "https://shuz-e-com-frontend.onrender.com",
-].filter(Boolean);
+const allowedOrigins = [process.env.CLIENT_FRONTEND_URL].filter(Boolean);
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));

@@ -1,18 +1,16 @@
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "react-toastify";
 // import axios from "axios";
-import api from "../../../server/config/axiosConfig";
+import api from "../../config/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "./AppContent";
 import { io } from "socket.io-client";
 import { assets } from "../assets/assets";
 
 export const AppContextProvider = (props) => {
-  const backendUrl = `http://${window.location.hostname}:4000/api`;
-  const socketBackendUrl =
-    window.location.hostname === "localhost"
-      ? "http://localhost:4000"
-      : `${window.location.origin}`; // Or simply window.location.origin if they share a domain
+  const backendUrl = "http://localhost:4000/api";
+
+  const socketBackendUrl = "https://shuz-e-com-backend.onrender.com/api";
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);

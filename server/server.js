@@ -50,10 +50,7 @@ connectDB();
 const allowedOrigins = [
   process.env.ADMIN_FRONTEND_URL || "http://localhost:3001",
   process.env.CLIENT_FRONTEND_URL || "http://localhost:3002",
-  "http://10.102.130.138:3001",
-  "http://10.102.130.138:3002",
-  "http://10.55.95.138:3001",
-  "http://10.55.95.138:3002",
+  "https://shuz-e-com-frontend.onrender.com/",
 ].filter(Boolean);
 
 app.use(

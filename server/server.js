@@ -25,7 +25,7 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin:
-      "https://shuz-e-com-frontend.onrender.com" ||
+      "https://shuz-e-com-frontend-client.onrender.com" ||
       "https://shuz-e-com-frontend-client.onrender.com/api", // Your frontend URL
     credentials: true,
   },

@@ -48,6 +48,7 @@ const PORT = process.env.PORT || 10000;
 connectDB();
 
 const allowedOrigins = [
+  "https://shuz-e-com-frontend.onrender.com",
   process.env.CLIENT_FRONTEND_URL,
   process.env.ADMIN_FRONTEND_URL,
 ].filter(Boolean);

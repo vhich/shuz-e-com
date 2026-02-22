@@ -25,12 +25,14 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin:
-      "https://shuz-e-com-frontend-client.onrender.com" ||
-      "https://shuz-e-com-frontend-client.onrender.com/api" ||
-      "https://shuz-e-com-frontend-admin.onrender.com/api" ||
-      "https://shuz-e-com-frontend-admin.onrender.com" ||
       "http://localhost:3001" ||
-      "http://localhost:3002",
+      "http://localhost:3002" ||
+      "https://shuz-e-com-frontend-client.onrender.com" ||
+      "https://shuz-e-com-frontend-admin.onrender.com" ||
+      "https://shuz-e-com-frontend-admin.onrender.com/api" ||
+      "https://shuz-e-com-frontend-client.onrender.com/api" ||
+      process.env.CLIENT_FRONTEND_URL ||
+      process.env.ADMIN_FRONTEND_URL,
     credentials: true,
   },
 });

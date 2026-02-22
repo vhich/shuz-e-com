@@ -9,11 +9,7 @@ import api from "../../../server/config/axiosConfig";
 export const AppContent = createContext();
 
 export const AppContextProvider = (props) => {
-  // This detects your current browser's IP/hostname
-  const hostname = window.location.hostname;
-  // use the dynamic IP address of the machine.
-
-  const backendUrl = `http://${hostname}:4000/api`;
+  const backendUrl = `https://shuz-e-com-backend.onrender.com/api`;
   const [isOpen, setIsOpen] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);

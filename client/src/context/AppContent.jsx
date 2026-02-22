@@ -4,12 +4,13 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import api from "../../../server/config/axiosConfig";
+import api from "../../config/axiosConfig";
 
 export const AppContent = createContext();
 
 export const AppContextProvider = (props) => {
-  const backendUrl = `https://shuz-e-com-backend.onrender.com/api`;
+  const backendUrl =
+    import.meta.env.VITE_BACKEND_URL_NETWORK || "http://localhost:4000/api";
   const [isOpen, setIsOpen] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);

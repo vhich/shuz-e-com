@@ -26,7 +26,9 @@ const io = new Server(httpServer, {
   cors: {
     origin:
       "https://shuz-e-com-frontend-client.onrender.com" ||
-      "https://shuz-e-com-frontend-client.onrender.com/api", // Your frontend URL
+      "https://shuz-e-com-frontend-client.onrender.com/api" ||
+      "http://localhost:3001" ||
+      "http://localhost:3002",
     credentials: true,
   },
 });
@@ -58,11 +60,15 @@ connectDB();
 app.use(
   cors({
     origin: [
+      "http://localhost:3001/",
+      "http://localhost:3002/",
+      "http://localhost:3001",
+      "http://localhost:3002",
       "https://shuz-e-com-frontend-client.onrender.com/",
       "https://shuz-e-com-frontend-client.onrender.com",
       "https://shuz-e-com-frontend-client.onrender.com/api",
       process.env.CLIENT_FRONTEND_URL,
-    ],
+    ].filter(Boolean),
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // MUST include OPTIONS
     allowedHeaders: [

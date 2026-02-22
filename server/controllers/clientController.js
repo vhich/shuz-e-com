@@ -24,18 +24,7 @@ export const googleAuth = async (req, res) => {
     }
 
     // 2. Create JWT Token
-    const token = jwt.sign({ id: client._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-
-    // 3. Set HTTP-only Cookie
-    res.cookie("ShuzClientToken", token, {
-      httpOnly: true, // Security: JS cannot access this
-      secure: process.env.NODE_ENV === "production", // Use HTTPS in production
-      sameSite: "Lax", // Helps with cross-site requests
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      path: "/",
-    });
+    const token = generateToken(client._id, res, "ShuzClientToken");
 
     res.json({
       success: true,

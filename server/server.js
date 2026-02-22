@@ -47,18 +47,24 @@ io.on("connection", (socket) => {
 const PORT = process.env.PORT || 10000;
 connectDB();
 
-const allowedOrigins = [process.env.CLIENT_FRONTEND_URL].filter(Boolean);
+const allowedOrigins = [
+  process.env.CLIENT_FRONTEND_URL,
+  process.env.ADMIN_FRONTEND_URL,
+].filter(Boolean);
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
+      // allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        return callback(new Error("CORS Policy Error"), false);
       }
+      return callback(null, true);
     },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 

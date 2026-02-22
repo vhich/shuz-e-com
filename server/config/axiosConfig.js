@@ -2,9 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL:
-    "http://localhost:3001" ||
-    "http://localhost:3002" ||
-    "http://localhost:4000",
+    "https://shuz-e-com-backend.onrender.com/" || "http://localhost:4000",
   withCredentials: true,
 });
 

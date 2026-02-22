@@ -97,7 +97,7 @@ app.use("/api/order", orderRouter);
 app.use("/api/client", clientRouter);
 app.use("/api/cart", cartRouter);
 
-httpServer.listen(PORT, "0.0.0.0", () => {
+app.listen(PORT, "0.0.0.0", () => {
   const interfaces = os.networkInterfaces();
   let ipAddress = "localhost";
 

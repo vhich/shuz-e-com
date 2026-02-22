@@ -24,7 +24,7 @@ const httpServer = createServer(app);
 // Initialize Socket.io
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:3002", // Your frontend URL
+    origin: "https://shuz-e-com-frontend.onrender.com", // Your frontend URL
     credentials: true,
   },
 });
@@ -47,27 +47,39 @@ io.on("connection", (socket) => {
 const PORT = process.env.PORT || 10000;
 connectDB();
 
-const allowedOrigins = [
-  "https://shuz-e-com-frontend.onrender.com",
-  process.env.CLIENT_FRONTEND_URL,
-  process.env.ADMIN_FRONTEND_URL,
-].filter(Boolean);
+// const allowedOrigins = [
+//   "https://shuz-e-com-frontend.onrender.com",
+//   process.env.CLIENT_FRONTEND_URL,
+//   process.env.ADMIN_FRONTEND_URL,
+// ].filter(Boolean);
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        return callback(new Error("CORS Policy Error"), false);
-      }
-      return callback(null, true);
-    },
+    origin: [
+      "https://shuz-e-com-frontend.onrender.com",
+      "https://shuz-e-com-admin.onrender.com",
+    ],
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // MUST include OPTIONS
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+      "Accept",
+    ],
   }),
 );
+
+// app.options("{/*path}?", cors());
+app.use(
+  helmet({
+    contentSecurityPolicy: false, // Strongly suggested to keep this false until the site is stable
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+  }),
+);
+app.use(cookieParser());
+app.use(express.json());
 
 // STRIPE WEBHOOK MUST BE BEFORE express.json()
 app.post(
@@ -75,14 +87,7 @@ app.post(
   express.raw({ type: "application/json" }),
   stripeWebhook,
 );
-app.use(express.json());
-app.use(cookieParser());
-app.use(
-  helmet({
-    contentSecurityPolicy: true,
-    referrerPolicy: { policy: "same-origin" },
-  }),
-);
+
 app.use(morgan("dev"));
 app.use(urlencoded({ extended: true }));
 

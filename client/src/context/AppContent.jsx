@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import api from "../../config/axiosConfig";
+import api from "../config/axiosConfig";
 
 export const AppContent = createContext();
 

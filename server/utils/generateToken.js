@@ -12,12 +12,13 @@ export const generateToken = (id, res, tokenName) => {
 
   // 2. Set the Cookie
   res.cookie(tokenName, token, {
-    httpOnly: true, // Prevents client-side JS from reading the cookie
-    secure: process.env.NODE_ENV === "production", // Only sent over HTTPS in production
-    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // "Lax" is usually better than "Strict" for local dev
+    httpOnly: true,
+    // On Render, it's safer to just set these to true/none for the live build
+    secure: true,
+    sameSite: "None",
     maxAge: maxAge,
     path: "/",
   });
 
-  return token; // Optional: return it in case you want to use it elsewhere
+  return token;
 };

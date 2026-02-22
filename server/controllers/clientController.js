@@ -115,9 +115,11 @@ export const loginClient = async (req, res) => {
 export const logoutClient = async (req, res) => {
   try {
     // Use setHeader to manually force the browser's hand
-    res.setHeader("Set-Cookie", [
-      `ShuzClientToken=; Path=/; HttpOnly; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; ${process.env.NODE_ENV === "production" ? "Secure" : ""}`,
-    ]);
+    res.cookie("ShuzAdminToken", "", {
+      httpOnly: true,
+      expires: new Date(0), // Sets expiration to the past to delete it immediately
+      path: "/",
+    });
 
     return res.json({ success: true, message: "Logged out successfully!" });
   } catch (error) {
@@ -191,8 +193,8 @@ export const deleteAccount = async (req, res) => {
 
     res.clearCookie("ShuzClientToken", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      secure: true,
+      sameSite: "none",
     });
 
     res.json({ success: true, message: "Account deleted." });

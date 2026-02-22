@@ -8,9 +8,10 @@ import { io } from "socket.io-client";
 import { assets } from "../assets/assets";
 
 export const AppContextProvider = (props) => {
-  const backendUrl = "http://localhost:4000/api";
+  const backendUrl =
+    import.meta.env.VITE_BACKEND_URL_NETWORK || "http://localhost:4000/api";
 
-  const socketBackendUrl = "https://shuz-e-com-backend.onrender.com/api";
+  const socketBackendUrl = import.meta.env.VITE_BACKEND_URL_NETWORK;
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -46,10 +47,13 @@ export const AppContextProvider = (props) => {
       setUserData(null);
     }
     if (isLoggedIn) {
-      const socket = io(socketBackendUrl, {
-        withCredentials: true,
-        transports: ["websocket", "polling"], // Force these to ensure compatibility
-      });
+      const socket = io(
+        socketBackendUrl || "https://shuz-e-com-backend.onrender.com",
+        {
+          withCredentials: true,
+          transports: ["websocket", "polling"], // Force these to ensure compatibility
+        },
+      );
       const fetchNotifications = async () => {
         // Join the admin room
         socket.emit("joinAdminRoom");

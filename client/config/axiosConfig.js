@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://shuz-e-com-backend.onrender.com",
+  baseURL: "https://shuz-e-com-backend.onrender.com/api",
   withCredentials: true,
 });
 

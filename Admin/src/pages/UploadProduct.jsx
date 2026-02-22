@@ -211,25 +211,7 @@ const UploadProduct = () => {
   }
   const closePreviewProduct = () => {
     setIsModalOpen(false);
-    if (editMode) {
-      setEditMode(false);
-      setProductId(null);
-    }
-    setProductData({
-      name: "",
-      sku: "",
-      price: "",
-      discount: 0,
-      description: "",
-    });
-    setSelectedCategories([]);
-    setSizes([
-      { value: "8", suffix: "08", stock: 0 },
-      { value: "9", suffix: "09", stock: 0 },
-      { value: "10", suffix: "10", stock: 0 },
-      { value: "11", suffix: "11", stock: 0 },
-    ]);
-    setImagePreview(null);
+    setEditMode(false);
   };
 
   return (

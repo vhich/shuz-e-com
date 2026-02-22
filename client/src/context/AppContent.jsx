@@ -100,7 +100,6 @@ export const AppContextProvider = (props) => {
       } catch (error) {
         console.error("Error fetching products", error);
         alert("Error fetching products, try again!");
-        // window.location.reload();
       }
     };
 

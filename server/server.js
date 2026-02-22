@@ -27,6 +27,8 @@ const io = new Server(httpServer, {
     origin:
       "https://shuz-e-com-frontend-client.onrender.com" ||
       "https://shuz-e-com-frontend-client.onrender.com/api" ||
+      "https://shuz-e-com-frontend-admin.onrender.com/api" ||
+      "https://shuz-e-com-frontend-admin.onrender.com" ||
       "http://localhost:3001" ||
       "http://localhost:3002",
     credentials: true,
@@ -62,9 +64,10 @@ app.use(
     origin: [
       "http://localhost:3001",
       "http://localhost:3002",
-      "https://shuz-e-com-frontend-client.onrender.com",
+      "https://shuz-e-com-frontend-admin.onrender.com/api",
       "https://shuz-e-com-frontend-client.onrender.com/api",
       process.env.CLIENT_FRONTEND_URL,
+      process.env.ADMIN_FRONTEND_URL,
     ].filter(Boolean),
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // MUST include OPTIONS

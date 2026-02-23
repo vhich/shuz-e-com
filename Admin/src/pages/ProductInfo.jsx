@@ -32,9 +32,7 @@ const ProductInfo = () => {
     const fetchProductDetail = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get(`${backendUrl}/shuz/products/${id}`, {
-          headers: { "cache-control": "no-cache" },
-        });
+        const { data } = await axios.get(`${backendUrl}/shuz/products/${id}`);
 
         if (data.success) {
           const fetchedProduct = data.data;

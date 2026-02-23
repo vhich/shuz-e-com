@@ -304,7 +304,7 @@ const AllProducts = () => {
                             </button>
                             <button
                               onClick={() =>
-                                navigate(`/admin/product-info/${item._id}`)
+                                navigate(`/admin/product/${item._id}`)
                               }
                               className="text-gray-600! hover:text-green-500!"
                             >

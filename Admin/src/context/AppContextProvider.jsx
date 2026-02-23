@@ -8,8 +8,7 @@ import { io } from "socket.io-client";
 import { assets } from "../assets/assets";
 
 export const AppContextProvider = (props) => {
-  const backendUrl =
-    import.meta.env.VITE_BACKEND_URL_NETWORK || "http://localhost:4000/api";
+  const backendUrl = import.meta.env.VITE_BACKEND_URL_NETWORK;
 
   const socketBackendUrl =
     import.meta.env.VITE_BACKEND_URL_NETWORK ||

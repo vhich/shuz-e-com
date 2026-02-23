@@ -10,9 +10,7 @@ import { assets } from "../assets/assets";
 export const AppContextProvider = (props) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-  const socketBackendUrl =
-    import.meta.env.VITE_BACKEND_URL ||
-    "https://shuz-e-com-backend.onrender.com";
+  const socketBackendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);

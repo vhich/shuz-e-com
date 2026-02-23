@@ -15,7 +15,7 @@ export const AppContextProvider = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
   const [newProducts, setNewProducts] = useState(null);
-  const [bestSellerProducts, setBestSellerProducts] = useState([]);
+  const [bestSellerProducts, setBestSellerProducts] = useState(null);
   const [productId, setProductId] = useState();
   const [loading, setLoading] = useState(true);
   const [allProduct, setAllProduct] = useState([]);
@@ -91,7 +91,7 @@ export const AppContextProvider = (props) => {
           setAllProduct(products);
 
           setNewProducts(products.slice(0, 4));
-          const filteredBestSellers = products.filter((p) => p.price > 500);
+          const filteredBestSellers = products.filter((p) => p.price >= 350);
           setBestSellerProducts(filteredBestSellers);
 
           setAllCategories([...new Set(products.flatMap((p) => p.categories))]);
@@ -119,6 +119,7 @@ export const AppContextProvider = (props) => {
     setNewProducts,
     setProduct,
     setAllCategories,
+    setBestSellerProducts,
     setCartItems,
     setToken,
     setIsLoggedIn,

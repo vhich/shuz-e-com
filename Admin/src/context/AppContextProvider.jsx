@@ -8,10 +8,10 @@ import { io } from "socket.io-client";
 import { assets } from "../assets/assets";
 
 export const AppContextProvider = (props) => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL_NETWORK;
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const socketBackendUrl =
-    import.meta.env.VITE_BACKEND_URL_NETWORK ||
+    import.meta.env.VITE_BACKEND_URL ||
     "https://shuz-e-com-backend.onrender.com";
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);

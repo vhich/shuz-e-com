@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FiX, FiSearch, FiPackage } from "react-icons/fi";
 import PropTypes from "prop-types";
 import ProductCard from "./ProductCard";
+import { useEffect } from "react";
 
 const SearchModal = ({ isOpen, onClose, products }) => {
   const [query, setQuery] = useState("");
@@ -18,6 +19,12 @@ const SearchModal = ({ isOpen, onClose, products }) => {
               cat.toLowerCase().includes(query.toLowerCase()),
             ).length > 0,
         );
+
+  useEffect(() => {
+    if (onClose) {
+      setQuery("");
+    }
+  }, [onClose]);
 
   return (
     <AnimatePresence>
@@ -55,7 +62,7 @@ const SearchModal = ({ isOpen, onClose, products }) => {
             {/* Results Area */}
             <div className="max-h-[60vh] overflow-y-auto p-4">
               {results.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 sm:gap-4 gap-2">
                   {results.map((product) => (
                     <ProductCard key={product._id} product={product} />
                   ))}

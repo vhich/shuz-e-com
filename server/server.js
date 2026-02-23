@@ -67,8 +67,6 @@ app.use(
       "https://shuz-e-com-frontend-admin.onrender.com",
       "https://shuz-e-com-frontend-admin.onrender.com/api",
       "https://shuz-e-com-frontend-client.onrender.com/api",
-      process.env.CLIENT_FRONTEND_URL,
-      process.env.ADMIN_FRONTEND_URL,
     ].filter(Boolean),
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // MUST include OPTIONS

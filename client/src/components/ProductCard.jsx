@@ -27,12 +27,12 @@ const ProductCard = ({ product }) => {
       onClick={setProductIdUrl}
     >
       <div
-        className={`product_img ${loading ? "bg-gray-200" : "bg-white"} my-4 h-45 flex flex-col overflow-hidden`}
+        className={`product_img ${loading ? "bg-gray-200" : "bg-white"} my-4 flex flex-col overflow-hidden`}
       >
         <img
           src={product.image}
           alt={product.name}
-          className="h-full object-contain"
+          className="h-full object-cover"
         />
       </div>
       <p className="lg:text-xl! sm:text-sm! mb-2 hover:text-green-700">

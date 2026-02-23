@@ -45,7 +45,11 @@ const StripePayment = ({ amount, orderId, paymentType }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4"
+      disabled={isProcessing || !stripe}
+    >
       <PaymentElement options={paymentElementOptions} />
       <button
         type="submit"

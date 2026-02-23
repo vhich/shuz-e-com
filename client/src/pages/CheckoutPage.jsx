@@ -294,7 +294,7 @@ export default function CheckoutPage() {
                         Phone number <span className="text-red-500">*</span>
                       </label>
                       <input
-                        disabled={isLoggedIn && userData.telephone} // Disable if logged in and data exists
+                        disabled={isLoggedIn && userData.phoneNumber} // Disable if logged in and data exists
                         value={
                           (isLoggedIn && userData.phoneNumber
                             ? userData.phoneNumber
@@ -354,7 +354,7 @@ export default function CheckoutPage() {
                         City <span className="text-red-500">*</span>
                       </label>
                       <input
-                        disabled={isLoggedIn && userData.address} // Disable if logged in and data exists
+                        disabled={isLoggedIn && userData.address.city} // Disable if logged in and data exists
                         value={
                           (isLoggedIn && userData.address.city
                             ? userData.address.city
@@ -372,7 +372,7 @@ export default function CheckoutPage() {
                         State <span className="text-red-500">*</span>
                       </label>
                       <input
-                        disabled={isLoggedIn && userData.address} // Disable if logged in and data exists
+                        disabled={isLoggedIn && userData.address.state} // Disable if logged in and data exists
                         value={
                           (isLoggedIn && userData.address.state
                             ? userData.address.state
@@ -391,7 +391,7 @@ export default function CheckoutPage() {
                         <span className="text-red-500 opacity-0">*</span>
                       </label>
                       <input
-                        disabled={isLoggedIn && userData.address} // Disable if logged in and data exists
+                        disabled={isLoggedIn && userData.address.zipCode} // Disable if logged in and data exists
                         value={
                           (isLoggedIn && userData.address.zipCode
                             ? userData.address.zipCode

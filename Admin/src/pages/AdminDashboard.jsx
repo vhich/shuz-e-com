@@ -772,7 +772,7 @@ const AdminDashboard = () => {
                         key={notif._id}
                         isRead={isRead}
                         notif={notif}
-                        getIcon={getIcon}
+                        getIcon={getIcon(notif.type)}
                       />
                     );
                   })

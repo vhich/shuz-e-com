@@ -16,7 +16,7 @@ const Notification = ({ notif, isRead, getIcon, handleReadNotification }) => {
         <div
           className={`p-3 rounded-xl h-fit sm:hidden md:hidden! lg:block! hidden! ${isRead ? "bg-slate-50" : "bg-white shadow-sm"}`}
         >
-          {getIcon(notif.type)}
+          {getIcon}
         </div>
 
         <div className="flex-1">

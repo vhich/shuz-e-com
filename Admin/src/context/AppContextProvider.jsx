@@ -5,12 +5,12 @@ import api from "../config/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "./AppContent";
 import { io } from "socket.io-client";
-import { assets } from "../assets/assets";
+// import { assets } from "../assets/assets";
 
 export const AppContextProvider = (props) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-  const socketBackendUrl = import.meta.env.VITE_BACKEND_URL;
+  const socketBackendUrl = "https://shuz-e-com-backend.onrender.com";
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -59,7 +59,10 @@ export const AppContextProvider = (props) => {
           console.log("New Notif ReadBy:", notif.readBy);
           setIsNewNotification(true);
 
-          const audio = new Audio(assets.noftSound);
+          const audioUrl =
+            "https://shuz-e-com-frontend-admin.onrender.com/notification-sound.mp3";
+
+          const audio = new Audio(audioUrl);
 
           // Play with a more robust promise handler
           const playPromise = audio.play();

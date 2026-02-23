@@ -47,7 +47,7 @@ const NotificationPage = () => {
             className="text-sm! text-blue-500 hover:underline flex! items-center gap-1"
           >
             <ArrowLeft size={14} />
-            Back to Dashboard
+            Dashboard
           </NavLink>
         </div>
 
@@ -67,9 +67,9 @@ const NotificationPage = () => {
                 <Notification
                   key={notif._id}
                   isRead={isRead}
-                  getIcon={getIcon}
+                  getIcon={getIcon(notif.type)}
                   notif={notif}
-                  handleReadNotification={handleReadNotification()}
+                  handleReadNotification={handleReadNotification}
                 />
               );
             })

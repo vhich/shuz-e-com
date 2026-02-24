@@ -75,6 +75,7 @@ app.use(
       "Authorization",
       "X-Requested-With",
       "Accept",
+      "Cache-Control",
     ],
   }),
 );

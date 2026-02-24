@@ -32,6 +32,7 @@ export default function AdminOrders() {
     fetchOrders,
     orders,
     api,
+    getAdminAuthState,
   } = useAppContext();
 
   // --- KPI CALCULATIONS ---
@@ -121,7 +122,14 @@ export default function AdminOrders() {
     return () => {
       setLoading(false);
     };
-  }, []);
+  }, [fetchOrders, setLoading]);
+
+  useEffect(() => {
+    const initBuyer = async () => {
+      await getAdminAuthState();
+    };
+    initBuyer();
+  }, [getAdminAuthState]);
 
   useEffect(() => {
     document.title = "Admin Dashboard - Orders";

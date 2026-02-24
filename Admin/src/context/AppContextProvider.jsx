@@ -244,27 +244,33 @@ export const AppContextProvider = (props) => {
       if (data.success) {
         setUserData(() => data.admin);
         setIsLoggedIn(true);
-        navigate("/admin/dashboard");
+        if (isLoggedIn) {
+          navigate("/admin/dashboard");
+        }
       }
     } catch (error) {
-      console.log("Status Code:", error?.response?.status);
-      setUserData(null);
-      setIsLoggedIn(null);
       if (error?.response && error.response.status === 429) {
         const expiryTime = Date.now() + 3 * 60 * 1000;
         localStorage.setItem("login_lockout", expiryTime);
         navigate("/account/too-many-attempts");
         setUserData(null);
         setIsLoggedIn(null);
+        if (!isLoggedIn) {
+          navigate("/");
+        }
       } else {
         // 4. Handle other errors (like "Email already in use")
         const message = error.response?.data?.message || error;
+        console.log("Status Code:", error?.response?.status);
         console.error("Error!", message);
         setUserData(null);
         setIsLoggedIn(null);
+        if (!isLoggedIn) {
+          navigate("/admin/account/create-account");
+        }
       }
     }
-  }, [navigate, backendUrl]);
+  }, [navigate, backendUrl, isLoggedIn]);
 
   // Delete logic remains identical
   const deleteProduct = async (id) => {
@@ -287,13 +293,6 @@ export const AppContextProvider = (props) => {
       }
     }
   };
-
-  useEffect(() => {
-    const initBuyer = async () => {
-      await getAdminAuthState();
-    };
-    initBuyer();
-  }, [getAdminAuthState]);
 
   const globalState = {
     // Define any global state or functions here
@@ -325,6 +324,7 @@ export const AppContextProvider = (props) => {
     isNewNotification,
     hasUnread,
     api,
+    getAdminAuthState,
   };
 
   return (

@@ -3,6 +3,7 @@ import {
   registerAdmin,
   loginAdmin,
   logoutAdmin,
+  deleteAdminAccount,
 } from "../controllers/adminController.js";
 import { getAdminData } from "../controllers/adminData.js";
 import { protectAdmin } from "../middleware/protectAdmin.js";
@@ -36,4 +37,5 @@ router.get("/me", protectAdmin, getAdminData);
 router.post("/notifications/read/:notificationId", markAsRead);
 router.get("/notifications", protectAdmin, getAdminNotifications);
 
+router.post("/account/delete", protectAdmin, deleteAdminAccount);
 export default router;

@@ -20,6 +20,7 @@ const AllProducts = () => {
     backendUrl,
     editMode,
     api,
+    getAdminAuthState,
   } = useAppContext();
   const [showAll, setShowAll] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,6 +37,12 @@ const AllProducts = () => {
   useEffect(() => {
     console.log(editMode);
   }, [editMode]);
+  useEffect(() => {
+    const initBuyer = async () => {
+      await getAdminAuthState();
+    };
+    initBuyer();
+  }, [getAdminAuthState]);
 
   // 2. useMemo Hooks (Top Level - NEVER inside a function)
   const uniqueCategories = useMemo(() => {

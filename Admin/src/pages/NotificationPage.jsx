@@ -14,7 +14,8 @@ import { NavLink } from "react-router-dom";
 import Notification from "../components/Notification";
 
 const NotificationPage = () => {
-  const { notifications, handleReadNotification, userData } = useAppContext();
+  const { notifications, handleReadNotification, userData, getAdminAuthState } =
+    useAppContext();
 
   const adminId = userData ? userData.id : null;
 
@@ -33,6 +34,12 @@ const NotificationPage = () => {
     document.title = "Admin Dashboard - Notifications";
     document.body.style.overflowY = "auto"; // Ensure scrolling is enabled on this page
   }, []);
+  useEffect(() => {
+    const initBuyer = async () => {
+      await getAdminAuthState();
+    };
+    initBuyer();
+  }, [getAdminAuthState]);
 
   return (
     <>

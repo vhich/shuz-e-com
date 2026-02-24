@@ -12,8 +12,14 @@ import { HiArrowLeft } from "react-icons/hi2";
 const ProductInfo = () => {
   const [product, setProduct] = useState(null);
 
-  const { backendUrl, setLoading, deleteProduct, setEditMode, isLoggedIn } =
-    useAppContext();
+  const {
+    backendUrl,
+    setLoading,
+    deleteProduct,
+    setEditMode,
+    isLoggedIn,
+    getAdminAuthState,
+  } = useAppContext();
 
   const { id } = useParams();
 
@@ -25,6 +31,13 @@ const ProductInfo = () => {
     document.title = "Admin Dashboard - Product Details";
     document.body.style.overflowY = "hidden";
   }, []);
+
+  useEffect(() => {
+    const initBuyer = async () => {
+      await getAdminAuthState();
+    };
+    initBuyer();
+  }, [getAdminAuthState]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });

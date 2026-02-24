@@ -34,7 +34,8 @@ import Notification from "../components/Notification";
 const AdminDashboard = () => {
   const { isLoggedIn } = useAppContext();
 
-  const { orders, fetchOrders, notifications, userData } = useAppContext();
+  const { orders, fetchOrders, notifications, userData, getAdminAuthState } =
+    useAppContext();
 
   const adminId = userData ? userData.id : null;
 
@@ -264,6 +265,12 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchOrders();
   }, []);
+  useEffect(() => {
+    const initBuyer = async () => {
+      await getAdminAuthState();
+    };
+    initBuyer();
+  }, [getAdminAuthState]);
 
   return (
     <>

@@ -158,3 +158,21 @@ export const logoutAdmin = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// 3. Delete Account
+export const deleteAdminAccount = async (req, res) => {
+  try {
+    const adminId = req.admin;
+
+    await Admin.findByIdAndDelete(adminId);
+    res.clearCookie("ShuzAdminToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+
+    res.json({ success: true, message: "Account deleted!" });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};

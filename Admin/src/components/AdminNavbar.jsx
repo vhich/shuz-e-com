@@ -58,12 +58,11 @@ const AdminNavbar = () => {
       }, 500);
     } else {
       try {
-        const { data } = await api.post(
-          `http://localhost:4000/api/admin/account/delete`,
-        );
+        const { data } = await api.post(`${backendUrl}/admin/account/delete`);
 
         if (data.success) {
           toast.success(data.message);
+          navigate("/");
         }
       } catch (error) {
         // toast(error);

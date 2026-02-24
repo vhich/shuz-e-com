@@ -235,7 +235,7 @@ export const AppContextProvider = (props) => {
     }
   };
 
-  const getAdminAuthState = useCallback(async () => {
+  const getAdminAuthState = async () => {
     try {
       const { data } = await api.get(
         `${backendUrl}/admin/me?t=${new Date().getTime()}`,
@@ -270,7 +270,7 @@ export const AppContextProvider = (props) => {
         }
       }
     }
-  }, [navigate, backendUrl, isLoggedIn]);
+  };
 
   // Delete logic remains identical
   const deleteProduct = async (id) => {

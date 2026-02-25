@@ -88,7 +88,7 @@ export const registerAdmin = async (req, res) => {
     const admin = await Admin.create({
       firstName,
       lastName,
-      usernam,
+      username,
       password,
       role,
     });

@@ -22,6 +22,7 @@ export const AppContextProvider = (props) => {
   const [notifications, setNotifications] = useState([]);
   const [isNewNotification, setIsNewNotification] = useState(false);
   const [orders, setOrders] = useState([]);
+  const [inviteAdmin, setInviteAdmin] = useState(false);
   // const [currentProduct, setCurrentProduct] = useState(null);
 
   const navigate = useNavigate();
@@ -178,38 +179,60 @@ export const AppContextProvider = (props) => {
       if (data.success) {
         toast.success(data.message);
         setIsLoggedIn(true);
-        navigate("/");
-        setDisableForm(false);
-        setLoading(false);
-      } else {
-        alert(data.message);
-        setDisableForm(false);
-        setLoading(false);
+        window.location.replace("/");
       }
     } catch (err) {
-      console.error("Login failed", err);
-      alert(err?.response?.data.message);
-      setDisableForm(false);
+      console.error("Registration failed", err);
+      toast.error(err?.response?.data.message);
+    } finally {
       setLoading(false);
+      setDisableForm(false);
+    }
+  };
+  const handleInviteAdminCreateAccount = async (formData) => {
+    console.log(inviteAdmin);
+    const adminInviteKey = import.meta.env.VITE_ADMIN_INVITE_KEY;
+    if (formData.adminKey === "" || formData.adminKey !== adminInviteKey) {
+      setLoading(false);
+      toast.error("You have to provide the invite key!");
+      setDisableForm(false);
+    }
+    formData.role = "Admin";
+    try {
+      // Optional: Call backend logout to clear the cookie
+      const { data } = await api.post(`${backendUrl}/admin/invite`, {
+        ...formData,
+      });
+      if (data.success) {
+        toast.success(data.message);
+        setIsLoggedIn(true);
+        navigate("/");
+      }
+    } catch (err) {
+      console.error("Adding admin failed", err);
+      toast.error(err?.response?.data.message);
+    } finally {
+      setLoading(false);
+      setDisableForm(false);
     }
   };
 
-  const handleAdminLogin = async (email, password) => {
+  const handleAdminLogin = async (username, password) => {
     try {
       // Optional: Call backend logout to clear the cookie
       const { data } = await api.post(`${backendUrl}/admin/login`, {
-        email,
+        username,
         password,
       });
       if (data.success) {
         toast.success(data.message);
         setIsLoggedIn(true);
-        window.location.href = "/admin/dashboard";
+        window.location.replace("/admin/dashboard");
         setDisableForm(false);
         setLoading(false);
       }
     } catch (err) {
-      console.error("Login failed", err);
+      console.error("Registration failed", err);
       alert(err?.response?.data?.message);
       setDisableForm(false);
       setLoading(false);
@@ -235,7 +258,7 @@ export const AppContextProvider = (props) => {
     }
   };
 
-  const getAdminAuthState = async () => {
+  const getAdminAuthState = useCallback(async () => {
     try {
       const { data } = await api.get(
         `${backendUrl}/admin/me?t=${new Date().getTime()}`,
@@ -255,22 +278,19 @@ export const AppContextProvider = (props) => {
         navigate("/account/too-many-attempts");
         setUserData(null);
         setIsLoggedIn(null);
-        if (!isLoggedIn) {
-          navigate("/");
-        }
       } else {
-        // 4. Handle other errors (like "Email already in use")
         const message = error.response?.data?.message || error;
         console.log("Status Code:", error?.response?.status);
         console.error("Error!", message);
         setUserData(null);
         setIsLoggedIn(null);
-        if (!isLoggedIn) {
-          navigate("/admin/account/create-account");
-        }
       }
     }
-  };
+  }, [backendUrl, isLoggedIn, navigate]);
+
+  useEffect(() => {
+    getAdminAuthState();
+  }, [getAdminAuthState]);
 
   // Delete logic remains identical
   const deleteProduct = async (id) => {
@@ -298,32 +318,35 @@ export const AppContextProvider = (props) => {
     // Define any global state or functions here
     backendUrl,
     isLoggedIn,
-    setIsLoggedIn,
     userData,
-    setUserData,
-    handleAdminCreateAccount,
-    handleAdminLogin,
-    handleAdminLogout,
     disableForm,
-    setDisableForm,
     loading,
-    setLoading,
     products,
-    setProducts,
-    fetchAllProducts,
     editMode,
-    setEditMode,
-    deleteProduct,
-    fetchAllNotifications,
-    handleReadNotification,
-    setNotifications,
-    fetchOrders,
     orders,
-    setOrders,
     notifications,
     isNewNotification,
     hasUnread,
+    inviteAdmin,
     api,
+    setEditMode,
+    deleteProduct,
+    fetchAllNotifications,
+    setIsLoggedIn,
+    handleReadNotification,
+    setUserData,
+    handleAdminCreateAccount,
+    handleInviteAdminCreateAccount,
+    handleAdminLogin,
+    handleAdminLogout,
+    setNotifications,
+    setDisableForm,
+    fetchOrders,
+    setLoading,
+    setOrders,
+    setProducts,
+    fetchAllProducts,
+    setInviteAdmin,
     getAdminAuthState,
   };
 

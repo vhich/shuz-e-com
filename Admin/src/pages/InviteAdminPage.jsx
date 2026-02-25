@@ -1,41 +1,43 @@
 import React, { useState, useEffect } from "react";
-import { User, Lock, ShieldCheck, UserPlus, ArrowLeft } from "lucide-react";
-import { NavLink, useNavigate } from "react-router-dom";
+import {
+  User,
+  Mail,
+  Lock,
+  ShieldCheck,
+  UserPlus,
+  ArrowLeft,
+} from "lucide-react";
+import { NavLink } from "react-router-dom";
 import { useAppContext } from "../context/AppContent";
 import Loading from "../components/Loading";
 
-const AdminCreateAcct = () => {
+const InviteAdminPage = () => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     username: "",
     password: "",
-    superAdminKey: "",
-    role: "Super Admin",
+    adminKey: "",
+    role: "Admin",
   });
 
   const {
-    handleAdminCreateAccount,
+    handleInviteAdminCreateAccount,
     setLoading,
     setDisableForm,
     disableForm,
-    isLoggedIn,
+    inviteAdmin,
   } = useAppContext();
-
-  const navigate = useNavigate();
-  useEffect(() => {
-    isLoggedIn && navigate("/admin/dashboard");
-  }, [isLoggedIn, navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
     setDisableForm(true);
-    handleAdminCreateAccount(formData);
+    handleInviteAdminCreateAccount(formData);
   };
 
   useEffect(() => {
-    document.title = "Admin Dashboard - Create Account";
+    document.title = "Admin Dashboard - Invite admin";
     document.body.style.overflowY = "hidden"; // Ensure scrolling is enabled on this page
   }, []);
 
@@ -46,20 +48,16 @@ const AdminCreateAcct = () => {
         <div>
           {/* Right Side: Registration Form */}
           <div className="lg:w-xl md:w-xl w-auto mx-auto">
-            <div className="w-full flex flex-row-reverse">
+            <div className="flex flex-wrap justify-between items-center my-8 gap-2 sm:flex-row flex-col-reverse">
+              <h6 className="uppercase text-gray-900">
+                {inviteAdmin ? "Add Admin" : "Create Admin Account"}
+              </h6>
               <NavLink
                 to="/"
-                className="flex! items-center gap-1 text-gray-400 hover:text-black transition-colors my-4"
+                className="flex! items-center gap-1 text-gray-400 hover:text-black transition-colors"
               >
                 <ArrowLeft size={16} /> Back to Login
               </NavLink>
-            </div>
-
-            <div className="mb-8 gap-2">
-              <h4 className="uppercase text-gray-900 mb-3">Sign up</h4>
-              <p className="text-sm! text-slate-600">
-                Create your super admin account to have full access to the panel
-              </p>
             </div>
 
             <form
@@ -109,14 +107,14 @@ const AdminCreateAcct = () => {
                 </div>
               </div>
 
-              {/* Username */}
+              {/* Email Address */}
               <div>
                 <label className="block text-xs font-bold uppercase text-gray-500 mb-2">
                   username
                 </label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-                    <User size={18} />
+                    <Mail size={18} />
                   </span>
                   <input
                     type="text"
@@ -124,7 +122,7 @@ const AdminCreateAcct = () => {
                     className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-gray-500 outline-none transition-all"
                     placeholder="myusername123"
                     onChange={(e) =>
-                      setFormData({ ...formData, username: e.target.value })
+                      setFormData({ ...formData, email: e.target.value })
                     }
                   />
                 </div>
@@ -168,10 +166,7 @@ const AdminCreateAcct = () => {
                       className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-gray-500 outline-none transition-all"
                       placeholder="KEY-1234"
                       onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          superAdminKey: e.target.value,
-                        })
+                        setFormData({ ...formData, adminKey: e.target.value })
                       }
                     />
                   </div>
@@ -203,4 +198,4 @@ const AdminCreateAcct = () => {
   );
 };
 
-export default AdminCreateAcct;
+export default InviteAdminPage;

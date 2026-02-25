@@ -7,7 +7,7 @@ import Loading from "../components/Loading";
 const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   //   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const {
     handleAdminLogin,
@@ -21,7 +21,7 @@ const AdminLogin = () => {
     e.preventDefault();
     setLoading(true);
     setDisableForm(true);
-    handleAdminLogin(email, password);
+    handleAdminLogin(username, password);
   };
   const navigate = useNavigate();
 
@@ -31,7 +31,7 @@ const AdminLogin = () => {
 
   useEffect(() => {
     document.title = "Admin Dashboard - Login";
-    document.body.style.overflowY = "auto"; // Ensure scrolling is enabled on this page
+    document.body.style.overflowY = "hidden"; // Ensure scrolling is enabled on this page
   }, []);
 
   return (
@@ -51,14 +51,14 @@ const AdminLogin = () => {
           {/* Email */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
-              Email or Username
+              Username
             </label>
             <div className="relative">
               <input
-                type="email"
+                type="text"
                 required
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded focus:border-gray-600 focus:bg-white transition-all outline-none text-gray-700"
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </div>
           </div>

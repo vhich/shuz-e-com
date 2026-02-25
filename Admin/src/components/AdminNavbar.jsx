@@ -144,9 +144,8 @@ const AdminNavbar = () => {
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
                 >
-                  <div className="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold uppercase!">
-                    {userData &&
-                      `${userData.firstName[0]}${userData.lastName[0]}`}
+                  <div className="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold uppercase">
+                    {userData && `${userData.firstName[0]}`}
                   </div>
                   <ChevronDown
                     size={14}
@@ -168,7 +167,7 @@ const AdminNavbar = () => {
                             ` ${userData.firstName}${" "}${userData.lastName}`}
                         </p>
                         <p className="text-xs text-gray-500 truncate">
-                          {userData && `${userData.email}`}
+                          {userData && `${userData.username}`}
                         </p>
                       </div>
                       {menuItems.map((item, index) =>

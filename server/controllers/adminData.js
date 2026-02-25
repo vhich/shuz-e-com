@@ -15,7 +15,7 @@ export const getAdminData = async (req, res) => {
         id: admin._id,
         firstName: admin.firstName,
         lastName: admin.lastName,
-        email: admin.email,
+        username: admin.username,
         loggedIn: admin.loggedIn,
       },
     });

@@ -11,18 +11,19 @@ import notificationModel from "../models/notification.js";
  * @desc    Register a new admin
  * @route   POST /api/admin/register
  */
-export const registerAdmin = async (req, res) => {
+export const registerSuperAdmin = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, adminKey } = req.body;
+    const { firstName, lastName, username, password, superAdminKey, role } =
+      req.body;
     console.log("Request Body:", req.body);
 
     // 1. Security Check
-    if (adminKey !== process.env.ADMIN_SECRET_KEY) {
+    if (superAdminKey !== "shuzsuperadminsecretekey20266789") {
       return res.status(401).json({ message: "Invalid Admin Invite Key." });
     }
 
     // 2. Check existence
-    const adminExists = await Admin.findOne({ email });
+    const adminExists = await Admin.findOne({ username });
     if (adminExists) {
       return res
         .status(400)
@@ -32,7 +33,50 @@ export const registerAdmin = async (req, res) => {
     const validationError = validateFields({
       firstName,
       lastName,
-      email,
+      username,
+      password,
+      superAdminKey,
+      role,
+    });
+
+    if (validationError) {
+      return res.status(400).json({ success: false, message: validationError });
+    }
+
+    const admin = await Admin.create({
+      firstName,
+      lastName,
+      username,
+      password,
+      superAdminKey,
+      role,
+    });
+    return res.status(201).json({
+      success: true,
+      message: "Admin created, successfully!",
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const registerAdmin = async (req, res) => {
+  try {
+    const { firstName, lastName, username, password, adminKey, role } =
+      req.body;
+    console.log("Request Body:", req.body);
+
+    // 2. Check existence
+    const adminExists = await Admin.findOne({ username });
+    if (adminExists) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Admin already exists." });
+    }
+    const validationError = validateFields({
+      firstName,
+      lastName,
+      username,
       password,
       adminKey,
     });
@@ -44,13 +88,13 @@ export const registerAdmin = async (req, res) => {
     const admin = await Admin.create({
       firstName,
       lastName,
-      email,
+      usernam,
       password,
-      adminKey,
+      role,
     });
     return res.status(201).json({
       success: true,
-      message: "Admin created, successfully!",
+      message: "Admin added, successfully!",
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
@@ -63,8 +107,8 @@ export const registerAdmin = async (req, res) => {
  */
 export const loginAdmin = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const admin = await Admin.findOne({ email });
+    const { username, password } = req.body;
+    const admin = await Admin.findOne({ username });
 
     // Get IP Address (handles local and proxy IPs)
     // const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
@@ -96,7 +140,7 @@ export const loginAdmin = async (req, res) => {
       if (!matchedPassword) {
         return res
           .status(401)
-          .json({ success: false, message: "Invalid email or password" });
+          .json({ success: false, message: "Invalid username or password" });
       }
       // Log the login attempt with device and location info
     }
@@ -104,7 +148,7 @@ export const loginAdmin = async (req, res) => {
     // Inside your adminLogin controller after successful password check:
     await createNotification(req, {
       title: "Admin Login Detected",
-      content: `Admin ${admin.email} accessed the dashboard.`,
+      content: `Admin ${admin.username} accessed the dashboard.`,
       type: "auth",
       priority: "high",
       loginData: {
@@ -119,12 +163,6 @@ export const loginAdmin = async (req, res) => {
     res.json({
       success: true,
       message: "Login successful!",
-      admin: {
-        _id: admin._id,
-        loggedIn: admin.loggedIn,
-        email: admin.email,
-        token: generateToken(admin._id, res, "ShuzAdminToken"),
-      },
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });

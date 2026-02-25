@@ -26,7 +26,6 @@ const UploadProduct = () => {
     isLoggedIn,
     editMode,
     setEditMode,
-    getAdminAuthState,
   } = useAppContext();
   const navigate = useNavigate();
   const location = useLocation(); // To catch the product data for editing
@@ -51,13 +50,6 @@ const UploadProduct = () => {
     { value: "10", suffix: "10", stock: 0 },
     { value: "11", suffix: "11", stock: 0 },
   ]);
-
-  useEffect(() => {
-    const initBuyer = async () => {
-      await getAdminAuthState();
-    };
-    initBuyer();
-  }, [getAdminAuthState]);
 
   useEffect(() => {
     document.title = editMode

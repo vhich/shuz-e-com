@@ -34,8 +34,7 @@ import Notification from "../components/Notification";
 const AdminDashboard = () => {
   const { isLoggedIn } = useAppContext();
 
-  const { orders, fetchOrders, notifications, userData, getAdminAuthState } =
-    useAppContext();
+  const { orders, fetchOrders, notifications, userData } = useAppContext();
 
   const adminId = userData ? userData.id : null;
 
@@ -177,7 +176,7 @@ const AdminDashboard = () => {
     const uniqueCustomers = {};
 
     orders.forEach((order) => {
-      const email = order.customerDetails?.email?.toLowerCase().trim();
+      const email = order.customerDetails?.username?.toLowerCase().trim();
       if (email && !uniqueCustomers[email]) {
         // Store the first instance of this customer we find
         uniqueCustomers[email] = {
@@ -265,12 +264,6 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchOrders();
   }, []);
-  useEffect(() => {
-    const initBuyer = async () => {
-      await getAdminAuthState();
-    };
-    initBuyer();
-  }, [getAdminAuthState]);
 
   return (
     <>

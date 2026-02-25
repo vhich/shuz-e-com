@@ -1,8 +1,8 @@
 // utils/validator.js
 
-export const isValidEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
+export const isValidUsername = (username) => {
+  const usernameRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{4,10}$/;
+  return usernameRegex.test(username);
 };
 
 /**
@@ -23,8 +23,8 @@ export const validateFields = (fields) => {
     }
 
     // 2. Specific email format check
-    if (key === "email" && !isValidEmail(value)) {
-      return "Please enter a valid email address!";
+    if (key === "username" && !isValidUsername(value)) {
+      return "Username must be 4-10 characters and include both letters and numbers.";
     }
 
     // 3. Password length check

@@ -5,7 +5,7 @@ const adminSchema = new mongoose.Schema(
   {
     firstName: { type: String, required: true, trim: true },
     lastName: { type: String, required: true, trim: true },
-    email: { type: String, required: true, unique: true, lowercase: true },
+    username: { type: String, required: true, unique: true, lowercase: true },
     // models/Admin.js
     password: {
       type: String,
@@ -13,8 +13,8 @@ const adminSchema = new mongoose.Schema(
       minlength: [4, "Password must be at least 4 characters"],
       maxlength: [100, "Password is too long"], // Note: Hashed passwords are long, so don't set this to 8!
     },
-    adminKey: { type: String, required: true },
-    role: { type: String, default: "admin" },
+    superAdminKey: { type: String, required: true },
+    role: { type: String, default: "super admin" },
     lockUntil: {
       type: Date,
       default: null,

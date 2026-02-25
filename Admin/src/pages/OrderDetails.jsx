@@ -23,14 +23,7 @@ export default function OrderDetails() {
   const [email, setEmail] = useState(searchParams.get("email") || "");
   const [orderData, setOrderData] = useState(null);
 
-  const {
-    backendUrl,
-    loading,
-    setLoading,
-    isLoggedIn,
-    api,
-    getAdminAuthState,
-  } = useAppContext();
+  const { backendUrl, loading, setLoading, isLoggedIn, api } = useAppContext();
 
   const steps = ["Pending", "Processing", "Shipped", "Delivered"];
   const currentStepIndex = orderData ? steps.indexOf(orderData.status) : -1;
@@ -40,12 +33,6 @@ export default function OrderDetails() {
   useEffect(() => {
     !isLoggedIn && navigate("/");
   }, [isLoggedIn, navigate]);
-  useEffect(() => {
-    const initBuyer = async () => {
-      await getAdminAuthState();
-    };
-    initBuyer();
-  }, [getAdminAuthState]);
 
   // --- LOGIC: Fetch Order ---
   const fetchStatus = useCallback(

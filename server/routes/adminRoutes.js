@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  registerSuperAdmin,
   registerAdmin,
   loginAdmin,
   logoutAdmin,
@@ -21,7 +22,8 @@ const router = express.Router();
 router.use(setSecurityHeaders);
 
 // Auth Routes
-router.post("/register", registerAdmin);
+router.post("/register", registerSuperAdmin);
+router.post("/invite", protectAdmin, registerAdmin);
 router.post("/login", loginAdmin);
 router.post("/logout", protectAdmin, logoutAdmin);
 router.post(

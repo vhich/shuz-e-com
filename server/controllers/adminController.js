@@ -157,12 +157,17 @@ export const loginAdmin = async (req, res) => {
         location: locationString, // The GeoIP logic
       },
     });
+    const token = generateToken(admin._id, res, "ShuzAdminToken");
 
     await admin.save();
 
     res.json({
       success: true,
       message: "Login successful!",
+      admin: {
+        username,
+        token,
+      },
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });

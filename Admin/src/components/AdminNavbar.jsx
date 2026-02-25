@@ -29,6 +29,7 @@ const AdminNavbar = () => {
     setLoading,
     api,
     backendUrl,
+    setInviteAdmin,
   } = useAppContext();
 
   const location = useLocation();
@@ -42,6 +43,10 @@ const AdminNavbar = () => {
 
   const openDeleteModal = () => {
     setIsDeleteModal(true);
+  };
+  const addAdminPage = () => {
+    setInviteAdmin(true);
+    navigate("/admin/add-admin");
   };
   const handleDeleteAccount = async (e) => {
     e.preventDefault();
@@ -76,20 +81,35 @@ const AdminNavbar = () => {
   };
 
   const menuItems = [
-    { icon: <User size={16} />, label: "Profile Settings" },
-    { icon: <MessageSquare size={16} />, label: "Messages" },
-    { icon: <UserPlus size={16} />, label: "Add User" },
+    {
+      icon: <User size={16} />,
+      label: "Profile Settings",
+      display: `${userData?.role?.toLowerCase() === "super admin" ? "flex" : "hidden"}`,
+    },
+    {
+      icon: <MessageSquare size={16} />,
+      label: "Messages",
+      display: `flex`,
+    },
+    {
+      icon: <UserPlus size={16} />,
+      label: "Add User",
+      display: `${userData?.role.toLowerCase() === "super admin" ? "flex" : "hidden"}`,
+      func: addAdminPage,
+    },
     { divider: true },
     {
       icon: <LogOut size={16} />,
       label: "Log Out",
       color: "text-gray-700",
       func: handleAdminLogout,
+      display: `flex`,
     },
     {
       icon: <Trash2 size={16} />,
       label: "Delete Account",
       color: "text-red-600",
+      display: `${userData?.role?.toLowerCase() === "super admin" ? "flex" : "hidden"}`,
       func: openDeleteModal,
     },
   ];
@@ -162,6 +182,11 @@ const AdminNavbar = () => {
                     ></div>
                     <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-lg z-20 py-1 overflow-hidden">
                       <div className="px-4 py-3 border-b border-gray-100">
+                        <p
+                          className={`${userData?.role?.toLowerCase() === "super admin" ? "bg-green-600 text-white" : "bg-gray-700 text-white"} px-1.5 py-0.5 capitalize text-xs! w-fit rounded-sm`}
+                        >
+                          {userData?.role}
+                        </p>
                         <p className="text-sm font-semibold! text-gray-900 capitalize!">
                           {userData &&
                             ` ${userData.firstName}${" "}${userData.lastName}`}
@@ -179,7 +204,7 @@ const AdminNavbar = () => {
                         ) : (
                           <button
                             key={index}
-                            className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm! hover:bg-gray-50 transition-colors ${item.color || "text-gray-700"}`}
+                            className={`w-full ${item.display} items-center gap-3 px-4 py-2.5 text-sm! hover:bg-gray-50 transition-colors ${item.color || "text-gray-700"}`}
                             onClick={item.func && item.func}
                           >
                             {item.icon}

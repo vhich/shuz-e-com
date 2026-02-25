@@ -17,6 +17,7 @@ import AdminOrders from "./pages/AdminOrders";
 import OrderDetails from "./pages/OrderDetails";
 import NotificationPage from "./pages/NotificationPage";
 import NotFound from "./pages/NotFound";
+import InviteAdminPage from "./pages/InviteAdminPage";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -51,6 +52,7 @@ const App = () => {
             path="/admin/notifications"
             element={<NotificationPage />}
           ></Route>
+          <Route path="/admin/add-admin" element={<InviteAdminPage />}></Route>
         </Route>
       </Route>,
     ),

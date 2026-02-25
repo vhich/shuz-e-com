@@ -17,6 +17,7 @@ export const getAdminData = async (req, res) => {
         lastName: admin.lastName,
         username: admin.username,
         loggedIn: admin.loggedIn,
+        role: admin.role,
       },
     });
   } catch (error) {

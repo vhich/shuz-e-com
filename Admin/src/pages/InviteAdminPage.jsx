@@ -154,7 +154,7 @@ const InviteAdminPage = () => {
 
                 <div>
                   <label className="block text-xs font-bold uppercase text-gray-500 mb-2">
-                    super Admin key
+                    admin key
                   </label>
                   <div className="relative">
                     <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
@@ -180,12 +180,12 @@ const InviteAdminPage = () => {
                 disabled={disableForm}
               >
                 <UserPlus size={18} />
-                Create Admin Account
+                Add Admin
               </button>
             </form>
 
             <p className="text-center mt-8 text-sm text-gray-500">
-              By registering, you agree to the{" "}
+              By adding this admin, you agree to the{" "}
               <a href="#" className="underline text-black">
                 Terms of Service
               </a>

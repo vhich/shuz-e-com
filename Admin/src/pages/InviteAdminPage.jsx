@@ -53,10 +53,10 @@ const InviteAdminPage = () => {
                 {inviteAdmin ? "Add Admin" : "Create Admin Account"}
               </h6>
               <NavLink
-                to="/"
+                to="/admin/dashboard"
                 className="flex! items-center gap-1 text-gray-400 hover:text-black transition-colors"
               >
-                <ArrowLeft size={16} /> Back to Login
+                <ArrowLeft size={16} /> Dashboard
               </NavLink>
             </div>
 
@@ -122,7 +122,7 @@ const InviteAdminPage = () => {
                     className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-gray-500 outline-none transition-all"
                     placeholder="myusername123"
                     onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
+                      setFormData({ ...formData, username: e.target.value })
                     }
                   />
                 </div>

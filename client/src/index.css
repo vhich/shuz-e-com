@@ -87,9 +87,9 @@ textarea {
 }
 
 h1 {
-  font-size: 4.5rem;
+  font-size: 6.5rem;
   font-weight: 700;
-  line-height: 5rem;
+  line-height: 5.8rem;
 }
 h2 {
   font-size: 3.5rem;
@@ -146,6 +146,7 @@ input {
   font-size: 1rem;
   font-weight: 500;
   transition: background-color 0.3s ease;
+  position: relative;
 }
 .sec-btn {
   background-color: #ffffff;

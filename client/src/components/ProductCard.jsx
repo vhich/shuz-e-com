@@ -27,7 +27,7 @@ const ProductCard = ({ product }) => {
       onClick={setProductIdUrl}
     >
       <div
-        className={`product_img ${loading ? "bg-gray-200" : "bg-white"} my-4 flex flex-col overflow-hidden`}
+        className={`product_img ${loading ? "bg-gray-200" : "bg-white"} h-50 my-4 flex flex-col overflow-hidden`}
       >
         <img
           src={product.image}

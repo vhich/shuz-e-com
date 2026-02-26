@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { assets } from "../assets/asset";
-import Navbar from "../components/Navbar";
 import Feature from "../components/Feature";
 import CollectionGrid from "../components/CollectionGrid";
 import NewArrivals from "../components/NewArrivals";
@@ -10,6 +9,7 @@ import Reviews from "../components/Reviews";
 import InfiniteBrandScroll from "../components/InfiniteBrandScroll";
 import Newsletter from "../components/Newsletter";
 import { NavLink } from "react-router-dom";
+import { Hero } from "../components/Hero";
 // import { AppContent } from "../context/AppContent";
 
 const Homepage = () => {
@@ -20,7 +20,7 @@ const Homepage = () => {
 
   return (
     <>
-      <section
+      {/* <section
         className={`relative bg-[url('/src/assets/images/hero_bg.png')] bg-center bg-cover`}
       >
         <Navbar />
@@ -47,7 +47,9 @@ const Homepage = () => {
             )}
           </div>
         </div>
-      </section>
+      </section> */}
+
+      <Hero />
       <Feature />
       <CollectionGrid />
       <CategoryList />

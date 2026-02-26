@@ -12,8 +12,14 @@ import { HiArrowLeft } from "react-icons/hi2";
 const ProductInfo = () => {
   const [product, setProduct] = useState(null);
 
-  const { backendUrl, setLoading, deleteProduct, setEditMode, isLoggedIn } =
-    useAppContext();
+  const {
+    backendUrl,
+    setLoading,
+    deleteProduct,
+    setEditMode,
+    isLoggedIn,
+    userData,
+  } = useAppContext();
 
   const { id } = useParams();
 
@@ -211,13 +217,15 @@ const ProductInfo = () => {
                 <SquarePen size={18} />
                 Edit
               </button>
-              <button
-                onClick={() => deleteProduct(product._id)}
-                className="bg-red-500 hover:bg-red-600 transition-colors py-3 px-8 rounded-xl text-white flex items-center gap-3 active:scale-95"
-              >
-                <Trash2 size={18} />
-                Delete
-              </button>
+              {userData?.role.toLowerCase() === "super admin" && (
+                <button
+                  onClick={() => deleteProduct(product._id)}
+                  className="bg-red-500 hover:bg-red-600 transition-colors py-3 px-8 rounded-xl text-white flex items-center gap-3 active:scale-95"
+                >
+                  <Trash2 size={18} />
+                  Delete
+                </button>
+              )}
             </div>
 
             <BottomSpace />

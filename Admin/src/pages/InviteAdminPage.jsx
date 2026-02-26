@@ -17,8 +17,8 @@ const InviteAdminPage = () => {
     lastName: "",
     username: "",
     password: "",
-    adminKey: "",
     role: "Admin",
+    superAdminKey: import.meta.env.VITE_SUPER_ADMIN_SECRET_KEY,
   });
 
   const {
@@ -49,9 +49,7 @@ const InviteAdminPage = () => {
           {/* Right Side: Registration Form */}
           <div className="lg:w-xl md:w-xl w-auto mx-auto">
             <div className="flex flex-wrap justify-between items-center my-8 gap-2 sm:flex-row flex-col-reverse">
-              <h6 className="uppercase text-gray-900">
-                {inviteAdmin ? "Add Admin" : "Create Admin Account"}
-              </h6>
+              <h6 className="uppercase text-gray-900">Add admin</h6>
               <NavLink
                 to="/admin/dashboard"
                 className="flex! items-center gap-1 text-gray-400 hover:text-black transition-colors"
@@ -171,6 +169,13 @@ const InviteAdminPage = () => {
                     />
                   </div>
                 </div>
+                <input
+                  type="text"
+                  onChange={(e) => setFormData(e.target.value)}
+                  value={formData.superAdminKey}
+                  disabled={inviteAdmin}
+                  className="hidden"
+                />
               </div>
 
               {/* Action Button */}

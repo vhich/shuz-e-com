@@ -176,7 +176,7 @@ const AdminDashboard = () => {
     const uniqueCustomers = {};
 
     orders.forEach((order) => {
-      const email = order.customerDetails?.username?.toLowerCase().trim();
+      const email = order.customerDetails?.email?.toLowerCase().trim();
       if (email && !uniqueCustomers[email]) {
         // Store the first instance of this customer we find
         uniqueCustomers[email] = {

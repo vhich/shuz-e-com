@@ -11,18 +11,25 @@ import notificationModel from "../models/notification.js";
  * @desc    Register a new admin
  * @route   POST /api/admin/register
  */
-export const registerSuperAdmin = async (req, res) => {
+// A helper to handle the actual creation logic
+const createAdminRecord = async (req, res, successMessage) => {
   try {
-    const { firstName, lastName, username, password, superAdminKey, role } =
+    const { firstName, lastName, username, password, role, superAdminKey } =
       req.body;
-    console.log("Request Body:", req.body);
 
-    // 1. Security Check
-    if (superAdminKey !== "shuzsuperadminsecretekey20266789") {
-      return res.status(401).json({ message: "Invalid Admin Invite Key." });
+    // 1. Validation (Using your existing validateFields helper)
+    const validationError = validateFields({
+      firstName,
+      lastName,
+      username,
+      password,
+      superAdminKey,
+    });
+    if (validationError) {
+      return res.status(400).json({ success: false, message: validationError });
     }
 
-    // 2. Check existence
+    // 2. Check if admin already exists
     const adminExists = await Admin.findOne({ username });
     if (adminExists) {
       return res
@@ -30,75 +37,36 @@ export const registerSuperAdmin = async (req, res) => {
         .json({ success: false, message: "Admin already exists." });
     }
 
-    const validationError = validateFields({
+    // 3. Create (This saves to DB automatically)
+    await Admin.create({
       firstName,
       lastName,
       username,
       password,
       superAdminKey,
-      role,
+      role: role,
     });
 
-    if (validationError) {
-      return res.status(400).json({ success: false, message: validationError });
-    }
-
-    const admin = await Admin.create({
-      firstName,
-      lastName,
-      username,
-      password,
-      superAdminKey,
-      role,
-    });
     return res.status(201).json({
       success: true,
-      message: "Admin created, successfully!",
+      message: successMessage,
     });
   } catch (error) {
+    // This is where that E11000 error usually gets caught
     return res.status(500).json({ success: false, message: error.message });
   }
 };
 
-export const registerAdmin = async (req, res) => {
-  try {
-    const { firstName, lastName, username, password, adminKey, role } =
-      req.body;
-    console.log("Request Body:", req.body);
-
-    // 2. Check existence
-    const adminExists = await Admin.findOne({ username });
-    if (adminExists) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Admin already exists." });
-    }
-    const validationError = validateFields({
-      firstName,
-      lastName,
-      username,
-      password,
-      adminKey,
-    });
-
-    if (validationError) {
-      return res.status(400).json({ success: false, message: validationError });
-    }
-
-    const admin = await Admin.create({
-      firstName,
-      lastName,
-      username,
-      password,
-      role,
-    });
-    return res.status(201).json({
-      success: true,
-      message: "Admin added, successfully!",
-    });
-  } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+export const registerSuperAdmin = async (req, res) => {
+  // Extra security check for Super Admin
+  if (req.body.superAdminKey !== process.env.SUPER_ADMIN_SECRET_KEY) {
+    return res.status(401).json({ message: "Invalid super admin key!" });
   }
+  return createAdminRecord(req, res, "Super Admin created!");
+};
+
+export const registerAdmin = async (req, res) => {
+  return createAdminRecord(req, res, "Admin added successfully!");
 };
 
 /**
@@ -164,7 +132,7 @@ export const loginAdmin = async (req, res) => {
     res.json({
       success: true,
       message: "Login successful!",
-      admin: {
+      data: {
         username,
         token,
       },

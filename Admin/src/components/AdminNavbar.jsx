@@ -182,14 +182,14 @@ const AdminNavbar = () => {
                     ></div>
                     <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-lg z-20 py-1 overflow-hidden">
                       <div className="px-4 py-3 border-b border-gray-100">
-                        <p
-                          className={`${userData?.role?.toLowerCase() === "super admin" ? "bg-green-600 text-white" : "bg-gray-700 text-white"} px-1.5 py-0.5 capitalize text-xs! w-fit rounded-sm`}
-                        >
-                          {userData?.role}
-                        </p>
-                        <p className="text-sm font-semibold! text-gray-900 capitalize!">
+                        <p className="flex flex-wrap items-center gap-1.5 text-sm font-semibold! text-gray-900 capitalize!">
                           {userData &&
                             ` ${userData.firstName}${" "}${userData.lastName}`}
+                          <span
+                            className={`${userData?.role?.toLowerCase() === "super admin" ? "bg-green-600 text-white" : "bg-gray-700 text-white"} px-1.5 py-0.5 capitalize text-xs! w-fit rounded-sm`}
+                          >
+                            {userData?.role}
+                          </span>
                         </p>
                         <p className="text-xs text-gray-500 truncate">
                           {userData && `${userData.username}`}

@@ -1,21 +1,21 @@
-import "dotenv/config";
-import express from "express";
-import connectDB from "./config/database.js";
-import { createServer } from "http";
-import cors from "cors";
-import helmet from "helmet";
-import morgan from "morgan";
-import { urlencoded } from "express";
 import cookieParser from "cookie-parser";
-import router from "./routes/adminRoutes.js";
-import productRouter from "./routes/productRoutes.js";
-import { rateLimiter } from "./middleware/rateLimiter.js";
+import cors from "cors";
+import "dotenv/config";
+import express, { urlencoded } from "express";
+import helmet from "helmet";
+import { createServer } from "http";
+import morgan from "morgan";
 import os from "os";
-import orderRouter from "./routes/orderRoutes.js";
-import clientRouter from "./routes/clientRoutes.js";
-import cartRouter from "./routes/cartRoutes.js";
-import { stripeWebhook } from "./controllers/orderController.js";
 import { Server } from "socket.io";
+import connectDB from "./config/database.js";
+import { stripeWebhook } from "./controllers/orderController.js";
+import { rateLimiter } from "./middleware/rateLimiter.js";
+import adminAllProductRouter from "./routes/adminProductRoutes.js";
+import router from "./routes/adminRoutes.js";
+import cartRouter from "./routes/cartRoutes.js";
+import clientProductRouter from "./routes/clientFetchProductsRoute.js";
+import clientRouter from "./routes/clientRoutes.js";
+import orderRouter from "./routes/orderRoutes.js";
 
 const app = express();
 app.set("trust proxy", 1);
@@ -114,10 +114,11 @@ app.get("/", (req, res) => {
 
 app.use("/api", rateLimiter);
 app.use("/api/admin", router);
-app.use("/api", productRouter);
+app.use("/api", adminAllProductRouter);
 app.use("/api/order", orderRouter);
 app.use("/api/client", clientRouter);
 app.use("/api/cart", cartRouter);
+app.use("/api/shuz", clientProductRouter)
 
 httpServer.listen(PORT, "0.0.0.0", () => {
   const interfaces = os.networkInterfaces();

@@ -1,16 +1,16 @@
 import express from "express";
-import Product from "../models/product.js";
-import { upload } from "../middleware/upload.js";
 import {
   removeAllProducts,
   removeProduct,
   updateProduct,
 } from "../controllers/productUpload.js";
 import { protectDeleteAll } from "../middleware/protectAdmin.js";
-const productRouter = express.Router();
+import { upload } from "../middleware/upload.js";
+import Product from "../models/product.js";
+const adminAllProductRouter = express.Router();
 
-// Public route to get all products
-productRouter.get("/shuz/products", async (req, res) => {
+// ========== PUBLIC ROUTE TO FETCH ALL PRODUCTS FOR ADMIN PANEL ================
+adminAllProductRouter.get("/shuz/products", async (req, res) => {
   try {
     const products = await Product.find().sort({ createdAt: -1 });
     res.status(200).json({ success: true, data: products });
@@ -19,7 +19,7 @@ productRouter.get("/shuz/products", async (req, res) => {
   }
 });
 
-productRouter.get("/shuz/products/:id", async (req, res) => {
+adminAllProductRouter.get("/shuz/products/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) {
@@ -32,12 +32,12 @@ productRouter.get("/shuz/products/:id", async (req, res) => {
     res.status(500).json({ success: false, message: error });
   }
 });
-productRouter.delete("/shuz/products/:id", removeProduct);
-productRouter.delete(
+adminAllProductRouter.delete("/shuz/products/:id", removeProduct);
+adminAllProductRouter.delete(
   "/shuz/products/flush",
   protectDeleteAll,
   removeAllProducts,
 );
-productRouter.put("/update-product/:id", upload.single("image"), updateProduct);
+adminAllProductRouter.put("/update-product/:id", upload.single("image"), updateProduct);
 
-export default productRouter;
+export default adminAllProductRouter;

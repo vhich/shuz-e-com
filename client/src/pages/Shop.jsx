@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import { Filter, X } from "lucide-react";
 import PropTypes from "prop-types";
@@ -17,14 +16,15 @@ const Shop = () => {
   const [selectedPriceRange, setSelectedPriceRange] = useState("");
   const [sortBy, setSortBy] = useState("Default Sorting");
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   // New States required for Server Side rendering
   const [products, setProducts] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
 
   // --- LOGIC: DATA ---
-  const { backendUrl, allCategories, setAllCategories } = useContext(AppContent);
+  const { backendUrl, allCategories, setAllCategories } =
+    useContext(AppContent);
 
   // --- LOGIC: SERVER-SIDE FETCHING ---
   useEffect(() => {
@@ -53,7 +53,7 @@ const Shop = () => {
         // Note: Sort handling can be sent to backend or done on the sliced array.
         // For security fallback against large sets, we execute retrieval:
         const response = await axios.get(url);
-        
+
         if (response.data.success) {
           let fetchedItems = response.data.data;
 
@@ -100,6 +100,7 @@ const Shop = () => {
           />
           <div
             className={`absolute left-0 top-0 h-full w-80 bg-white p-6 transition-transform duration-300 ${isFilterOpen ? "translate-x-0" : "-translate-x-full"}`}
+            onClick={() => setIsFilterOpen(false)}
           >
             <div className="flex justify-between items-center mb-8">
               <p className="text-lg! font-medium! text-gray-700 mb-6">
@@ -118,10 +119,10 @@ const Shop = () => {
           </div>
         </div>
 
-        <div className="max-w-360 mx-auto p-2 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col lg:flex-row gap-8">
+        <div className="mx-auto p-2 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col lg:flex-row gap-4">
             {/* --- DESKTOP SIDEBAR --- */}
-            <aside className="hidden lg:block w-64 shrink-0">
+            <aside className="hidden lg:block w-50 shrink-0">
               <p className="text-lg! font-medium! text-gray-700 mb-6">
                 Filters
               </p>
@@ -171,7 +172,7 @@ const Shop = () => {
                 </div>
               ) : products.length > 0 ? (
                 <>
-                  <div className="grid lg:grid-cols-3 md:grid-cols-3 grid-cols-2 sm:gap-2 lg:gap-6">
+                  <div className="grid lg:grid-cols-3 md:grid-cols-3 grid-cols-2 sm:gap-2 lg:gap-4">
                     {products.map((product) => (
                       <ProductCard key={product._id} product={product} />
                     ))}

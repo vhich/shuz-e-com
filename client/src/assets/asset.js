@@ -1,16 +1,16 @@
+import hero_bg from "./images/hero_bg.png";
 import logo from "./images/logo.png";
 import logo_white from "./images/logo_white.png";
-import hero_bg from "./images/hero_bg.png";
 import xpro_1 from "./images/xpro_1.png";
-import xpro_1plus from "./images/xpro_1plus.png";
+// import xpro_1plus from "./images/xpro_1plus.png";
 import feature_icon1 from "./images/icons/feature-icon1.png";
 import feature_icon2 from "./images/icons/feature-icon2.png";
 import feature_icon3 from "./images/icons/feature-icon3.png";
 import feature_icon4 from "./images/icons/feature-icon4.png";
+import running_shoe1 from "./images/running_shoe1.png";
 import season_sale_img1 from "./images/season-sale-img1.png";
 import season_sale_img2 from "./images/season-sale-img2.png";
 import season_sale_img3 from "./images/season-sale-img3.png";
-import running_shoe1 from "./images/running_shoe1.png";
 
 import product_img1 from "./images/product_img/product-img1.jpg";
 import product_img2 from "./images/product_img/product-img2.jpg";
@@ -38,7 +38,7 @@ const assets = {
   logo_white,
   hero_bg,
   xpro_1,
-  xpro_1plus,
+  // xpro_1plus,
   running_shoe1,
   feature_icon1,
   feature_icon2,
@@ -284,12 +284,12 @@ const footerLinks = [
 
 export {
   assets,
-  navLinks,
-  userNavLinks,
-  features,
+  brands,
   category,
+  features,
+  footerLinks,
+  navLinks,
   productCard,
   reviews,
-  brands,
-  footerLinks,
+  userNavLinks,
 };

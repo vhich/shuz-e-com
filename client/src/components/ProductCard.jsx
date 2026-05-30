@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
-import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { AppContent } from "../context/AppContent";
 
 const ProductCard = ({ product }) => {
@@ -12,7 +12,7 @@ const ProductCard = ({ product }) => {
     navigate(`/product/${product._id}`);
   };
 
-  const hasDiscountPrice = product.discount;
+  const hasDiscountPrice = product.discount > 0;
   const discountPrice = (
     product.price -
     (product.price * product.discount) / 100
@@ -23,9 +23,15 @@ const ProductCard = ({ product }) => {
   return (
     <div
       id={product._id}
-      className="p-2 border border-gray-200 bg-white rounded-lg shadow-sm flex flex-col items-center text-center hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer overflow-hidden"
+      className="p-2 border border-gray-200 rounded-lg flex flex-col hover:bg-white hover:shadow-sm transition-all duration-300 cursor-pointer overflow-hidden relative"
       onClick={setProductIdUrl}
     >
+      {hasDiscountPrice && (
+        <b className="text-sm text-white bg-red-500 absolute top-6 right-4 p-1">
+          {product.discount}% off
+        </b>
+      )}
+
       <div
         className={`product_img ${loading ? "bg-gray-200" : "bg-white"} h-50 my-4 flex flex-col overflow-hidden`}
       >
@@ -35,15 +41,12 @@ const ProductCard = ({ product }) => {
           className="h-full object-cover"
         />
       </div>
-      <p className="lg:text-xl! sm:text-sm! mb-2 hover:text-green-700">
-        {product.name.length > 10
-          ? `${product.name.slice(0, 10)}...`
-          : product.name}
-      </p>
       {hasDiscountPrice ? (
-        <div className="price flex flex-wrap gap-2 items-center mb-4">
-          <span className="discount_price text-red-600">${discountPrice}</span>
-          <span className="original_price text-gray-600 line-through!">
+        <div className="price flex flex-wrap gap-2 items-center mb-2">
+          <span className="discount_price text-red-600 font-bold!">
+            ${discountPrice}
+          </span>
+          <span className="original_price text-gray-600 line-through! font-bold!">
             $
             {product.price.toLocaleString(undefined, {
               minimumFractionDigits: 2,
@@ -52,7 +55,7 @@ const ProductCard = ({ product }) => {
           </span>
         </div>
       ) : (
-        <p className="price text-gray-800 mb-4">
+        <p className="price text-gray-800 mb-2 font-bold!">
           $
           {product.price.toLocaleString(undefined, {
             minimumFractionDigits: 2,
@@ -60,6 +63,16 @@ const ProductCard = ({ product }) => {
           })}
         </p>
       )}
+      <p className="font-bold hover:text-green-700">
+        {product.name.length > 15
+          ? `${product.name.slice(0, 15)}...`
+          : product.name}
+      </p>
+      <p className="mb-2 text-xs!">
+        {product.description.length > 30
+          ? `${product.description.slice(0, 30)}...`
+          : product.description}
+      </p>
     </div>
   );
 };

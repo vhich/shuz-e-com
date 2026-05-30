@@ -11,7 +11,7 @@ export const AppContent = createContext();
 export const AppContextProvider = (props) => {
   // const backendUrl =
   //   import.meta.env.VITE_BACKEND_URL_NETWORK || "http://localhost:4000/api";
-  const backendUrl ="http://localhost:4000/api";
+  const backendUrl = "http://localhost:4000/api";
   const [isOpen, setIsOpen] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -89,11 +89,11 @@ export const AppContextProvider = (props) => {
         // Run requests in parallel to speed up home screen loading times!
         const [newArrivalsRes, bestSellersRes] = await Promise.all([
           axios.get(`${backendUrl}/me/shuz/products?type=new-arrivals`),
-          axios.get(`${backendUrl}/me/shuz/products?type=best-sellers`)
+          axios.get(`${backendUrl}/me/shuz/products?type=best-sellers`),
         ]);
 
-        setNewProducts(newArrivalsRes.data.data);          // Array of exactly 4 items
-        setBestSellerProducts(bestSellersRes.data.data);  // Array of exactly 4 items
+        setNewProducts(newArrivalsRes.data.data); // Array of exactly 4 items
+        setBestSellerProducts(bestSellersRes.data.data); // Array of exactly 4 items
       } catch (error) {
         console.error("Error fetching homepage sections:", error);
       } finally {

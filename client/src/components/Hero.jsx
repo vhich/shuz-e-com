@@ -1,10 +1,8 @@
-import React from "react";
-import { assets } from "../assets/asset";
-import { NavLink } from "react-router-dom";
-import Navbar from "./Navbar";
 import { motion } from "framer-motion";
 import { useContext } from "react";
+import { NavLink } from "react-router-dom";
 import { AppContent } from "../context/AppContent";
+import Navbar from "./Navbar";
 
 export const Hero = () => {
   // Ultra-snappy spring for that premium "mechanical" feel
@@ -18,15 +16,6 @@ export const Hero = () => {
       {/* Background Decorative Text - Large and Faint */}
       {!loading && (
         <>
-          <motion.div
-            initial={{ x: -200, opacity: 0 }}
-            animate={{ x: 0, opacity: 0.08 }}
-            transition={{ duration: 2, ease: "easeOut" }}
-            className="absolute inset-0 flex items-center justify-center select-none pointer-events-none"
-          >
-            <h1 className="text-[25vw]! font-black italic">X-SERIES</h1>
-          </motion.div>
-
           <div className="container relative z-10 grid h-full lg:grid grid-cols-1 items-center sm:block sm:pt-8 md:grid place-items-center pb-6">
             {/* TEXT CONTENT */}
             <div className="text-center grid place-items-center mb-10 text-gray-800">
@@ -88,7 +77,7 @@ export const Hero = () => {
             </div>
 
             {/* THE HERO IMAGE - Dynamic Tilt & Entrance */}
-            <motion.div
+            {/* <motion.div
               className="relative group"
               initial={{ opacity: 0, x: 100, rotate: 15 }}
               animate={{ opacity: 1, x: 0, rotate: -5 }}
@@ -98,7 +87,6 @@ export const Hero = () => {
                 <motion.img
                   src={assets.xpro_1}
                   alt="XPro 1"
-                  /* Subtle floating while hovering only */
                   whileHover={{
                     scale: 1.05,
                     rotate: 0,
@@ -108,13 +96,12 @@ export const Hero = () => {
                 />
               )}
 
-              {/* Animated Background Glow */}
               <motion.div
                 animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
                 transition={{ duration: 4, repeat: Infinity }}
                 className="absolute -inset-10 bg-orange-100 rounded-full blur-[100px] -z-10"
               />
-            </motion.div>
+            </motion.div> */}
           </div>
         </>
       )}

@@ -1,13 +1,13 @@
-import React from "react";
 import PropTypes from "prop-types";
 import Navbar from "./Navbar";
 
 const Jumbotron = ({ text }) => {
   return (
-    <header className="shop_hero">
+    <header className="jumbotron {
+">
       <Navbar />
       <div className="container">
-        <h1 className="mt-16 text-center">{text}</h1>
+        <h1 className="text-center">{text}</h1>
       </div>
     </header>
   );

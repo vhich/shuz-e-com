@@ -185,7 +185,7 @@ button {
   z-index: 200;
 }
 
-.shop_hero {
+.jumbotron {
   height: 55vh;
   background: url("./assets/images/shop_default_header_img.jpg");
   background-size: cover;

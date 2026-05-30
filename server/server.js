@@ -118,7 +118,7 @@ app.use("/api", adminAllProductRouter);
 app.use("/api/order", orderRouter);
 app.use("/api/client", clientRouter);
 app.use("/api/cart", cartRouter);
-app.use("/api/shuz", clientProductRouter)
+app.use("/api/me", clientProductRouter)
 
 httpServer.listen(PORT, "0.0.0.0", () => {
   const interfaces = os.networkInterfaces();

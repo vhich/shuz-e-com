@@ -1,5 +1,5 @@
-import React, { createContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import { createContext, useEffect, useState } from "react";
 // import { toast } from "react-toastify";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -9,8 +9,9 @@ import api from "../config/axiosConfig";
 export const AppContent = createContext();
 
 export const AppContextProvider = (props) => {
-  const backendUrl =
-    import.meta.env.VITE_BACKEND_URL_NETWORK || "http://localhost:4000/api";
+  // const backendUrl =
+  //   import.meta.env.VITE_BACKEND_URL_NETWORK || "http://localhost:4000/api";
+  const backendUrl ="http://localhost:4000/api";
   const [isOpen, setIsOpen] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -81,30 +82,27 @@ export const AppContextProvider = (props) => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    const fetchNewProducts = async () => {
+    // Inside your Context or Home Component:
+    const fetchHomeData = async () => {
+      setLoading(true);
       try {
-        const { data } = await axios.get(`${backendUrl}/shuz/products`);
+        // Run requests in parallel to speed up home screen loading times!
+        const [newArrivalsRes, bestSellersRes] = await Promise.all([
+          axios.get(`${backendUrl}/me/shuz/products?type=new-arrivals`),
+          axios.get(`${backendUrl}/me/shuz/products?type=best-sellers`)
+        ]);
 
-        if (data?.success) {
-          // 2. Update state
-          const products = data.data;
-          setAllProduct(products);
-
-          setNewProducts(products.slice(0, 4));
-          const filteredBestSellers = products.filter((p) => p.price >= 350);
-          setBestSellerProducts(filteredBestSellers);
-
-          setAllCategories([...new Set(products.flatMap((p) => p.categories))]);
-          setLoading(false);
-        }
+        setNewProducts(newArrivalsRes.data.data);          // Array of exactly 4 items
+        setBestSellerProducts(bestSellersRes.data.data);  // Array of exactly 4 items
       } catch (error) {
-        console.error("Error fetching products", error);
-        alert("Error fetching products, try again!");
+        console.error("Error fetching homepage sections:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchNewProducts();
-    // return undefined;
+    fetchHomeData();
+    return;
   }, [backendUrl]);
 
   useEffect(() => {

@@ -1,7 +1,6 @@
-import React, { useContext } from "react";
-import ProductCard from "./ProductCard";
-import { NavLink } from "react-router-dom";
+import { useContext } from "react";
 import { AppContent } from "../context/AppContent";
+import ProductCard from "./ProductCard";
 
 const NewArrivals = () => {
   const { newProducts } = useContext(AppContent);
@@ -20,9 +19,9 @@ const NewArrivals = () => {
           <p className="text-gray-400">Loading..</p>
         )}
       </div>
-      <NavLink to="/shop" className="sec-btn text-center mt-8 m-auto">
+      {/* <NavLink to="/shop" className="sec-btn text-center mt-8 m-auto">
         View All
-      </NavLink>
+      </NavLink> */}
     </section>
   );
 };

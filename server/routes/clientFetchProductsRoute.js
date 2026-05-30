@@ -1,4 +1,5 @@
 import express from "express";
+import Product from "../models/product.js";
 
 const clientProductRouter = express.Router()
 
@@ -7,6 +8,8 @@ const clientProductRouter = express.Router()
 clientProductRouter.get("/shuz/products", async (req, res) => {
   try {
     const { page, limit, category, minPrice, maxPrice, type } = req.query;
+
+    const categories = await Product.distinct("categories");
 
     // -------------------------------------------------------------
     // CASE A: SPECIAL SECTIONS (New Arrivals / Best Sellers)
@@ -19,7 +22,7 @@ clientProductRouter.get("/shuz/products", async (req, res) => {
 
     if (type === "best-sellers") {
       // Fetch only 4 items that match your bestseller metric (e.g., price >= 350)
-      const products = await Product.find({ price: { $gte: 350 } }).limit(4);
+      const products = await Product.find({ price: { $gte: 350 } }).limit(5);
       return res.status(200).json({ success: true, data: products });
     }
 
@@ -62,8 +65,8 @@ clientProductRouter.get("/shuz/products", async (req, res) => {
       totalPages: Math.ceil(totalProducts / limitNum),
       currentPage: pageNum,
       data: products,
+      category: categories,
     });
-
   } catch (error) {
     res.status(500).json({ success: false, message: error.message || error });
   }

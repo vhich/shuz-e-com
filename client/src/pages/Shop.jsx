@@ -1,10 +1,12 @@
-import React, { useState, useMemo, useContext } from "react";
-import PropTypes from "prop-types";
+
+import axios from "axios";
 import { Filter, X } from "lucide-react";
-import ProductCard from "../components/ProductCard";
+import PropTypes from "prop-types";
+import { useContext, useEffect, useState } from "react";
 import Feature from "../components/Feature";
-import Newsletter from "../components/Newsletter";
 import Jumbotron from "../components/Jumbotron";
+import Newsletter from "../components/Newsletter";
+import ProductCard from "../components/ProductCard";
 import { AppContent } from "../context/AppContent";
 
 const Shop = () => {
@@ -15,69 +17,73 @@ const Shop = () => {
   const [selectedPriceRange, setSelectedPriceRange] = useState("");
   const [sortBy, setSortBy] = useState("Default Sorting");
   const [currentPage, setCurrentPage] = useState(1);
+  
+  // New States required for Server Side rendering
+  const [products, setProducts] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   // --- LOGIC: DATA ---
-  // --- LOGIC: DATA ---
-  const { allProduct, allCategories } = useContext(AppContent);
+  const { backendUrl, allCategories, setAllCategories } = useContext(AppContent);
 
-  // --- LOGIC: FILTERING & SORTING ---
-  const filteredProducts = useMemo(() => {
-    // Defensive check: if allProducts is empty, return empty
-    if (!allProduct || allProduct.length === 0) return [];
+  // --- LOGIC: SERVER-SIDE FETCHING ---
+  useEffect(() => {
+    const fetchShopProducts = async () => {
+      setLoading(true);
+      try {
+        // Base request setting 5 items per page to match backend configurations
+        let url = `${backendUrl}/me/shuz/products?page=${currentPage}&limit=5`;
 
-    let result = [...allProduct];
+        // 1. Map chosen categories array into comma separated query
+        if (selectedCategories.length > 0) {
+          url += `&category=${encodeURIComponent(selectedCategories.join(","))}`;
+        }
 
-    // Category Filter (Fixing p.category -> p.categories)
-    if (selectedCategories.length > 0) {
-      result = result.filter((p) =>
-        // Check if ANY of the product's categories match the selected ones
-        p.categories?.some((cat) => selectedCategories.includes(cat)),
-      );
-    }
+        // 2. Translate label ranges down into database-ready integers
+        if (selectedPriceRange === "Under $50") {
+          url += `&maxPrice=49`;
+        } else if (selectedPriceRange === "$50 - $100") {
+          url += `&minPrice=50&maxPrice=100`;
+        } else if (selectedPriceRange === "$100 - $150") {
+          url += `&minPrice=100&maxPrice=150`;
+        } else if (selectedPriceRange === "Over $150") {
+          url += `&minPrice=151`;
+        }
 
-    // Price Filter (Ensure numbers match your DB scale)
-    // If your DB uses 50,000 for 50k Naira, change these numbers to match!
-    if (selectedPriceRange === "Under $50")
-      result = result.filter((p) => p.price < 50);
-    else if (selectedPriceRange === "$50 - $100")
-      result = result.filter((p) => p.price >= 50 && p.price <= 100);
-    else if (selectedPriceRange === "$100 - $150")
-      result = result.filter((p) => p.price >= 100 && p.price <= 150);
-    else if (selectedPriceRange === "Over $150")
-      result = result.filter((p) => p.price > 150);
+        // Note: Sort handling can be sent to backend or done on the sliced array.
+        // For security fallback against large sets, we execute retrieval:
+        const response = await axios.get(url);
+        
+        if (response.data.success) {
+          let fetchedItems = response.data.data;
 
-    // Sort Logic
-    if (sortBy === "Price: Low to High")
-      result.sort((a, b) => a.price - b.price);
-    if (sortBy === "Price: High to Low")
-      result.sort((a, b) => b.price - a.price);
-    if (sortBy === "Latest")
-      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          // Handle sorting on your active 5 products array match block
+          if (sortBy === "Price: Low to High") {
+            fetchedItems.sort((a, b) => a.price - b.price);
+          } else if (sortBy === "Price: High to Low") {
+            fetchedItems.sort((a, b) => b.price - a.price);
+          }
 
-    return result;
-    // ADD allProducts HERE!
-  }, [
-    allProduct,
-    allCategories,
-    selectedCategories,
-    selectedPriceRange,
-    sortBy,
-  ]);
+          setProducts(fetchedItems);
+          setTotalPages(response.data.totalPages || 1);
+          setAllCategories([...response.data.category]);
+        }
+      } catch (error) {
+        console.error("Error retrieving shop updates:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Pagination Logic
-  const itemsPerPage = 4;
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const currentItems = filteredProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
+    fetchShopProducts();
+  }, [currentPage, selectedCategories, selectedPriceRange, sortBy, backendUrl]);
 
   // Handlers
   const handleCategoryChange = (cat) => {
     setSelectedCategories((prev) =>
       prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
     );
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset page indices immediately on query alterations
   };
 
   return (
@@ -142,6 +148,7 @@ const Shop = () => {
                     Sort by:
                   </span>
                   <select
+                    value={sortBy}
                     onChange={(e) => {
                       setSortBy(e.target.value);
                       setCurrentPage(1);
@@ -157,16 +164,20 @@ const Shop = () => {
                 </div>
               </div>
 
-              {/* Product Grid or Empty State */}
-              {currentItems.length > 0 ? (
+              {/* Product Grid or Empty State Loading Blocks */}
+              {loading ? (
+                <div className="flex justify-center items-center py-20">
+                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-black" />
+                </div>
+              ) : products.length > 0 ? (
                 <>
                   <div className="grid lg:grid-cols-3 md:grid-cols-3 grid-cols-2 sm:gap-2 lg:gap-6">
-                    {currentItems.map((product) => (
+                    {products.map((product) => (
                       <ProductCard key={product._id} product={product} />
                     ))}
                   </div>
 
-                  {/* Pagination (Only show if there are multiple pages) */}
+                  {/* Pagination Control Layout Render */}
                   {totalPages > 1 && (
                     <div
                       className="mt-16 flex justify-center gap-2"
@@ -207,6 +218,7 @@ const Shop = () => {
                       setSelectedCategories([]);
                       setSelectedPriceRange("");
                       setSortBy("Default Sorting");
+                      setCurrentPage(1);
                     }}
                     className="mt-6 text-black font-semibold underline decoration-2 underline-offset-4 hover:text-gray-600 transition-colors"
                   >

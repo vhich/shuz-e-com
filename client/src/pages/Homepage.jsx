@@ -1,15 +1,15 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import { assets } from "../assets/asset";
-import Feature from "../components/Feature";
-import CollectionGrid from "../components/CollectionGrid";
-import NewArrivals from "../components/NewArrivals";
 import BestSeller from "../components/BestSeller";
 import CategoryList from "../components/CategoryList";
-import Reviews from "../components/Reviews";
-import InfiniteBrandScroll from "../components/InfiniteBrandScroll";
-import Newsletter from "../components/Newsletter";
-import { NavLink } from "react-router-dom";
+import CollectionGrid from "../components/CollectionGrid";
+import Feature from "../components/Feature";
 import { Hero } from "../components/Hero";
+import InfiniteBrandScroll from "../components/InfiniteBrandScroll";
+import NewArrivals from "../components/NewArrivals";
+import Newsletter from "../components/Newsletter";
+import Reviews from "../components/Reviews";
 // import { AppContent } from "../context/AppContent";
 
 const Homepage = () => {
@@ -20,35 +20,6 @@ const Homepage = () => {
 
   return (
     <>
-      {/* <section
-        className={`relative bg-[url('/src/assets/images/hero_bg.png')] bg-center bg-cover`}
-      >
-        <Navbar />
-        <div className="container h-full lg:grid grid-cols-1 items-center sm:block sm:pt-8 md:grid place-items-center pb-6">
-          <div className="text-center grid place-items-center mb-10 text-gray-800">
-            <h5>Style destination</h5>
-            <h1 className="text-gray-900 uppercase">
-              The new shoe <br></br>collection
-            </h1>
-            <p className="text-gray-600">
-              Discover the latest styles and comfort in every step.
-            </p>
-            <NavLink to={"/shop"} className="pry-btn my-4 mx-auto block!">
-              Shop Now
-            </NavLink>
-          </div>
-          <div>
-            {assets.xpro_1 && (
-              <img
-                src={assets.xpro_1}
-                alt="XPro 1"
-                className="object-contain"
-              />
-            )}
-          </div>
-        </div>
-      </section> */}
-
       <Hero />
       <Feature />
       <CollectionGrid />

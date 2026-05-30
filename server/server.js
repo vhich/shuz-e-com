@@ -16,6 +16,7 @@ import cartRouter from "./routes/cartRoutes.js";
 import clientProductRouter from "./routes/clientFetchProductsRoute.js";
 import clientRouter from "./routes/clientRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
+import searchProductRouter from "./routes/searchProductRoute.js";
 
 const app = express();
 app.set("trust proxy", 1);
@@ -118,7 +119,7 @@ app.use("/api", adminAllProductRouter);
 app.use("/api/order", orderRouter);
 app.use("/api/client", clientRouter);
 app.use("/api/cart", cartRouter);
-app.use("/api/me", clientProductRouter)
+app.use("/api/me", clientProductRouter, searchProductRouter);
 
 httpServer.listen(PORT, "0.0.0.0", () => {
   const interfaces = os.networkInterfaces();

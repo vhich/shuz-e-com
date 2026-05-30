@@ -19,7 +19,6 @@ export const AppContextProvider = (props) => {
   const [bestSellerProducts, setBestSellerProducts] = useState(null);
   const [productId, setProductId] = useState();
   const [loading, setLoading] = useState(true);
-  const [allProduct, setAllProduct] = useState([]);
   const [product, setProduct] = useState(); //to get the product detail in the product page
   const [allCategories, setAllCategories] = useState([]);
   const [token, setToken] = useState(null);
@@ -113,7 +112,6 @@ export const AppContextProvider = (props) => {
     setUserData,
     setProductId,
     setLoading,
-    setAllProduct,
     setNewProducts,
     setProduct,
     setAllCategories,
@@ -126,7 +124,6 @@ export const AppContextProvider = (props) => {
     setIsSearchOpen,
     productId,
     loading,
-    allProduct,
     product,
     newProducts,
     bestSellerProducts,

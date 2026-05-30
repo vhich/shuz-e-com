@@ -8,27 +8,27 @@ const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const setProductIdUrl = () => {
     setIsSearchOpen(false);
-    setProductId(product._id);
-    navigate(`/product/${product._id}`);
+    setProductId(product?._id);
+    navigate(`/product/${product?._id}`);
   };
 
-  const hasDiscountPrice = product.discount > 0;
+  const hasDiscountPrice = product?.discount > 0;
   const discountPrice = (
-    product.price -
-    (product.price * product.discount) / 100
+    product?.price -
+    (product?.price * product?.discount) / 100
   ).toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
   return (
     <div
-      id={product._id}
+      id={product?._id}
       className="p-2 border border-gray-200 rounded-lg flex flex-col hover:bg-white hover:shadow-sm transition-all duration-300 cursor-pointer overflow-hidden relative"
       onClick={setProductIdUrl}
     >
       {hasDiscountPrice && (
         <b className="text-sm text-white bg-red-500 absolute top-6 right-4 p-1">
-          {product.discount}% off
+          {product?.discount}% off
         </b>
       )}
 
@@ -36,8 +36,8 @@ const ProductCard = ({ product }) => {
         className={`product_img ${loading ? "bg-gray-200" : "bg-white"} h-50 my-4 flex flex-col overflow-hidden`}
       >
         <img
-          src={product.image}
-          alt={product.name}
+          src={product?.image}
+          alt={product?.name}
           className="h-full object-cover"
         />
       </div>
@@ -48,7 +48,7 @@ const ProductCard = ({ product }) => {
           </span>
           <span className="original_price text-gray-600 line-through! font-bold!">
             $
-            {product.price.toLocaleString(undefined, {
+            {product?.price.toLocaleString(undefined, {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
@@ -57,21 +57,21 @@ const ProductCard = ({ product }) => {
       ) : (
         <p className="price text-gray-800 mb-2 font-bold!">
           $
-          {product.price.toLocaleString(undefined, {
+          {product?.price.toLocaleString(undefined, {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })}
         </p>
       )}
       <p className="font-bold hover:text-green-700">
-        {product.name.length > 15
-          ? `${product.name.slice(0, 15)}...`
-          : product.name}
+        {product?.name?.length > 15
+          ? `${product?.name.slice(0, 15)}...`
+          : product?.name}
       </p>
       <p className="mb-2 text-xs!">
-        {product.description.length > 30
-          ? `${product.description.slice(0, 30)}...`
-          : product.description}
+        {product?.description?.length > 30
+          ? `${product?.description.slice(0, 30)}...`
+          : product?.description}
       </p>
     </div>
   );

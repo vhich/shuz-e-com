@@ -1,9 +1,10 @@
-import React from "react";
-import { FaStar } from "react-icons/fa";
+import { decode } from "html-entities";
 import { Quote } from "lucide-react";
 import PropTypes from "prop-types";
+import { FaStar } from "react-icons/fa";
 
 const ReviewCard = ({ review }) => {
+  const cleanText = decode(review?.comment);
   return (
     <div className="p-6 bg-green-50 rounded-lg shadow-md relative overflow-hidden">
       <Quote
@@ -14,25 +15,23 @@ const ReviewCard = ({ review }) => {
         {[...Array(5)].map((_, i) => (
           <FaStar
             key={i}
-            className={
-              i < review.rate_given ? "text-yellow-400" : "text-gray-300"
-            }
+            className={i < review?.rating ? "text-yellow-400" : "text-gray-300"}
           />
         ))}
       </div>
-      <h6 className="text-sm! font-bold text-gray-900 capitalize my-2">
-        {review.title}
-      </h6>
+      {/* <h6 className="text-sm! font-bold text-gray-900 capitalize my-2">
+        {review?.title}
+      </h6> */}
 
-      <p className="text-gray-600 italic mb-4">{review.comment}</p>
+      <p className="text-slate-800 italic mb-4">{cleanText}</p>
 
       <div className="flex items-center gap-3 pt-4 border-t border-green-200">
         <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold uppercase">
-          {review.name.charAt(0)}
+          {review?.name.charAt(0)}
         </div>
         <div>
-          <p className="text-sm font-semibold text-gray-900 capitalize">
-            {review.name}
+          <p className="text-sm font-semibold text-slate-500 capitalize">
+            {review?.name}
           </p>
         </div>
       </div>

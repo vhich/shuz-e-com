@@ -16,6 +16,7 @@ import cartRouter from "./routes/cartRoutes.js";
 import clientProductRouter from "./routes/clientFetchProductsRoute.js";
 import clientRouter from "./routes/clientRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
+import reviewRouter from "./routes/productReview.js";
 import searchProductRouter from "./routes/searchProductRoute.js";
 
 const app = express();
@@ -120,6 +121,7 @@ app.use("/api/order", orderRouter);
 app.use("/api/client", clientRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/me", clientProductRouter, searchProductRouter);
+app.use("/api/review", reviewRouter);
 
 httpServer.listen(PORT, "0.0.0.0", () => {
   const interfaces = os.networkInterfaces();

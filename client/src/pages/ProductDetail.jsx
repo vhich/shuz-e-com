@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Added for URL ID
+import { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom"; // Added for URL ID
 // import axios from "axios";
-import Navbar from "../components/Navbar";
-import ReviewCard from "../components/ReviewCard";
-import { reviews } from "../assets/asset";
-import BestSeller from "../components/BestSeller";
-import { AppContent } from "../context/AppContent";
+import { FaStar } from "react-icons/fa";
 import { toast } from "react-toastify";
+import BestSeller from "../components/BestSeller";
+import Navbar from "../components/Navbar";
+import ReviewPagination from "../components/ReviewPagination";
+import { AppContent } from "../context/AppContent";
+
 
 const ProductDetail = () => {
   const { id } = useParams(); // Get ID from URL
@@ -104,7 +105,7 @@ const ProductDetail = () => {
 
         if (data.success) {
           const fetchedProduct = data.data;
-          setProduct(fetchedProduct);
+          const reviews = data.review;
           // 1. Look inside the array objects to see if at least one size has stock
           const isAvailable = fetchedProduct.sizes.some((s) => s.stock > 0);
 
@@ -118,6 +119,7 @@ const ProductDetail = () => {
             ...fetchedProduct,
             isAvailable,
             totalStockCount,
+            reviews,
           });
 
           // Set discount logic once product is loaded
@@ -182,9 +184,23 @@ const ProductDetail = () => {
                   <span>{product.categories?.[0] || "Running"}</span>
                 </nav>
                 <h4 className="text-gray-900 capitalize">{product.name}</h4>
-                <div className="ratings my-3">
-                  <span className="text-yellow-500 text-lg!">★★★★☆</span>
-                  <span className="text-gray-500 ml-2">(2 reviews)</span>
+                <div className="ratings my-3 flex gap-4 flex-wrap items-center">
+                  <div className="flex items-center gap-1 mb-2">
+                    {[...Array(5)].map((_, i) => (
+                      <FaStar
+                        key={i}
+                        className={
+                          i < product.reviews[0]?.rating
+                            ? "text-yellow-400"
+                            : "text-gray-300"
+                        }
+                      />
+                    ))}
+                  </div>
+                  <span className="text-gray-500 ml-2">
+                    ({product?.reviews.length > 0 ? product?.reviews.length : 0}{" "}
+                    reviews)
+                  </span>
                 </div>
 
                 <div className="mt-4 flex items-center justify-between">
@@ -345,7 +361,7 @@ const ProductDetail = () => {
                 onClick={() => setPagination("reviews")}
                 className={`border-b-3 ${pagination === "reviews" ? "border-green-900" : "border-transparent"} px-2 py-2`}
               >
-                Reviews(2)
+                Reviews ({product.reviews.length})
               </button>
             </header>
             <div className="my-4">
@@ -358,49 +374,7 @@ const ProductDetail = () => {
               )}
               {pagination === "reviews" && (
                 <>
-                  <div className="reviews grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
-                    <div className="order-2">
-                      <h6>Add a review</h6>
-                      <small className="block text-gray-600 mt-4">
-                        Your email address will not be published. Required
-                        fields are marked *
-                      </small>
-                      <select
-                        name="rate"
-                        id="rate"
-                        className="my-4 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
-                      >
-                        <option value="Your rating" disabled>
-                          Your rating *
-                        </option>
-                        <option value="1">1 star</option>
-                        <option value="2">2 stars</option>
-                        <option value="3">3 stars</option>
-                        <option value="4">4 stars</option>
-                        <option value="5">5 stars</option>
-                      </select>
-                      <input
-                        type="email"
-                        name="email"
-                        className="my-4 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
-                        placeholder="Your email*"
-                      />
-                      <form action="">
-                        <textarea
-                          className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black resize-none"
-                          placeholder="Write your review here*"
-                        ></textarea>
-                        <button type="submit" className="mt-2 pry-btn">
-                          Submit Review
-                        </button>
-                      </form>
-                    </div>
-                    <div className="flex flex-col gap-y-6">
-                      {reviews.slice(0, 2).map((review, index) => (
-                        <ReviewCard review={review} key={index} />
-                      ))}
-                    </div>
-                  </div>
+                  <ReviewPagination />
                 </>
               )}
             </div>

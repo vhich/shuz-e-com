@@ -42,7 +42,7 @@ const ProductCard = ({ product }) => {
         />
       </div>
       {hasDiscountPrice ? (
-        <div className="price flex flex-wrap gap-2 items-center mb-2">
+        <div className="discount_price flex flex-wrap gap-2 items-center mb-2">
           <span className="discount_price text-red-600 font-bold!">
             ${discountPrice}
           </span>
@@ -55,13 +55,13 @@ const ProductCard = ({ product }) => {
           </span>
         </div>
       ) : (
-        <p className="price text-gray-800 mb-2 font-bold!">
+        <span className="original_price text-gray-800 mb-2 font-bold!">
           $
           {product?.price.toLocaleString(undefined, {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })}
-        </p>
+        </span>
       )}
       <p className="font-bold hover:text-green-700">
         {product?.name?.length > 15

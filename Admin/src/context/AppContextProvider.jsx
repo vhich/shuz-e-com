@@ -1,10 +1,10 @@
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 // import axios from "axios";
-import api from "../config/axiosConfig";
 import { useNavigate } from "react-router-dom";
-import { AppContext } from "./AppContent";
 import { io } from "socket.io-client";
+import api from "../config/axiosConfig";
+import { AppContext } from "./AppContent";
 // import { assets } from "../assets/assets";
 
 export const AppContextProvider = (props) => {
@@ -153,7 +153,7 @@ export const AppContextProvider = (props) => {
   const fetchAllProducts = useCallback(async () => {
     try {
       setLoading(true);
-      const { data } = await api.get(`${backendUrl}/shuz/products`);
+      const { data } = await api.get(`${backendUrl}/admin/shuz/products`);
       if (data.success) {
         // Reverse to show the most recently uploaded products first
         setProducts(data.data.reverse());

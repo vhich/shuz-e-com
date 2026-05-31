@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const BlockageUI = () => {
   const [blockedUntil, setBlockedUntil] = useState(
@@ -16,10 +16,17 @@ const BlockageUI = () => {
 
     const timer = setInterval(() => {
       if (blockedUntil) {
-        const diff = Math.ceil((new Date(blockedUntil) - new Date()) / 1000);
+        // Check if the value is a pure string of numbers, parse it accordingly
+        const targetTime = isNaN(Number(blockedUntil))
+          ? new Date(blockedUntil)
+          : new Date(Number(blockedUntil));
+
+        const diff = Math.ceil((targetTime - new Date()) / 1000);
+
         if (diff <= 0) {
           localStorage.removeItem("blocked_until");
           setBlockedUntil(null);
+          clearInterval(timer); // Good practice to clear the interval right before reloading
           window.location.reload(); // Refresh to restore access
         } else {
           setTimeLeft(diff);
@@ -36,7 +43,7 @@ const BlockageUI = () => {
   if (!blockedUntil || timeLeft <= 0) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/95 backdrop-blur-md flex items-center justify-center p-4">
+    <div className="fixed top-0 left-0 w-full h-full inset-0 z-50 bg-slate-900/95 backdrop-blur-md flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl p-8 max-w-md w-full text-center shadow-2xl">
         <div className="text-6xl mb-4">🛡️</div>
         <h5 className="text-2xl font-black text-slate-900 mb-2">
@@ -54,10 +61,10 @@ const BlockageUI = () => {
             {timeLeft}s
           </p>
         </div>
-        <p className="text-[10px] text-slate-400">
-          This block is tied to your IP/Account. Clearing your browser cache
-          will not bypass this security measure.
-        </p>
+        {/* <p className="text-[10px] text-slate-400">
+            This block is tied to your IP/Account. Clearing your browser cache
+            will not bypass this security measure.
+          </p> */}
       </div>
     </div>
   );

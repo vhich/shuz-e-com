@@ -8,7 +8,6 @@ import Navbar from "../components/Navbar";
 import ReviewPagination from "../components/ReviewPagination";
 import { AppContent } from "../context/AppContent";
 
-
 const ProductDetail = () => {
   const { id } = useParams(); // Get ID from URL
   const {
@@ -101,7 +100,9 @@ const ProductDetail = () => {
     const fetchProductDetail = async () => {
       try {
         setLoading(true);
-        const { data } = await api.get(`${backendUrl}/shuz/products/${id}`);
+        const { data } = await api.get(
+          `${backendUrl}/admin/shuz/products/${id}`,
+        );
 
         if (data.success) {
           const fetchedProduct = data.data;

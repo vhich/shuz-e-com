@@ -186,7 +186,8 @@ button {
 }
 
 .jumbotron {
-  height: 55vh;
+  height: fit-content;
+  padding-bottom: 6rem;
   background: url("./assets/images/shop_default_header_img.jpg");
   background-size: cover;
   background-position: center;

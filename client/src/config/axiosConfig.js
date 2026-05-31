@@ -5,16 +5,26 @@ const api = axios.create({
   withCredentials: true,
 });
 
-api.interceptors.response.use(
+axios.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 429 || error.response?.status === 403) {
-      const unlockAt = error.response.data.retryAfter;
-      if (unlockAt) {
-        localStorage.setItem("blocked_until", unlockAt);
-        // Force state update if component is already mounted
-        window.dispatchEvent(new Event("storage"));
-      }
+    const fallbackData = error.response?.data;
+
+    if (
+      error.response?.status === 429 ||
+      fallbackData?.message?.includes("locked")
+    ) {
+      // Extract retry timestamp from backend parameters
+      const blockExpiry =
+        fallbackData.retryAfter || Date.now() + 15 * 60 * 1000;
+
+      localStorage.setItem("blocked_until", blockExpiry);
+      alert("Too many request!");
+      document.body.style.opacity = "0.6";
+      document.body.style.pointerEvents = "none";
+
+      // Dispatch custom message forcing UI to lock screens dynamically
+      window.dispatchEvent(new Event("local_blockage"));
     }
     return Promise.reject(error);
   },

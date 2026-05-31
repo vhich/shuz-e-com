@@ -3,8 +3,7 @@ import Navbar from "./Navbar";
 
 const Jumbotron = ({ text }) => {
   return (
-    <header className="jumbotron {
-">
+    <header className="jumbotron">
       <Navbar />
       <div className="container">
         <h1 className="text-center">{text}</h1>

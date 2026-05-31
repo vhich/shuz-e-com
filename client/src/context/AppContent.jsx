@@ -80,29 +80,23 @@ export const AppContextProvider = (props) => {
 
   const { pathname } = useLocation();
 
-  useEffect(() => {
-    // Inside your Context or Home Component:
-    const fetchHomeData = async () => {
-      setLoading(true);
-      try {
-        // Run requests in parallel to speed up home screen loading times!
-        const [newArrivalsRes, bestSellersRes] = await Promise.all([
-          axios.get(`${backendUrl}/me/shuz/products?type=new-arrivals`),
-          axios.get(`${backendUrl}/me/shuz/products?type=best-sellers`),
-        ]);
+  const fetchHomeData = async () => {
+    setLoading(true);
+    try {
+      // Run requests in parallel to speed up home screen loading times!
+      const [newArrivalsRes, bestSellersRes] = await Promise.all([
+        axios.get(`${backendUrl}/me/shuz/products?type=new-arrivals`),
+        axios.get(`${backendUrl}/me/shuz/products?type=best-sellers`),
+      ]);
 
-        setNewProducts(newArrivalsRes.data.data); // Array of exactly 4 items
-        setBestSellerProducts(bestSellersRes.data.data); // Array of exactly 4 items
-      } catch (error) {
-        console.error("Error fetching homepage sections:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchHomeData();
-    return;
-  }, [backendUrl]);
+      setNewProducts(newArrivalsRes.data.data); // Array of exactly 4 items
+      setBestSellerProducts(bestSellersRes.data.data); // Array of exactly 4 items
+    } catch (error) {
+      console.error("Error fetching homepage sections:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -122,6 +116,7 @@ export const AppContextProvider = (props) => {
     setIsOpen,
     setOrderSuccess,
     setIsSearchOpen,
+    fetchHomeData,
     productId,
     loading,
     product,

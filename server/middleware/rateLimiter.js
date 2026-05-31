@@ -1,25 +1,27 @@
 import crypto from "crypto";
-import clientModel from "../models/users/clients.js";
 import Admin from "../models/users/admin.js";
+import clientModel from "../models/users/clients.js";
 
-// In-memory store for guest fingerprints
+// Stores active block expiration timestamps
 const guestStore = new Map();
+
+// Stores active request counters: { fingerprint: { count: X, resetTime: Y } }
+const requestTracker = new Map();
 
 export const rateLimiter = async (req, res, next) => {
   const User = req.user?.role === "admin" ? Admin : clientModel;
-  const ip = req.ip || req.headers["x-forwarded-for"];
+  const ip = req.ip || req.headers["x-forwarded-for"] || "127.0.0.1";
   const userAgent = req.headers["user-agent"] || "";
 
-  // 1. Create a unique fingerprint for Guests (IP + Browser Info)
+  // Create a unique fingerprint for the visitor
   const fingerprint = crypto
     .createHash("md5")
     .update(ip + userAgent)
     .digest("hex");
 
-  // 2. Identify if user is logged in (Assuming you have auth middleware before this)
   const userId = req.user?._id;
 
-  // --- CHECK LOGGED IN USER ---
+  // 1. CHECK IF USER IS ALREADY LOCKED OUT IN DB
   if (userId) {
     const user = await User.findById(userId);
     if (user?.lockUntil && user.lockUntil > Date.now()) {
@@ -31,7 +33,7 @@ export const rateLimiter = async (req, res, next) => {
     }
   }
 
-  // --- CHECK GUEST FINGERPRINT ---
+  // 2. CHECK IF GUEST IS ALREADY BLOCKED IN MEMORY
   const guestBlockTime = guestStore.get(fingerprint);
   if (guestBlockTime && guestBlockTime > Date.now()) {
     return res.status(429).json({
@@ -43,21 +45,49 @@ export const rateLimiter = async (req, res, next) => {
     guestStore.delete(fingerprint); // Clean up expired block
   }
 
+  // 3. --- REQUEST TRACKING COUNTER ENGINE ---
+  const currentTime = Date.now();
+  const WINDOW_MS = 60000; // 1 minute window
+  const MAX_REQUESTS = 10; // Maximum requests allowed in that minute
+  const BLOCK_DURATION_MIN = 5; // Block them for 5 minutes if they breach it
+
+  let record = requestTracker.get(fingerprint);
+
+  if (!record || currentTime > record.resetTime) {
+    // Start a fresh tracking window for this visitor
+    record = { count: 1, resetTime: currentTime + WINDOW_MS };
+    requestTracker.set(fingerprint, record);
+  } else {
+    // Increment existing count
+    record.count += 1;
+
+    // Check if user exceeded the maximum allowed hits
+    if (record.count > MAX_REQUESTS) {
+      const unlockTime = currentTime + BLOCK_DURATION_MIN * 60000;
+
+      // Enforce the block immediately
+      guestStore.set(fingerprint, unlockTime);
+      requestTracker.delete(fingerprint); // Clear window tracking data
+
+      return res.status(429).json({
+        success: false,
+        message: "Too many requests. Please slow down.",
+        retryAfter: unlockTime,
+      });
+    }
+  }
+
   next();
 };
 
-/**
- * Helper to trigger a block manually (e.g., in a controller after 5 failed logins)
- */
 export const triggerBlock = async (req, durationMinutes = 15) => {
   const unlockTime = Date.now() + durationMinutes * 60000;
+  const User = req.user?.role === "admin" ? Admin : clientModel;
 
   if (req.user?._id) {
-    // Lock the actual account in DB
     await User.findByIdAndUpdate(req.user._id, { lockUntil: unlockTime });
   } else {
-    // Lock the guest fingerprint in memory
-    const ip = req.ip || req.headers["x-forwarded-for"];
+    const ip = req.ip || req.headers["x-forwarded-for"] || "127.0.0.1";
     const userAgent = req.headers["user-agent"] || "";
     const fingerprint = crypto
       .createHash("md5")

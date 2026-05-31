@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { assets } from "../assets/asset";
 import BestSeller from "../components/BestSeller";
@@ -10,13 +10,18 @@ import InfiniteBrandScroll from "../components/InfiniteBrandScroll";
 import NewArrivals from "../components/NewArrivals";
 import Newsletter from "../components/Newsletter";
 import Reviews from "../components/Reviews";
-// import { AppContent } from "../context/AppContent";
+import { AppContent } from "../context/AppContent";
 
 const Homepage = () => {
-  // const { userData } = useContext(AppContent);
+  const { fetchHomeData, backendUrl } = useContext(AppContent);
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });
   }, []);
+
+  useEffect(() => {
+    fetchHomeData();
+    return;
+  }, [backendUrl]);
 
   return (
     <>

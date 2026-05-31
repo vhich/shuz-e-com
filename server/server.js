@@ -115,8 +115,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api", rateLimiter);
-app.use("/api/admin", router);
-app.use("/api", adminAllProductRouter);
+app.use("/api/admin", router, adminAllProductRouter);
 app.use("/api/order", orderRouter);
 app.use("/api/client", clientRouter);
 app.use("/api/cart", cartRouter);

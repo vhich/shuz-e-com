@@ -1,20 +1,20 @@
 import express from "express";
 import {
-  registerSuperAdmin,
-  registerAdmin,
+  deleteAdminAccount,
   loginAdmin,
   logoutAdmin,
-  deleteAdminAccount,
+  registerAdmin,
+  registerSuperAdmin,
 } from "../controllers/adminController.js";
 import { getAdminData } from "../controllers/adminData.js";
-import { protectAdmin } from "../middleware/protectAdmin.js";
-import { setSecurityHeaders } from "../middleware/securityHeader.js";
-import { upload } from "../middleware/upload.js";
-import { createProduct } from "../controllers/productUpload.js";
 import {
   getAdminNotifications,
   markAsRead,
 } from "../controllers/notificationController.js";
+import { createProduct } from "../controllers/productUpload.js";
+import { protectAdmin } from "../middleware/protectAdmin.js";
+import { setSecurityHeaders } from "../middleware/securityHeader.js";
+import { upload } from "../middleware/upload.js";
 
 const router = express.Router();
 
@@ -27,7 +27,7 @@ router.post("/invite", protectAdmin, registerAdmin);
 router.post("/login", loginAdmin);
 router.post("/logout", protectAdmin, logoutAdmin);
 router.post(
-  "/add-product",
+  "/shuz/add-product",
   protectAdmin,
   upload.single("image"),
   createProduct,

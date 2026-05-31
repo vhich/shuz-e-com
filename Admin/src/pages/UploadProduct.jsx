@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import SideNav from "../components/SideNav";
-import AdminNavbar from "../components/AdminNavbar";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useAppContext } from "../context/AppContent";
-import ProductPreview from "../components/ProductPreview";
+import AdminNavbar from "../components/AdminNavbar";
 import BottomSpace from "../components/BottomSpace";
-import { useNavigate, useLocation } from "react-router-dom";
+import ProductPreview from "../components/ProductPreview";
+import SideNav from "../components/SideNav";
+import { useAppContext } from "../context/AppContent";
 
 const CATEGORIES = [
   { id: 1, name: "Running Shoes" },
@@ -147,14 +147,14 @@ const UploadProduct = () => {
     try {
       let response = editMode
         ? await axios.put(
-            `${backendUrl}/update-product/${productId}`,
+            `${backendUrl}/shuz/update-product/${productId}`,
             formData,
             {
               withCredentials: true,
               headers: { "Content-Type": "multipart/form-data" },
             },
           )
-        : await axios.post(`${backendUrl}/admin/add-product`, formData, {
+        : await axios.post(`${backendUrl}/admin/shuz/add-product`, formData, {
             withCredentials: true,
             headers: { "Content-Type": "multipart/form-data" },
           });

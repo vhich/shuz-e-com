@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { SquarePen, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { HiArrowLeft } from "react-icons/hi2";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import AdminNavbar from "../components/AdminNavbar";
 import BottomSpace from "../components/BottomSpace";
+import Loading from "../components/Loading";
 import SideNav from "../components/SideNav";
 import { useAppContext } from "../context/AppContent";
-import { useParams, useNavigate, NavLink } from "react-router-dom";
-import axios from "axios";
-import Loading from "../components/Loading";
-import { Trash2, SquarePen } from "lucide-react";
-import { HiArrowLeft } from "react-icons/hi2";
 
 const ProductInfo = () => {
   const [product, setProduct] = useState(null);
@@ -38,7 +38,9 @@ const ProductInfo = () => {
     const fetchProductDetail = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get(`${backendUrl}/shuz/products/${id}`);
+        const { data } = await axios.get(
+          `${backendUrl}/admin/shuz/products/${id}`,
+        );
 
         if (data.success) {
           const fetchedProduct = data.data;

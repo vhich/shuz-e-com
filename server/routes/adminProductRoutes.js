@@ -43,7 +43,7 @@ adminAllProductRouter.delete(
   removeAllProducts,
 );
 adminAllProductRouter.put(
-  "/update-product/:id",
+  "/shuz/update-product/:id",
   upload.single("image"),
   updateProduct,
 );

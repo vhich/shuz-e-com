@@ -79,7 +79,7 @@ export const AppContextProvider = (props) => {
 
   const { pathname } = useLocation();
 
-  const fetchHomeData = async () => {
+  const fetchBestNewProduct = async () => {
     setLoading(true);
     try {
       // Run requests in parallel to speed up home screen loading times!
@@ -115,7 +115,7 @@ export const AppContextProvider = (props) => {
     setIsOpen,
     setOrderSuccess,
     setIsSearchOpen,
-    fetchHomeData,
+    fetchBestNewProduct,
     productId,
     loading,
     product,

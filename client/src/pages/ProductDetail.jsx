@@ -11,6 +11,7 @@ import { AppContent } from "../context/AppContent";
 const ProductDetail = () => {
   const { id } = useParams(); // Get ID from URL
   const {
+    fetchBestNewProduct,
     backendUrl,
     setCartItems,
     cartItems,
@@ -93,6 +94,11 @@ const ProductDetail = () => {
     toast.success("Added to cart!");
     navigate("/cart");
   };
+
+  useEffect(() => {
+    fetchBestNewProduct();
+    return;
+  }, [backendUrl]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });

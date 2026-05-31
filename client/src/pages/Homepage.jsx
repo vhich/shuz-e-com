@@ -13,13 +13,13 @@ import Reviews from "../components/Reviews";
 import { AppContent } from "../context/AppContent";
 
 const Homepage = () => {
-  const { fetchHomeData, backendUrl } = useContext(AppContent);
+  const { fetchBestNewProduct, backendUrl } = useContext(AppContent);
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });
   }, []);
 
   useEffect(() => {
-    fetchHomeData();
+    fetchBestNewProduct();
     return;
   }, [backendUrl]);
 

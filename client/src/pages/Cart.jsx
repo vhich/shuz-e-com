@@ -37,6 +37,8 @@ const Cart = () => {
     const sizeInfo = productData?.sizes.find((s) => s.value === item.size);
     const availableStock = sizeInfo ? sizeInfo.stock : 0;
 
+    console.log(productData)
+
     // 3. Prevent increase if it exceeds stock
     if (newQty > availableStock) {
       toast.error(

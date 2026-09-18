@@ -7,8 +7,8 @@ import Loading from "../components/Loading";
 const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   //   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("adminpeter1");
+  const [password, setPassword] = useState("12345678");
   const {
     handleAdminLogin,
     setDisableForm,
@@ -56,7 +56,7 @@ const AdminLogin = () => {
             <div className="relative">
               <input
                 type="text"
-                value="adminpeter1"
+                value={username}
                 required
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded focus:border-gray-600 focus:bg-white transition-all outline-none text-gray-700"
                 onChange={(e) => setUsername(e.target.value)}
@@ -74,7 +74,7 @@ const AdminLogin = () => {
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                value="12345678"
+                value={password}
                 required
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded focus:border-gray-600 focus:bg-white transition-all outline-none text-gray-700"
                 onChange={(e) => setPassword(e.target.value)}

@@ -56,6 +56,7 @@ const AdminLogin = () => {
             <div className="relative">
               <input
                 type="text"
+                value="adminpeter1"
                 required
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded focus:border-gray-600 focus:bg-white transition-all outline-none text-gray-700"
                 onChange={(e) => setUsername(e.target.value)}
@@ -73,6 +74,7 @@ const AdminLogin = () => {
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
+                value="12345678"
                 required
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded focus:border-gray-600 focus:bg-white transition-all outline-none text-gray-700"
                 onChange={(e) => setPassword(e.target.value)}
